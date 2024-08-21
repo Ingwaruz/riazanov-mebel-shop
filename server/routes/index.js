@@ -1,8 +1,8 @@
 const Router = require('express')
 const router = new Router()
-const userRouter = require('./productRouter')
-const typeRouter = require('./productRouter')
-const factoryRouter = require('./productRouter')
+const userRouter = require('./userRouter')
+const typeRouter = require('./typeRouter')
+const factoryRouter = require('./factoryRouter')
 const productRouter = require('./productRouter')
 
 router.use('/user', userRouter)
