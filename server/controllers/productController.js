@@ -20,17 +20,25 @@ class productController {
     }
 
     async getAll(req, res) {
-        const {factoryId, typeId} = req.body
-        let products;
+        let {factoryId, typeId, limit, page} = req.query
+        page = page || 1
+        limit = limit || 9
+        let offset = page * limit - limit
+        let products
+
         if (!factoryId && !typeId) {
-            products = await Product.findAll({where: {factoryId}})
+            products = await Product.findAndCountAll({limit, offset})
         }
         if (factoryId && !typeId) {
-            products = await Product.findAll({where: {typeId}})
+            products = await Product.findAndCountAll({where: {factoryId, limit, offset}})
         }
         if (!factoryId && typeId) {
-                products = await Product.findAll({where: {typeId, factoryId}})
+            products = await Product.findAndCountAll({where: {typeId, limit, offset}})
         }
+        if (factoryId && typeId) {
+            products = await Product.findAndCountAll({where: {typeId, factoryId, limit, offset}})
+    }
+        
         return res.json(products)
     }
 
