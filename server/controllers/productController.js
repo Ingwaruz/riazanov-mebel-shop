@@ -1,6 +1,6 @@
 class productController {
     async create(req, res) {
-
+        const
     }
 
     async getAll(req, res) {
