@@ -1,24 +1,32 @@
 import React, { useContext } from 'react';
-import { Navbar as BootstrapNavbar, Container, Nav } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar, Container, Nav, Button } from 'react-bootstrap';
 import { Context } from "../index";
+import { SHOP_ROUTE } from "../utils/consts";
+import { NavLink } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
-const MyNavbar = () => {
+const MyNavbar = observer(() => {
     const { user } = useContext(Context);
 
     return (
         <div>
             <BootstrapNavbar bg="dark" data-bs-theme="dark">
                 <Container>
-                    <BootstrapNavbar.Brand href="#home">Navbar</BootstrapNavbar.Brand>
-                    <Nav className="me-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#features">Features</Nav.Link>
-                        <Nav.Link href="#pricing">Pricing</Nav.Link>
-                    </Nav>
+                    <NavLink style={{ color: 'white' }} to={SHOP_ROUTE}>КупиДиван</NavLink>
+                    {user.isAuth ?
+                        <Nav className="ml-auto" style={{ color: 'white' }}>
+                            <Button variant={"outline-light"}>Админ панель</Button>
+                            <Button variant={"outline-light"}>Выйти</Button>
+                        </Nav>
+                        :
+                        <Nav className="ml-auto" style={{ color: 'white' }}>
+                            <Button variant={"outline-light"} onClick={() => user.setIsAuth(true)}>Авторизация</Button>
+                        </Nav>
+                    }
                 </Container>
             </BootstrapNavbar>
         </div>
     );
-};
+});
 
 export default MyNavbar;
