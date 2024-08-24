@@ -20,7 +20,7 @@ const Auth = () => {
                         className="mt-3"
                         placeholder="Введите ваш пароль..."
                     />
-                    <Row className="d-flex justify-content-between pl-3 pr-3">
+                    <Row className="d-flex justify-content-between pl-3 p-lg-3">
                         <div>
                             Нет аккаунта? <NavLink to={REGISTRATION_ROUTE}>Зарегестрируйся!</NavLink>
                         </div>
