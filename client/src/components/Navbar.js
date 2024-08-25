@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Navbar as BootstrapNavbar, Container, Nav, Button } from 'react-bootstrap';
 import { Context } from "../index";
-import { SHOP_ROUTE } from "../utils/consts";
+import {REGISTRATION_ROUTE, SHOP_ROUTE} from "../utils/consts";
 import { NavLink } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 

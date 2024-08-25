@@ -4,7 +4,11 @@ export default class ProductStore {
     constructor() {
         this._types = [
             {id: 1, name: 'Диваны'},
-            {id: 2, name: 'Кровати'}
+            {id: 2, name: 'Кресла'},
+            {id: 3, name: 'Кровати'},
+            {id: 4, name: 'Матрасы'},
+            {id: 5, name: 'Топперы'},
+            {id: 6, name: 'Подушки'},
         ]
         this._factories = [
             {id: 1, name: 'Ardoni'},
@@ -18,6 +22,7 @@ export default class ProductStore {
             {id: 5, name: 'Фаби', price: 55000, img: 'https://thefurny.eu/upload/iblock/096/09675713a87bbdd4919393cd839a7457.jpg'},
             {id: 6, name: 'Дэнвер', price: 65000, img: 'https://thefurny.eu/upload/iblock/096/09675713a87bbdd4919393cd839a7457.jpg'},
         ]
+        this._selectedType = {}
         makeAutoObservable(this)
     }
 
@@ -30,6 +35,9 @@ export default class ProductStore {
     setProducts(products) {
         this._products = products
     }
+    setSelectedType(type) {
+        this._selectedType = type
+    }
 
     get types() {
         return this._types
@@ -39,5 +47,8 @@ export default class ProductStore {
     }
     get products() {
         return this._products
+    }
+    get selectedType() {
+        return this._selectedType
     }
 }
