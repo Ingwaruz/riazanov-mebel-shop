@@ -12,7 +12,11 @@ export default class ProductStore {
         ]
         this._factories = [
             {id: 1, name: 'Ardoni'},
-            {id: 2, name: 'Мелодия сна'}
+            {id: 2, name: 'Оримэкс'},
+            {id: 3, name: 'Мелодия сна'},
+            {id: 4, name: 'Geniuspark'},
+            {id: 5, name: 'Furny'},
+            {id: 6, name: 'Сонум'},
         ]
         this._products = [
             {id: 1, name: 'Люфтен', price: 15000, img: 'https://thefurny.eu/upload/iblock/096/09675713a87bbdd4919393cd839a7457.jpg'},
@@ -23,6 +27,7 @@ export default class ProductStore {
             {id: 6, name: 'Дэнвер', price: 65000, img: 'https://thefurny.eu/upload/iblock/096/09675713a87bbdd4919393cd839a7457.jpg'},
         ]
         this._selectedType = {}
+        this._selectedFactory = {}
         makeAutoObservable(this)
     }
 
@@ -38,6 +43,9 @@ export default class ProductStore {
     setSelectedType(type) {
         this._selectedType = type
     }
+    setSelectedFactory(factory) {
+        this._selectedFactory = factory
+    }
 
     get types() {
         return this._types
@@ -50,5 +58,8 @@ export default class ProductStore {
     }
     get selectedType() {
         return this._selectedType
+    }
+    get selectedFactory() {
+        return this._selectedFactory
     }
 }
