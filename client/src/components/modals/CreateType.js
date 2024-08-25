@@ -17,7 +17,7 @@ const CreateType = ({show, onHide}) => {
             <Modal.Body>
                 <Form>
                     <Form.Control
-                        placeholder={'Введите название типа товара'}
+                        placeholder={'Введите название типа товара...'}
                     />
                 </Form>
             </Modal.Body>

@@ -17,7 +17,7 @@ const CreateProduct = ({show, onHide}) => {
             <Modal.Body>
                 <Form>
                     <Form.Control
-                        placeholder={'Введите название типа товара'}
+                        placeholder={'Введите имя товара (без слов диван, матрас и т.п.)...'}
                     />
                 </Form>
             </Modal.Body>

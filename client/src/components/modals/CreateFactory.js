@@ -17,7 +17,7 @@ const CreateFactory = ({show, onHide}) => {
             <Modal.Body>
                 <Form>
                     <Form.Control
-                        placeholder={'Введите название типа товара'}
+                        placeholder={'Введите производителя...'}
                     />
                 </Form>
             </Modal.Body>
