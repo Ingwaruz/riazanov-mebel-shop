@@ -9,7 +9,7 @@ const ProductItem = ({ product }) => {
     return (
         <Col md={5} className="mt-3" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>
             <Card style={{ width: 150, cursor: 'pointer' }} border={'light'}>
-                <Image width={350} height={350} src={product.img} />
+                <Image width={350} height={350} src={process.env.REACT_APP_API_URL + product.img} />
                 <div className="d-flex justify-content-center">
                     <div>Ardoni</div>
                 </div>
