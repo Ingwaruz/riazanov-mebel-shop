@@ -11,3 +11,14 @@ export const fetchTypes = async () => {
     return data;
 }
 
+export const createFactory = async (factory) => {
+    const {data} = await $authHost.post('api/factory', factory);
+    return data;
+}
+
+export const fetchFactories = async () => {
+    const {data} = await $host.get('api/factory');
+    return data;
+}
+
+

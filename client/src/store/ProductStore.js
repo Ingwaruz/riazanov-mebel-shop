@@ -3,14 +3,7 @@ import {makeAutoObservable} from "mobx";
 export default class ProductStore {
     constructor() {
         this._types = []
-        this._factories = [
-            {id: 1, name: 'Ardoni'},
-            {id: 2, name: 'Оримэкс'},
-            {id: 3, name: 'Мелодия сна'},
-            {id: 4, name: 'Geniuspark'},
-            {id: 5, name: 'Furny'},
-            {id: 6, name: 'Сонум'},
-        ]
+        this._factories = []
         this._products = [
             {id: 1, name: 'Люфтен', price: 15000, img: 'https://thefurny.eu/upload/iblock/096/09675713a87bbdd4919393cd839a7457.jpg'},
             {id: 2, name: 'Лондон', price: 25000, img: 'https://thefurny.eu/upload/iblock/096/09675713a87bbdd4919393cd839a7457.jpg'},

@@ -5,13 +5,14 @@ import FactoryBar from "../components/FactoryBar";
 import ProductList from "../components/ProductList";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {fetchTypes} from "../http/productAPI";
+import {fetchFactories, fetchTypes} from "../http/productAPI";
 
 const Shop = observer(() => {
     const {product} = useContext(Context)
 
     useEffect(() => {
         fetchTypes().then(data => product.setTypes(data))
+        fetchFactories().then(data => product.setFactories(data))
     }, []);
     return (
         <Container>
