@@ -1,7 +1,17 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
+import {createFactory} from "../../http/productAPI";
 
 const CreateFactory = ({show, onHide}) => {
+
+    const [value, setValue] = useState('')
+    const addFactory = () => {
+        createFactory({name: value}).then(data => {
+            setValue('')
+            onHide()
+        })
+    }
+
     return (
         <Modal
             show={show}
@@ -17,13 +27,15 @@ const CreateFactory = ({show, onHide}) => {
             <Modal.Body>
                 <Form>
                     <Form.Control
+                        value={value}
+                        onChange={e => setValue(e.target.value)}
                         placeholder={'Введите производителя...'}
                     />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant={'outline-danger'} onClick={onHide}>Закрыть</Button>
-                <Button variant={'outline-success'} onClick={onHide}>Добавить</Button>
+                <Button variant={'outline-success'} onClick={addFactory}>Добавить</Button>
             </Modal.Footer>
         </Modal>
     );
