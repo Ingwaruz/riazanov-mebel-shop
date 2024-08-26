@@ -11,7 +11,7 @@ const CreateFactory = ({show, onHide}) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Добавить тип
+                    Добавить производителя
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>

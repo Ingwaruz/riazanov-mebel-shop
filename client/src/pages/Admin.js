@@ -13,24 +13,24 @@ const Admin = () => {
         <Container className={'d-flex flex-column'}>
             <Button
                 variant={'outline-dark'}
-                className={'mt-4 p-2'}
+                className={'mt-4 p-3'}
                 onClick={() => setTypeVisible(true)}
             >
                 Добавить тип
             </Button>
             <Button
                 variant={'outline-dark'}
-                className={'mt-4 p-2'}
+                className={'mt-4 p-3'}
                 onClick={() => setFactoryVisible(true)}
             >
-                Добавить фабрику
+                Добавить производителя
             </Button>
             <Button
                 variant={'outline-dark'}
-                className={'mt-4 p-2'}
+                className={'mt-4 p-3'}
                 onClick={() => setProductVisible(true)}
             >
-                Добавить устройство
+                Добавить товар
             </Button>
             <CreateFactory show={factoryVisible} onHide={() => setFactoryVisible(false)}/>
             <CreateProduct show={productVisible} onHide={() => setProductVisible(false)}/>
