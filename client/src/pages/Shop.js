@@ -6,6 +6,7 @@ import ProductList from "../components/ProductList";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import {fetchFactories, fetchProducts, fetchTypes} from "../http/productAPI";
+import Pages from "../components/Pages";
 
 const Shop = observer(() => {
     const {product} = useContext(Context)
@@ -13,8 +14,19 @@ const Shop = observer(() => {
     useEffect(() => {
         fetchTypes().then(data => product.setTypes(data))
         fetchFactories().then(data => product.setFactories(data))
-        fetchProducts().then(data => product.setProducts(data.rows))
+        fetchProducts(null, null, 1, 4).then(data => {
+            product.setProducts(data.rows)
+            product.setTotalCount(data.count)
+        })
     }, []);
+
+    useEffect(() => {
+        fetchProducts(product.selectedType.id, product.selectedFactory.id, product.page, 4).then(data => {
+            product.setProducts(data.rows)
+            product.setTotalCount(data.count)
+        })
+    }, [product.page, product.selectedType, product.selectedFactory,]);
+
     return (
         <Container>
             <Row className="mt-2">
@@ -24,6 +36,7 @@ const Shop = observer(() => {
                 <Col md={9}>
                     <FactoryBar/>
                     <ProductList/>
+                    <Pages/>
                 </Col>
             </Row>
         </Container>

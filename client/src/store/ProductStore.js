@@ -7,6 +7,9 @@ export default class ProductStore {
         this._products = []
         this._selectedType = {}
         this._selectedFactory = {}
+        this._page = 1
+        this._totalCount = 0
+        this._limit = 6
         makeAutoObservable(this)
     }
 
@@ -26,6 +29,14 @@ export default class ProductStore {
         this._selectedFactory = factory
     }
 
+    setPage(page) {
+        this._page = page
+    }
+
+    setTotalCount(count) {
+        this._totalCount = count
+    }
+
     get types() {
         return this._types
     }
@@ -40,5 +51,17 @@ export default class ProductStore {
     }
     get selectedFactory() {
         return this._selectedFactory
+    }
+
+    get totalCount() {
+        return this._totalCount
+    }
+
+    get page() {
+        return this._page
+    }
+
+    get limit() {
+        return this._limit
     }
 }
