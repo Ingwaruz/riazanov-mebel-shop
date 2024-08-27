@@ -9,23 +9,43 @@ import {fetchFactories, fetchProducts, fetchTypes} from "../http/productAPI";
 import Pages from "../components/Pages";
 
 const Shop = observer(() => {
-    const {product} = useContext(Context)
+    const {product} = useContext(Context);
+
+    // Функция для загрузки данных при первой загрузке компонента
+    const loadInitialData = async () => {
+        try {
+            const types = await fetchTypes();
+            product.setTypes(types);
+
+            const factories = await fetchFactories();
+            product.setFactories(factories);
+
+            const products = await fetchProducts(null, null, 1, 4);
+            product.setProducts(products.rows);
+            product.setTotalCount(products.count);
+        } catch (error) {
+            console.error('Error fetching initial data:', error);
+        }
+    };
+
+    // Функция для загрузки продуктов при изменении фильтров или страницы
+    const loadProducts = async () => {
+        try {
+            const products = await fetchProducts(product.selectedType.id, product.selectedFactory.id, product.page, 4);
+            product.setProducts(products.rows);
+            product.setTotalCount(products.count);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
 
     useEffect(() => {
-        fetchTypes().then(data => product.setTypes(data))
-        fetchFactories().then(data => product.setFactories(data))
-        fetchProducts(null, null, 1, 4).then(data => {
-            product.setProducts(data.rows)
-            product.setTotalCount(data.count)
-        })
+        loadInitialData();
     }, []);
 
     useEffect(() => {
-        fetchProducts(product.selectedType.id, product.selectedFactory.id, product.page, 4).then(data => {
-            product.setProducts(data.rows)
-            product.setTotalCount(data.count)
-        })
-    }, [product.page, product.selectedType, product.selectedFactory,]);
+        loadProducts();
+    }, [product.page, product.selectedType, product.selectedFactory]);
 
     return (
         <Container>
