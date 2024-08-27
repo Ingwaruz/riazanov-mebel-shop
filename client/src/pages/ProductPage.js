@@ -5,36 +5,58 @@ import { fetchOneProducts } from "../http/productAPI";
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const { id } = useParams();
 
     useEffect(() => {
-        fetchOneProducts(id).then(data => {
-            if (data && data.info) {
-                setProduct({ ...data, info: data.info });
-            } else {
-                setProduct({ ...data, info: [] });
+        const loadProduct = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchOneProducts(id);
+                setProduct(data);
+            } catch (error) {
+                console.error("Failed to fetch product:", error);
+                setError("Не удалось загрузить данные продукта.");
+                setProduct({ info: [] });  // Fallback to empty array
+            } finally {
+                setLoading(false);
             }
-        }).catch(error => {
-            console.error("Failed to fetch product:", error);
-            setProduct({ info: [] });  // Fallback to empty array
-        });
+        };
+
+        loadProduct();
     }, [id]);
+
+    // Return early if loading
+    if (loading) {
+        return <Container className={'mt-3'}><p>Загрузка...</p></Container>;
+    }
+
+    // Return early if error
+    if (error) {
+        return <Container className={'mt-3'}><p>{error}</p></Container>;
+    }
 
     return (
         <Container className={'mt-3'}>
             <Row>
                 <Col md={4} className={'d-flex justify-content-center align-items-center'}>
-                    <Image width={350} height={350} src={process.env.REACT_APP_API_URL + product.img} />
+                    <Image
+                        width={350}
+                        height={350}
+                        src={product.img ? process.env.REACT_APP_API_URL + product.img : 'default_image_path'}
+                        alt={product.name || 'Product image'}
+                    />
                 </Col>
                 <Col md={4} className={'d-flex justify-content-center align-items-center'}>
-                    <h2>{product.name}</h2>
+                    <h2>{product.name || 'Название отсутствует'}</h2>
                 </Col>
                 <Col md={4}>
                     <Card
                         className={'d-flex flex-column align-items-center justify-content-around'}
                         style={{ width: 300, height: 300, fontSize: 32, border: '5px solid lightgray' }}
                     >
-                        <h3>От {product.price} руб.</h3>
+                        <h3>От {product.price || 'Цена не указана'} руб.</h3>
                         <Button variant={"outline-dark"}>Добавить в корзину</Button>
                     </Card>
                 </Col>
