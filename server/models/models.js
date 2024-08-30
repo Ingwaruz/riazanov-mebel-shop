@@ -48,7 +48,7 @@ const Factory = sequelize.define('factory', {
 const ProductInfo = sequelize.define('product_info', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     title: {type: DataTypes.STRING, allowNull: false},
-    describtion: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.STRING, allowNull: false},
 })
 
 // Временная связующая таблица между типом товара и фабрикой
