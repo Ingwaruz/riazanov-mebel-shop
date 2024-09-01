@@ -14,6 +14,7 @@ const MyNavbar = observer(() => {
         user.setUser({})
         user.setIsAuth(false)
         localStorage.removeItem('token')
+        navigate(LOGIN_ROUTE);
     }
 
     return (

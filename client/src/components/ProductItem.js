@@ -11,7 +11,7 @@ const ProductItem = ({ product }) => {
             <Card style={{ width: 150, cursor: 'pointer' }} border={'light'}>
                 <Image width={350} height={350} src={process.env.REACT_APP_API_URL + product.img} />
                 <div className="d-flex justify-content-center">
-                    <div>Ardoni</div>
+                    <div className={'d-flex justify-content-center align-items-center'}>{product.name}</div>
                 </div>
             </Card>
         </Col>

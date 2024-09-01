@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+$font-family-roboto: 'Roboto', sans-serif;
+
+$font-size-xs: 12px;
+$font-size-s: 16px;
+$font-size-m: 20px;
+$font-size-l: 24px;
+$font-size-xl: 32px;
+
+@mixin roboto-font($size) {
+  font-family: $font-family-roboto;
+  font-size: $size;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.xs-text {
+  @include roboto-font($font-size-xs);
+}
+
+.s-text {
+  @include roboto-font($font-size-s);
+}
+
+.m-text {
+  @include roboto-font($font-size-m);
+}
+
+.l-text {
+  @include roboto-font($font-size-l);
+}
+
+.xl-text {
+  @include roboto-font($font-size-xl);
+}

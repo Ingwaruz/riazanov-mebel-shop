@@ -7,29 +7,33 @@ import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 
 const Auth = observer(() => {
-    const  {user} = useContext(Context)
+    const { user } = useContext(Context);
     const location = useLocation();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const isLogin = location.pathname === LOGIN_ROUTE;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const click = async () => {
-        let data
+        setLoading(true);
+        let data;
         try {
             if (isLogin) {
                 data = await login(email, password);
             } else {
                 data = await registration(email, password);
             }
-        } catch (e) {
-            alert(e.response.data.message())
-        }
 
-        user.setUser(user)
-        user.setIsAuth(true)
-        navigate(SHOP_ROUTE)
-    }
+            user.setUser(data);
+            user.setIsAuth(true);
+            navigate(SHOP_ROUTE);
+        } catch (e) {
+            alert(e.response.data.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Container
@@ -50,12 +54,12 @@ const Auth = observer(() => {
                         placeholder="Введите ваш пароль..."
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        type={'password'}
+                        type="password"
                     />
                     <Row className="d-flex justify-content-between align-items-center mt-3 pl-3 pr-3">
                         {isLogin ?
                             <Col xs="auto">
-                                Нет аккаунта? <NavLink to={REGISTRATION_ROUTE}>Зарегестрируйся!</NavLink>
+                                Нет аккаунта? <NavLink to={REGISTRATION_ROUTE}>Зарегистрируйтесь!</NavLink>
                             </Col>
                             :
                             <Col xs="auto">
@@ -66,6 +70,7 @@ const Auth = observer(() => {
                             <Button
                                 variant="outline-success"
                                 onClick={click}
+                                disabled={loading}
                             >
                                 {isLogin ? 'Войти' : 'Регистрация'}
                             </Button>
