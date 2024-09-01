@@ -11,7 +11,7 @@ const FactoryBar = observer(() => {
                 <Card
                     style={{cursor:"pointer"}}
                     key={factory.id}
-                    className="p-3"
+                    className="p-3 m-text"
                     onClick={() => product.setSelectedFactory(factory)}
                     border={factory.id === product.selectedFactory.id ? 'dark' : 'light'}
                     //bg={factory.id === product.selectedFactory.id ? 'success' : 'light'}

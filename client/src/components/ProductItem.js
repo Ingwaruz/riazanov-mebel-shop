@@ -7,11 +7,11 @@ const ProductItem = ({ product }) => {
     const navigate = useNavigate();
 
     return (
-        <Col md={5} className="mt-3" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>
-            <Card style={{ width: 150, cursor: 'pointer' }} border={'light'}>
+        <Col md={5} className="mt-5 d-flex justify-content-center " onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>
+            <Card style={{ width: 150, cursor: 'pointer' }} border={'dark'}>
                 <Image width={350} height={350} src={process.env.REACT_APP_API_URL + product.img} />
                 <div className="d-flex justify-content-center">
-                    <div className={'d-flex justify-content-center align-items-center'}>{product.name}</div>
+                    <div className={'d-flex justify-content-center align-items-center m-text'}>{product.name}</div>
                 </div>
             </Card>
         </Col>

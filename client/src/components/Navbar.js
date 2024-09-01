@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Navbar as BootstrapNavbar, Container, Nav, Button } from 'react-bootstrap';
+import {Navbar as BootstrapNavbar, Container, Nav, Button, Row, Col} from 'react-bootstrap';
 import { Context } from "../index";
 import {ADMIN_ROUTE, LOGIN_ROUTE, PRODUCT_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "../utils/consts";
 import { NavLink } from "react-router-dom";
@@ -19,25 +19,47 @@ const MyNavbar = observer(() => {
 
     return (
         <div>
-            <BootstrapNavbar bg="dark" data-bs-theme="dark">
+            <BootstrapNavbar bg="dark" data-bs-theme="dark" style={{height: 75}} className={'s-text'}>
                 <Container>
-                    <NavLink style={{ color: 'white' }} to={SHOP_ROUTE}>КупиДиван</NavLink>
+                    <NavLink style={{ color: 'white' }} className={'l-text"'} to={SHOP_ROUTE}>Тут будет логотип</NavLink>
+                    <Row className={'d-flex'} style={{ color: 'white', width: 500}}>
+                        <Col className={'s-text'}>
+                            <NavLink
+                                style={{ color: 'white' }}
+                                to={SHOP_ROUTE}
+                            >
+                                Где купить
+                            </NavLink>
+                        </Col>
+                        <Col className={'s-text'}>
+                            Нигде бля
+                        </Col>
+                        <Col className={'s-text'}>
+                            <NavLink
+                                style={{ color: 'white' }}
+                                to={SHOP_ROUTE}
+                            >
+                                +7 (999) 999-99-99
+                            </NavLink>
+                        </Col>
+                    </Row>
                     {user.isAuth ?
                         <Nav className="ml-auto" style={{ color: 'white' }}>
                             <Button
                                 variant={"outline-light"}
+                                className="ms-lg-4 s-text"
                                 onClick={() => navigate(ADMIN_ROUTE)}>
                                 Админ панель
                             </Button>
                             <Button
                                 variant={"outline-light"}
-                                className="ms-lg-4"
+                                className="ms-lg-4 s-text"
                                 onClick={() => logOut()}>
                                 Выйти
                             </Button>
                         </Nav>
                         :
-                        <Nav className="ml-auto" style={{ color: 'white' }}>
+                        <Nav className="ml-auto s-text" style={{ color: 'white' }}>
                             <Button variant={"outline-light"} onClick={() => navigate(LOGIN_ROUTE)}>Авторизация</Button>
                         </Nav>
                     }
