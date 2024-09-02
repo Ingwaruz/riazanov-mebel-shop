@@ -21,7 +21,9 @@ const MyNavbar = observer(() => {
         <div>
             <BootstrapNavbar bg="dark" data-bs-theme="dark" style={{height: 75}} className={'s-text'}>
                 <Container>
-                    <NavLink style={{ color: 'white' }} className={'l-text"'} to={SHOP_ROUTE}>Тут будет логотип</NavLink>
+                    <NavLink style={{ color: 'white' }} className={'s-text ps-3'} to={SHOP_ROUTE}>
+                        Тут будет логотип
+                    </NavLink>
                     <Row className={'d-flex'} style={{ color: 'white', width: 500}}>
                         <Col className={'s-text'}>
                             <NavLink

@@ -8,6 +8,8 @@ import {Context} from "./index";
 import {check} from "./http/userAPI";
 import {Spinner} from "react-bootstrap";
 import './styles/fonts.scss'
+import './styles/commonStyles.scss'
+import Footer from "./components/Footer";
 
 
 const App = observer(() => {
@@ -30,6 +32,7 @@ const App = observer(() => {
     <BrowserRouter>
         <MyNavbar />
         <AppRouter />
+        <Footer />
     </BrowserRouter>
   );
 });
