@@ -1,9 +1,16 @@
 .product-card {
   transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 
   &:hover {
     transform: scale(1.01);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   }
+}
+
+.img-centered {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
 }

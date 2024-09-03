@@ -41,7 +41,7 @@ const MyNavbar = observer(() => {
                                 style={{ color: 'white' }}
                                 to={SHOP_ROUTE}
                             >
-                                +7 (999) 999-99-99
+                                Контакты
                             </NavLink>
                         </Col>
                     </Row>
