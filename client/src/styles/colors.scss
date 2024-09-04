@@ -3,18 +3,23 @@ $color-black: #1D1D1B;
 $color-gray: #212529;
 $color-lightgray: #d3d3d3;
 
-.color-white {
-  color: $color-white;
-}
+$colors: (
+        white: $color-white,
+        black: $color-black,
+        gray: $color-gray,
+        lightgray: $color-lightgray
+);
 
-.color-black {
-  color: $color-black;
-}
+@each $name, $color in $colors {
+  .color-#{$name} {
+    color: #{$color} !important;
+  }
 
-.color-gray {
-  color: $color-gray;
-}
+  .bg-color-#{$name} {
+    background-color: #{$color} !important;
+  }
 
-.color-lightgray {
-  color: $color-lightgray;
+  .border-color-#{$name} {
+    border-color: #{$color} !important;
+  }
 }

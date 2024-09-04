@@ -13,7 +13,11 @@ const TypeBar = observer(() => {
     return (
         <ListGroup>
             <ListGroup.Item
-                className={`type-item ${!product.selectedType ? 'color-white' : 'color-black'}`}
+                className={`type-item ${!product.selectedType ? 
+                    'color-black bg-color-lightgray border-color-gray' 
+                    : 
+                    'color-black bg-color-white'
+                }`}
                 onClick={resetSelectedType}
                 active={!product.selectedType} // Активно, если тип не выбран
             >
@@ -21,9 +25,14 @@ const TypeBar = observer(() => {
             </ListGroup.Item>
             {product.types.map(type =>
                 <ListGroup.Item
-                    className={`type-item ${type.id === product.selectedType?.id ? 'color-white' : 'color-black'}`}
+                    className={`type-item ${type.id === product.selectedType?.id ? 
+                        'color-black bg-color-lightgray border-color-gray' 
+                        : 
+                        'color-black bg-color-white' +
+                        ''}`}
                     active={type.id === product.selectedType?.id}
                     onClick={() => product.setSelectedType(type)}
+                    bg={'color-'}
                     key={type.id}
                 >
                     {type.name}

@@ -19,7 +19,7 @@
 
 .type-item {
   cursor: pointer;
-  border: 1px solid $color-lightgray;
+  border: 1px solid $color-lightgray; // Используем цвет из переменной
   color: $color-black;
   background-color: $color-white;
 
