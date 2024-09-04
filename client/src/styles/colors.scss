@@ -4,10 +4,10 @@ $color-gray: #212529;
 $color-lightgray: #d3d3d3;
 
 $colors: (
-        white: $color-white,
-        black: $color-black,
-        gray: $color-gray,
-        lightgray: $color-lightgray
+  white: $color-white,
+  black: $color-black,
+  gray: $color-gray,
+  lightgray: $color-lightgray
 );
 
 @each $name, $color in $colors {
