@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import 'colors';
 
 $font-family-roboto: 'Roboto', sans-serif;
 
@@ -13,11 +14,12 @@ $font-size-xl: 32px;
   font-size: $size;
   line-height: 1.5;
   font-weight: 400;
+  color: $color-black;
 }
 
 .xs-text {
   @include roboto-font($font-size-xs);
-  color: #434343;
+  color: $color-gray !important;
 }
 
 .s-text {

@@ -1,3 +1,5 @@
+@import 'colors';
+
 .product-card {
   transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -13,4 +15,17 @@
   display: inline-block;
   max-width: 100%;
   height: auto;
+}
+
+.type-item {
+  cursor: pointer;
+  border: 1px solid $color-lightgray;
+  color: $color-black;
+  background-color: $color-white;
+
+  &.active-item {
+    background-color: $color-lightgray; // Серый фон для активного элемента
+    border-color: $color-lightgray; // Серый бордер для активного элемента
+    color: $color-black; // Черный текст для активного элемента
+  }
 }
