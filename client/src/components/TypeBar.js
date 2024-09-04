@@ -13,7 +13,7 @@ const TypeBar = observer(() => {
     return (
         <ListGroup>
             <ListGroup.Item
-                className={`type-item ${!product.selectedType ? 
+                className={`type-item hover-item ${!product.selectedType ? 
                     'color-black bg-color-lightgray border-color-gray' 
                     : 
                     'color-black bg-color-white'
@@ -25,7 +25,7 @@ const TypeBar = observer(() => {
             </ListGroup.Item>
             {product.types.map(type =>
                 <ListGroup.Item
-                    className={`type-item ${type.id === product.selectedType?.id ? 
+                    className={`type-item hover-item ${type.id === product.selectedType?.id ? 
                         'color-black bg-color-lightgray border-color-gray' 
                         : 
                         'color-black bg-color-white' +

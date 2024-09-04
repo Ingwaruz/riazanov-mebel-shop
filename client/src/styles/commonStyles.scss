@@ -29,3 +29,11 @@
     color: $color-black; // Черный текст для активного элемента
   }
 }
+
+.hover-item {
+  transition: background-color 0.2s ease-out; // плавное изменение цвета за 0.3 секунды
+
+  &:hover {
+    background-color: $color-lightgray !important;
+  }
+}
