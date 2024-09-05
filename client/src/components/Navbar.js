@@ -19,7 +19,7 @@ const MyNavbar = observer(() => {
 
     return (
         <div>
-            <BootstrapNavbar bg="dark" data-bs-theme="dark" style={{height: 75}} className={'s-text'}>
+            <BootstrapNavbar data-bs-theme="dark" style={{height: 75}} className={'s-text bg-color-gray'}>
                 <Container>
                     <NavLink className={'s-text ps-3 color-white'} to={SHOP_ROUTE}>
                         Тут будет логотип
@@ -49,19 +49,19 @@ const MyNavbar = observer(() => {
                         <Nav className="ml-auto color-white">
                             <Button
                                 variant={"outline-light"}
-                                className="ms-lg-4 s-text color-white border-radius-0"
+                                className="ms-lg-4 s-text color-white border-radius-0 hover-text"
                                 onClick={() => navigate(ADMIN_ROUTE)}>
                                 Админ панель
                             </Button>
                             <Button
                                 variant={"outline-light"}
-                                className="ms-lg-4 s-text color-white border-radius-0"
+                                className="ms-lg-4 s-text color-white border-radius-0 hover-text"
                                 onClick={() => logOut()}>
                                 Выйти
                             </Button>
                         </Nav>
                         :
-                        <Nav className="ml-auto s-text color-white border-radius-0">
+                        <Nav className="ml-auto s-text color-white border-radius-0 hover-text">
                             <Button variant={"outline-light"} onClick={() => navigate(LOGIN_ROUTE)}>Авторизация</Button>
                         </Nav>
                     }

@@ -48,7 +48,7 @@ export default class ProductStore {
         this.setSelectedFactory({})
         this.setPage(1)
     }
-    
+
     get types() {
         return this._types
     }

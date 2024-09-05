@@ -34,11 +34,39 @@
 .hover-item {
   transition: background-color 0.2s ease-out;
 
+  &--white {
+    &:hover {
+      background-color: $color-white !important;
+    }
+  }
+
+  &--black {
+    &:hover {
+      background-color: $color-black !important;
+    }
+  }
+
+  &--gray {
+    &:hover {
+      background-color: $color-gray !important;
+    }
+  }
+
+  &--lightgray {
+    &:hover {
+      background-color: $color-lightgray !important;
+    }
+  }
+}
+
+
+.hover-text {
+  transition: background-color 0.3s ease-out;
   &:hover {
-    background-color: $color-lightgray !important;
+    color: $color-gray !important;
   }
 }
 
 .border-radius-0 {
-  border-radius: 0px !important;
+  border-radius: 0 !important;
 }
