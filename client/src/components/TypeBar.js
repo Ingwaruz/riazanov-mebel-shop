@@ -20,7 +20,7 @@ const TypeBar = observer(() => {
                     : 
                     'color-black bg-color-white'
                 }`}
-                onClick={resetSelectedType}
+                onClick={() => { product.resetFilters() }}
                 active={!product.selectedType} // Активно, если тип не выбран
             >
                 Все
