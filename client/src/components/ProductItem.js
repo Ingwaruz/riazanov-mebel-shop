@@ -7,11 +7,20 @@ const ProductItem = ({ product }) => {
     const navigate = useNavigate();
 
     return (
-        <Col md={5} className="mt-5 d-flex" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>
-            <Card style={{ width: 368, cursor: 'pointer' }} bg={'light'} className={'product-card justify-content-center img-centered'}>
-                <Image className={'m-lg-2 img-centered'} width={350} height={350} src={process.env.REACT_APP_API_URL + product.img} />
-                <Col className={'d-flex mx-2 m-text'}>{product.name}</Col>
-                <Col className={'d-flex xs-text m-lg-2 text-start'}>
+        <Col xs={12} sm={12} md={12} lg={6} className="d-flex justify-content-around">
+            <Card
+                style={{ cursor: 'pointer', flexGrow: 1 }}
+                bg={'light'}
+                className="product-card img-centered border-radius-0 w-100"
+                onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
+            >
+                <Image
+                    className="m-lg-2 img-centered"
+                    //width={350}
+                    src={process.env.REACT_APP_API_URL + product.img}
+                />
+                <Col className="d-flex mx-2 m-text">{product.name}</Col>
+                <Col className="d-flex xs-text m-lg-2 text-start">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.

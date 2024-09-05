@@ -20,20 +20,25 @@ $font-size-xl: 32px;
 .xs-text {
   @include roboto-font($font-size-xs);
   color: $color-gray !important;
+  text-wrap: pretty !important;
 }
 
 .s-text {
   @include roboto-font($font-size-s);
+  text-wrap: pretty !important;
 }
 
 .m-text {
   @include roboto-font($font-size-m);
+  text-wrap: nowrap !important;
 }
 
 .l-text {
   @include roboto-font($font-size-l);
+  text-wrap: nowrap !important;
 }
 
 .xl-text {
   @include roboto-font($font-size-xl);
+  text-wrap: nowrap !important;
 }
