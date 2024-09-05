@@ -15,8 +15,8 @@ const TypeBar = observer(() => {
             className={'border-radius-0'}
         >
             <ListGroup.Item
-                className={`type-item hover-item ${!product.selectedType ? 
-                    'color-black bg-color-lightgray border-color-gray' 
+                className={`type-item hover-item ps-3 m-text ${!product.selectedType ? 
+                    'color-black bg-color-white border-color-lightgray' 
                     : 
                     'color-black bg-color-white'
                 }`}
@@ -27,14 +27,14 @@ const TypeBar = observer(() => {
             </ListGroup.Item>
             {product.types.map(type =>
                 <ListGroup.Item
-                    className={`type-item hover-item ${type.id === product.selectedType?.id ? 
+                    className={`type-item hover-item s-text color-gray ps-3 ${type.id === product.selectedType?.id ? 
                         'color-black bg-color-lightgray border-color-gray' 
                         : 
                         'color-black bg-color-white' +
                         ''}`}
                     active={type.id === product.selectedType?.id}
                     onClick={() => product.setSelectedType(type)}
-                    bg={'color-'}
+                    bg={'color-white'}
                     key={type.id}
                 >
                     {type.name}

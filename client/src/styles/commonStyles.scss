@@ -20,19 +20,19 @@
 
 .type-item {
   cursor: pointer;
-  border: 1px solid $color-lightgray; // Используем цвет из переменной
+  border: 1px solid $color-lightgray;
   color: $color-black;
   background-color: $color-white;
 
   &.active-item {
-    background-color: $color-lightgray; // Серый фон для активного элемента
-    border-color: $color-lightgray; // Серый бордер для активного элемента
-    color: $color-black; // Черный текст для активного элемента
+    background-color: $color-lightgray;
+    border-color: $color-lightgray;
+    color: $color-black;
   }
 }
 
 .hover-item {
-  transition: background-color 0.2s ease-out; // плавное изменение цвета за 0.3 секунды
+  transition: background-color 0.2s ease-out;
 
   &:hover {
     background-color: $color-lightgray !important;

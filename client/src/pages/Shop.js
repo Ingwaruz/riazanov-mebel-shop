@@ -20,7 +20,7 @@ const Shop = observer(() => {
             const factories = await fetchFactories();
             product.setFactories(factories);
 
-            const products = await fetchProducts(null, null, 1, 4);
+            const products = await fetchProducts(null, null, 1, 12);
             product.setProducts(products.rows);
             product.setTotalCount(products.count);
         } catch (error) {
@@ -31,7 +31,7 @@ const Shop = observer(() => {
     // Функция для загрузки продуктов при изменении фильтров или страницы
     const loadProducts = async () => {
         try {
-            const products = await fetchProducts(product.selectedType.id, product.selectedFactory.id, product.page, 4);
+            const products = await fetchProducts(product.selectedType.id, product.selectedFactory.id, product.page, 12);
             product.setProducts(products.rows);
             product.setTotalCount(products.count);
         } catch (error) {
@@ -50,10 +50,10 @@ const Shop = observer(() => {
     return (
         <Container>
             <Row className="mt-2">
-                <Col md={3}>
+                <Col md={2}>
                     <TypeBar/>
                 </Col>
-                <Col md={9}>
+                <Col md={10}>
                     <FactoryBar/>
                     <ProductList/>
                     <Pages/>
