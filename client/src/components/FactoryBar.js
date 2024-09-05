@@ -11,9 +11,12 @@ const FactoryBar = observer(() => {
                 <Card
                     style={{cursor:"pointer"}}
                     key={factory.id}
-                    className="p-3 m-text"
+                    className="p-3 m-text border-radius-0 hover-item"
                     onClick={() => product.setSelectedFactory(factory)}
-                    border={factory.id === product.selectedFactory.id ? 'dark' : 'light'}
+                    border={factory.id === product.selectedFactory.id ?
+                        'color-black bg-color-lightgray border-color-gray'
+                        :
+                        'color-black bg-color-white border-color-lightgray'}
                     //bg={factory.id === product.selectedFactory.id ? 'success' : 'light'}
                 >
                     {factory.name}

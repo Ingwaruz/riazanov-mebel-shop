@@ -11,14 +11,17 @@ $colors: (
 );
 
 @each $name, $color in $colors {
+  // Color
   .color-#{$name} {
     color: #{$color} !important;
   }
 
+  // Background color
   .bg-color-#{$name} {
     background-color: #{$color} !important;
   }
 
+  // Border color
   .border-color-#{$name} {
     border-color: #{$color} !important;
   }

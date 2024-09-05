@@ -49,19 +49,19 @@ const MyNavbar = observer(() => {
                         <Nav className="ml-auto color-white">
                             <Button
                                 variant={"outline-light"}
-                                className="ms-lg-4 s-text color-white"
+                                className="ms-lg-4 s-text color-white border-radius-0"
                                 onClick={() => navigate(ADMIN_ROUTE)}>
                                 Админ панель
                             </Button>
                             <Button
                                 variant={"outline-light"}
-                                className="ms-lg-4 s-text color-white"
+                                className="ms-lg-4 s-text color-white border-radius-0"
                                 onClick={() => logOut()}>
                                 Выйти
                             </Button>
                         </Nav>
                         :
-                        <Nav className="ml-auto s-text color-white">
+                        <Nav className="ml-auto s-text color-white border-radius-0">
                             <Button variant={"outline-light"} onClick={() => navigate(LOGIN_ROUTE)}>Авторизация</Button>
                         </Nav>
                     }

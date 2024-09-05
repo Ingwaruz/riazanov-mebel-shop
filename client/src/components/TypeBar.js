@@ -11,7 +11,9 @@ const TypeBar = observer(() => {
     };
 
     return (
-        <ListGroup>
+        <ListGroup
+            className={'border-radius-0'}
+        >
             <ListGroup.Item
                 className={`type-item hover-item ${!product.selectedType ? 
                     'color-black bg-color-lightgray border-color-gray' 
