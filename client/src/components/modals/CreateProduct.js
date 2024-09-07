@@ -14,18 +14,20 @@ const CreateProduct = observer(({show, onHide}) => {
     });
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const types = await fetchTypes();
-                const factories = await fetchFactories();
-                product.setTypes(types);
-                product.setFactories(factories);
-            } catch (error) {
-                console.error("Failed to fetch types or factories", error);
-            }
-        };
-        fetchData();
-    }, []);
+        if (show) {
+            const fetchData = async () => {
+                try {
+                    const types = await fetchTypes();
+                    const factories = await fetchFactories();
+                    product.setTypes(types);
+                    product.setFactories(factories);
+                } catch (error) {
+                    console.error("Failed to fetch types or factories", error);
+                }
+            };
+            fetchData();
+        }
+    }, [show]);
 
     const addInfo = useCallback(() => {
         setProductData(prevState => ({
