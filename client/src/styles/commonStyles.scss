@@ -37,33 +37,29 @@
   &--white {
     &:hover {
       background-color: $color-white !important;
+      color: $color-gray !important;
     }
   }
 
   &--black {
     &:hover {
       background-color: $color-black !important;
+      color: $color-white !important;
     }
   }
 
   &--gray {
     &:hover {
       background-color: $color-gray !important;
+      color: $color-white !important;
     }
   }
 
   &--lightgray {
     &:hover {
       background-color: $color-lightgray !important;
+      color: $color-gray !important;
     }
-  }
-}
-
-
-.hover-text {
-  transition: background-color 0.3s ease-out;
-  &:hover {
-    color: $color-gray !important;
   }
 }
 

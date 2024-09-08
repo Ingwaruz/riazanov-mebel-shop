@@ -48,21 +48,23 @@ const MyNavbar = observer(() => {
                     {user.isAuth ?
                         <Nav className="ml-auto color-white">
                             <Button
-                                variant={"outline-light"}
-                                className="ms-lg-4 s-text color-white border-radius-0 hover-text"
+                                className="ms-lg-4 s-text color-white border-radius-0 hover-item--white border-color-white bg-color-gray"
                                 onClick={() => navigate(ADMIN_ROUTE)}>
                                 Админ панель
                             </Button>
                             <Button
-                                variant={"outline-light"}
-                                className="ms-lg-4 s-text color-white border-radius-0 hover-text"
+                                className="ms-lg-4 s-text color-white border-radius-0 hover-item--white border-color-white bg-color-gray"
                                 onClick={() => logOut()}>
                                 Выйти
                             </Button>
                         </Nav>
                         :
-                        <Nav className="ml-auto s-text color-white border-radius-0 hover-text">
-                            <Button variant={"outline-light"} onClick={() => navigate(LOGIN_ROUTE)}>Авторизация</Button>
+                        <Nav className="ml-auto">
+                            <Button
+                                className={'border-radius-0 s-text hover-item--white color-white border-color-white bg-color-gray'}
+                                onClick={() => navigate(LOGIN_ROUTE)}>
+                                Авторизация
+                            </Button>
                         </Nav>
                     }
                 </Container>

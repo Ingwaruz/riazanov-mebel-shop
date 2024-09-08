@@ -5,9 +5,13 @@ import {Card, Col} from "react-bootstrap";
 
 const FactoryBar = observer(() => {
     const { product } = useContext(Context);
+
+    // Сортировка фабрик по id
+    const sortedFactories = product.factories.slice().sort((a, b) => a.id - b.id);
+
     return (
         <Col className="d-flex">
-            {product.factories.map(factory =>
+            {sortedFactories.map(factory =>
                 <Card
                     style={{cursor:"pointer"}}
                     key={factory.id}

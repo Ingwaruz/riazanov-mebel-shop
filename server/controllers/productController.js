@@ -2,27 +2,36 @@ const uuid = require('uuid');
 const path = require('path');
 const {Product, ProductInfo} = require('../models/models');
 const ApiError = require('../error/apiError');
-const {Sequelize} = require('sequelize');
+const {sequelize} = require('../models/models');  // Экземпляр sequelize
 
 class productController {
     async create(req, res, next) {
-        const transaction = await Sequelize.transaction();
+        const transaction = await sequelize.transaction();  // Создание транзакции
         try {
             let {name, price, factoryId, typeId, info} = req.body;
             const {img} = req.files;
 
+            // Проверка на наличие всех необходимых полей
             if (!name || !price || !factoryId || !typeId || !img) {
                 throw ApiError.badRequest('All fields must be filled');
             }
 
+            // Генерация уникального имени файла с расширением
             const fileExtension = path.extname(img.name);
-            let fileName = uuid.v4() + ".jpg";
+            let fileName = uuid.v4() + fileExtension;
+
+            // Перемещение файла в нужную директорию
             img.mv(path.resolve(__dirname, '..', 'static', fileName));
 
-            const product = await Product.create({name, price, factoryId, typeId, img: fileName}, {transaction});
+            // Создание продукта
+            const product = await Product.create(
+                {name, price, factoryId, typeId, img: fileName},
+                {transaction}
+            );
 
+            // Если есть дополнительная информация о продукте
             if (info) {
-                info = JSON.parse(info);
+                info = JSON.parse(info);  // Парсинг строки info в JSON
                 info.forEach(element => {
                     ProductInfo.create({
                         title: element.title,
@@ -32,10 +41,11 @@ class productController {
                 });
             }
 
+            // Коммит транзакции
             await transaction.commit();
             return res.json(product);
         } catch (e) {
-            await transaction.rollback();
+            await transaction.rollback();  // Откат транзакции при ошибке
             next(ApiError.badRequest(e.message));
         }
     }
