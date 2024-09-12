@@ -11,7 +11,6 @@ class productController {
         const transaction = await sequelize.transaction();  // Создание транзакции
         try {
             let {name, price, factoryId, typeId, info} = req.body;
-            console.log('Request body:', req.body);  // Лог содержимого тела запроса
             const {img} = req.files;
 
             // Проверка на наличие всех необходимых полей
@@ -38,15 +37,11 @@ class productController {
                 {name, price, factoryId, typeId, img: fileName},
                 {transaction}
             );
-            console.log('Product created:', product);  // Лог созданного продукта
 
             // Если есть дополнительная информация о продукте
             if (info) {
-                console.log('Parsing additional product info:', info);  // Лог информации о продукте
-                info = JSON.parse(info);  // Парсинг строки info в JSON
-                console.log('Parsed info:', info);  // Лог успешного парсинга
+                info = JSON.parse(info);
                 for (const element of info) {
-                    console.log('Creating product info entry:', element);  // Лог данных элемента информации
                     await ProductInfo.create({
                         title: element.title,
                         description: element.description,
@@ -55,10 +50,7 @@ class productController {
                 }
             }
 
-            // Коммит транзакции
-            console.log('Committing transaction...');
             await transaction.commit();
-            console.log('Transaction committed successfully.');
             return res.json(product);
         } catch (e) {
             console.log('Error occurred:', e);  // Лог ошибки
@@ -69,7 +61,6 @@ class productController {
     }
 
     async getAll(req, res, next) {
-        console.log('Get all products request received.');
 
         try {
             let {factoryId, typeId, limit, page} = req.query;
@@ -98,25 +89,20 @@ class productController {
     }
 
     async getOne(req, res, next) {
-        console.log('Get product by ID request received:', req.params);  // Лог параметров запроса
 
         try {
             const {id} = req.params;
-            console.log('Searching for product with ID:', id);  // Лог ID продукта
             const product = await Product.findOne({
                 where: {id},
                 include: [{model: ProductInfo, as: 'product_infos'}]
             });
 
             if (!product) {
-                console.log('Product not found.');  // Лог отсутствующего продукта
                 throw ApiError.badRequest('Product not found');
             }
 
-            console.log('Product found:', product);  // Лог найденного продукта
             return res.json(product);
         } catch (e) {
-            console.log('Error occurred:', e);  // Лог ошибки
             next(ApiError.badRequest(e.message));
         }
     }
