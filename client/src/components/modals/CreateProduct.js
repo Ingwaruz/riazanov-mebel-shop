@@ -87,6 +87,7 @@ const CreateProduct = observer(({ show, onHide }) => {
 
         try {
             setLoading(true);
+            setError(null);
             await createProduct(formData);
             onHide();
             dispatch({ type: 'RESET' });
