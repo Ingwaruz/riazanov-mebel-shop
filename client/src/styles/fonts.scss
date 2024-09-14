@@ -19,7 +19,6 @@ $font-size-xl: 36px;
 
 .xs-text {
   @include roboto-font($font-size-xs);
-  color: $color-gray !important;
   text-wrap: pretty !important;
 }
 

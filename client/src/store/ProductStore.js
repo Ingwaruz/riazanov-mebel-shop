@@ -9,7 +9,7 @@ export default class ProductStore {
         this._selectedFactory = {}
         this._page = 1
         this._totalCount = 0
-        this._limit = 6
+        this._limit = 12
         makeAutoObservable(this)
     }
 

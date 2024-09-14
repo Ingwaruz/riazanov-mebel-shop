@@ -13,7 +13,7 @@ const ProductItem = ({ product, factoryName }) => {
                 className="product-card img-centered border-radius-0 bg-color-light"
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
-                <Col className={'m-text'}>{factoryName}</Col>
+                <Col className={'d-flex m-text ms-2 mt-1 '}>{factoryName}</Col>
                 <Image
                     className="m-lg-2 img-centered"
                     //width={350}

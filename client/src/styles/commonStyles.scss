@@ -18,6 +18,10 @@
   height: auto;
 }
 
+.icon {
+  display: inline-block;
+}
+
 .type-item {
   cursor: pointer;
   border: 1px solid $color-lightgray;

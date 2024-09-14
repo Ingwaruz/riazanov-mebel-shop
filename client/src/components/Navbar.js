@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import {Navbar as BootstrapNavbar, Container, Nav, Button, Row, Col} from 'react-bootstrap';
+import {Navbar as BootstrapNavbar, Container, Nav, Button, Row, Col, Image} from 'react-bootstrap';
 import { Context } from "../index";
 import {ADMIN_ROUTE, LOGIN_ROUTE, PRODUCT_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "../utils/consts";
 import { NavLink } from "react-router-dom";
@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom'
 const MyNavbar = observer(() => {
     const { user } = useContext(Context);
     const navigate = useNavigate()
+    const { product } = useContext(Context);
+
 
     const logOut = () => {
         user.setUser({})
@@ -22,7 +24,12 @@ const MyNavbar = observer(() => {
             <BootstrapNavbar data-bs-theme="dark" style={{height: 75}} className={'s-text bg-color-gray'}>
                 <Container>
                     <NavLink className={'s-text ps-3 color-white'} to={SHOP_ROUTE}>
-                        Тут будет логотип
+                        <Image
+                            className="icon"
+                            width={50}
+                            onClick={() => { product.resetFilters() }}
+                            src="/icons/riazanov-mebel.jpg"
+                        />
                     </NavLink>
                     <Row className={'d-flex color-white'} style={{width: 500}}>
                         <Col className={'s-text'}>
