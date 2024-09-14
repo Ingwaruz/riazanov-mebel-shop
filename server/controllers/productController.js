@@ -35,7 +35,7 @@ class productController {
             let {factoryId, typeId, limit, page} = req.query;
             console.log('Request query:', req.query);  // Лог запроса
             page = page || 1;
-            limit = limit || 9;
+            limit = limit || 12;
             let offset = (page - 1) * limit;
             let products;
 

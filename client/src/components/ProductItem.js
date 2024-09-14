@@ -3,7 +3,7 @@ import {Card, Col, Image, Row} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { PRODUCT_ROUTE } from '../utils/consts';
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ product, factoryName }) => {
     const navigate = useNavigate();
 
     return (
@@ -13,6 +13,7 @@ const ProductItem = ({ product }) => {
                 className="product-card img-centered border-radius-0 bg-color-light"
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
+                <Col className={'m-text'}>{factoryName}</Col>
                 <Image
                     className="m-lg-2 img-centered"
                     //width={350}

@@ -15,7 +15,7 @@ const TypeBar = observer(() => {
             className={'border-radius-0'}
         >
             <ListGroup.Item
-                className={`type-item hover-item--lightgray ps-3 m-text ${!product.selectedType ? 
+                className={`type-item hover-item--lightgray ps-3 s-text ${!product.selectedType ? 
                     'color-black bg-color-white border-color-lightgray' 
                     : 
                     'color-black bg-color-white'
@@ -23,7 +23,7 @@ const TypeBar = observer(() => {
                 onClick={() => { product.resetFilters() }}
                 active={!product.selectedType} // Активно, если тип не выбран
             >
-                Все
+                Вся мебель
             </ListGroup.Item>
             {product.types.map(type =>
                 <ListGroup.Item
