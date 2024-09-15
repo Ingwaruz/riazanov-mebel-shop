@@ -7,7 +7,7 @@ const ProductItem = ({ product, factoryName }) => {
     const navigate = useNavigate();
 
     return (
-        <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-around">
+        <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
             <Card
                 style={{ cursor: 'pointer', flexGrow: 1, position: 'relative' }}
                 className="product-card img-centered border-radius-0 bg-color-white"
@@ -15,7 +15,7 @@ const ProductItem = ({ product, factoryName }) => {
             >
                 <Col className={'d-flex m-text ms-2 mt-1 '}>{factoryName}</Col>
                 <Image
-                    className="mx-2 mt-2 mb-5 img-centered"
+                    className="mb-5 m-lg-2 img-centered"
                     //width={350}
                     src={process.env.REACT_APP_API_URL + product.img}
                 />

@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {Card, Col} from "react-bootstrap";
+import {Card, Col, Row} from "react-bootstrap";
 
 const FactoryBar = observer(() => {
     const { product } = useContext(Context);
@@ -10,7 +10,9 @@ const FactoryBar = observer(() => {
     const sortedFactories = product.factories.slice().sort((a, b) => a.id - b.id);
 
     return (
-        <Col className="d-flex">
+        <Col
+            className="d-flex flex-md-row flex-column"
+        >
             {sortedFactories.map(factory =>
                 <Card
                     style={{cursor:"pointer"}}

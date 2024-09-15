@@ -31,24 +31,37 @@ const MyNavbar = observer(() => {
                             src="/icons/riazanov-mebel.jpg"
                         />
                     </NavLink>
-                    <Row className={'d-flex color-white'} style={{width: 500}}>
-                        <Col className={'s-text'}>
+                    <Row className={'d-flex color-white'} style={{width: 800}}>
+                        <Col className={'xs-text'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
                             >
-                                Где купить
+                                ГДЕ КУПИТЬ
                             </NavLink>
                         </Col>
-                        <Col className={'s-text color-white'}>
-                            Нигде бля
-                        </Col>
-                        <Col className={'s-text'}>
+                        <Col className={'xs-text'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
                             >
-                                Контакты
+                                РАСПРОДАЖА
+                            </NavLink>
+                        </Col>
+                        <Col className={'xs-text'}>
+                            <NavLink
+                                className={'color-white'}
+                                to={SHOP_ROUTE}
+                            >
+                                ДОСТАВКА
+                            </NavLink>
+                        </Col>
+                        <Col className={'xs-text'}>
+                            <NavLink
+                                className={'color-white'}
+                                to={SHOP_ROUTE}
+                            >
+                                КОНТАКТЫ
                             </NavLink>
                         </Col>
                     </Row>
