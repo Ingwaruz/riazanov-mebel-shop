@@ -1,43 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import 'colors';
 
-$font-family-roboto: 'Roboto', sans-serif;
+$font-family: "Montserrat", sans-serif;
 
-$font-size-xs: 14px;
-$font-size-s: 16px;
-$font-size-m: 18px;
-$font-size-l: 22px;
-$font-size-xl: 36px;
+$font-size-xs: 12px;
+$font-size-s: 14px;
+$font-size-m: 16px;
+$font-size-l: 20px;
+$font-size-xl: 24px;
 
-@mixin roboto-font($size) {
-  font-family: $font-family-roboto;
+@mixin font($size) {
+  font-family: $font-family;
+  font-weight: 600;
+  font-optical-sizing: auto;
+  font-style: normal;
   font-size: $size;
   line-height: 1.5;
-  font-weight: 400;
-  color: $color-black;
+  color: $color-gray;
+  text-overflow: ellipsis;
 }
 
 .xs-text {
-  @include roboto-font($font-size-xs);
-  text-wrap: pretty !important;
+  @include font($font-size-xs);
 }
 
 .s-text {
-  @include roboto-font($font-size-s);
-  text-wrap: pretty !important;
+  @include font($font-size-s);
 }
 
 .m-text {
-  @include roboto-font($font-size-m);
-  text-wrap: nowrap !important;
+  @include font($font-size-m);
 }
 
 .l-text {
-  @include roboto-font($font-size-l);
-  text-wrap: nowrap !important;
+  @include font($font-size-l);
 }
 
 .xl-text {
-  @include roboto-font($font-size-xl);
-  text-wrap: nowrap !important;
+  @include font($font-size-xl);
 }

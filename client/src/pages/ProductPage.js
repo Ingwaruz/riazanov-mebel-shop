@@ -29,7 +29,7 @@ const ProductPage = () => {
 
     // Return early if loading
     if (loading) {
-        return <Container className={'mt-3'}><p>Загрузка...</p></Container>;
+        return <Container className={'mt-3'}><h1 className={'l-text'}>Загрузка...</h1></Container>;
     }
 
     // Return early if error
@@ -56,7 +56,7 @@ const ProductPage = () => {
                         className={'d-flex flex-column align-items-center justify-content-around'}
                         style={{ width: 300, height: 300, fontSize: 32, border: '5px solid lightgray' }}
                     >
-                        <h3>От {product.price || 'Цена не указана'} руб.</h3>
+                        <h1 className={'l-text'}>От {product.price || 'Цена отсутсвует'} руб.</h1>
                         <Button variant={"outline-dark"}>Добавить в корзину</Button>
                     </Card>
                 </Col>

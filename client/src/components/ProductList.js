@@ -5,7 +5,7 @@ import { Row } from "react-bootstrap";
 import ProductItem from "./ProductItem";
 
 const ProductList = observer(() => {
-    const { product, factory } = useContext(Context);
+    const { product } = useContext(Context);
 
     return (
         <Row className="g-4 d-flex flex-wrap justify-content-start mt-3">
@@ -17,7 +17,7 @@ const ProductList = observer(() => {
                     <ProductItem
                         key={productItem.id}
                         product={productItem}
-                        factoryName={productFactory ? productFactory.name : "Неизвестная фабрика"} // Передаем название фабрики
+                        factoryName={productFactory ? productFactory.name : "Неизвестная фабрика"}
                     />
                 );
             })}

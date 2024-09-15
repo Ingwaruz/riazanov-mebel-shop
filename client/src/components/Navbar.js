@@ -21,8 +21,8 @@ const MyNavbar = observer(() => {
 
     return (
         <div>
-            <BootstrapNavbar data-bs-theme="dark" style={{height: 75}} className={'s-text bg-color-gray'}>
-                <Container>
+            <BootstrapNavbar data-bs-theme="dark" style={{height: 75, boxShadow: '0 4px 4px rgba(0, 0, 0, 0.4)'}} className={'s-text bg-color-gray'}>
+                <div className={'container-fluid'}>
                     <NavLink className={'s-text ps-3 color-white'} to={SHOP_ROUTE}>
                         <Image
                             className="icon"
@@ -74,7 +74,7 @@ const MyNavbar = observer(() => {
                             </Button>
                         </Nav>
                     }
-                </Container>
+                </div>
             </BootstrapNavbar>
         </div>
     );

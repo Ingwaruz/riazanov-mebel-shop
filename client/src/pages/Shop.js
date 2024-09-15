@@ -48,7 +48,7 @@ const Shop = observer(() => {
     }, [product.page, product.selectedType, product.selectedFactory]);
 
     return (
-        <Container>
+        <div className={'container-fluid'}>
             <Row className="mt-2">
                 <Col md={2}>
                     <TypeBar/>
@@ -59,7 +59,7 @@ const Shop = observer(() => {
                     <Pages/>
                 </Col>
             </Row>
-        </Container>
+        </div>
     );
 });
 

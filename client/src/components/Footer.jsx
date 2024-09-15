@@ -5,10 +5,10 @@ import {Container} from "react-bootstrap";
 export default function Footer() {
     return (
         <MDBFooter className='text-center text-lg-start text-muted mt-5 bg-color-gray color-white'>
-            <Container>
+            <div className={'container-fluid'}>
                 <section className='d-flex justify-content-center justify-content-lg-between p-4 border-bottom'>
                     <div className='me-5 d-none d-lg-block'>
-                        <span>Get connected with us on social networks:</span>
+                        <span>Следите за нами в социальных сетях:</span>
                     </div>
 
                     <div>
@@ -39,7 +39,7 @@ export default function Footer() {
                             <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-4'>
                                 <h6 className='text-uppercase fw-bold mb-4'>
                                     <MDBIcon icon="gem" className="me-3" />
-                                    Company name
+                                    МЕБЕЛЬ ОТ РЯЗАНОВА
                                 </h6>
                                 <p>
                                     Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
@@ -48,25 +48,30 @@ export default function Footer() {
                             </MDBCol>
 
                             <MDBCol md="2" lg="2" xl="2" className='mx-auto mb-4'>
-                                <h6 className='text-uppercase fw-bold mb-4'>Products</h6>
+                                <h6 className='text-uppercase fw-bold mb-4'>ПАРТНЁРЫ</h6>
                                 <p>
-                                    <a href='#!' className='text-reset'>
-                                        Angular
+                                    <a href='https://www.ardoni.ru/' className='text-reset'>
+                                        Ardoni
                                     </a>
                                 </p>
                                 <p>
-                                    <a href='#!' className='text-reset'>
-                                        React
+                                    <a href='https://geniuspark.ru/' className='text-reset'>
+                                        Geniuspark
                                     </a>
                                 </p>
                                 <p>
-                                    <a href='#!' className='text-reset'>
-                                        Vue
+                                    <a href='https://www.orimex.ru/' className='text-reset'>
+                                        Оримэкс
                                     </a>
                                 </p>
                                 <p>
-                                    <a href='#!' className='text-reset'>
-                                        Laravel
+                                    <a href='https://melodiasna.ru/' className='text-reset'>
+                                        Мелодия сна
+                                    </a>
+                                </p>
+                                <p>
+                                    <a href='https://sonum.ru/' className='text-reset'>
+                                        Сонум
                                     </a>
                                 </p>
                             </MDBCol>
@@ -75,41 +80,23 @@ export default function Footer() {
                                 <h6 className='text-uppercase fw-bold mb-4'>Ссылки</h6>
                                 <p>
                                     <a href='#!' className='text-reset'>
-                                        Pricing
+                                        Где купить
                                     </a>
                                 </p>
                                 <p>
                                     <a href='#!' className='text-reset'>
-                                        Settings
+                                        Распродажа
                                     </a>
                                 </p>
                                 <p>
                                     <a href='#!' className='text-reset'>
-                                        Orders
+                                        Доставка
                                     </a>
                                 </p>
                                 <p>
                                     <a href='#!' className='text-reset'>
-                                        Help
+                                        Контакты
                                     </a>
-                                </p>
-                            </MDBCol>
-
-                            <MDBCol md="4" lg="3" xl="3" className='mx-auto mb-md-0 mb-4'>
-                                <h6 className='text-uppercase fw-bold mb-4'>Contact</h6>
-                                <p>
-                                    <MDBIcon icon="home" className="me-2" />
-                                    New York, NY 10012, US
-                                </p>
-                                <p>
-                                    <MDBIcon icon="envelope" className="me-3" />
-                                    info@example.com
-                                </p>
-                                <p>
-                                    <MDBIcon icon="phone" className="me-3" /> + 01 234 567 88
-                                </p>
-                                <p>
-                                    <MDBIcon icon="print" className="me-3" /> + 01 234 567 89
                                 </p>
                             </MDBCol>
                         </MDBRow>
@@ -122,7 +109,7 @@ export default function Footer() {
                         MDBootstrap.com
                     </a>
                 </div>
-            </Container>
+            </div>
         </MDBFooter>
     );
 }
