@@ -10,7 +10,7 @@ const ProductItem = ({ product, factoryName }) => {
         <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
             <Card
                 style={{ cursor: 'pointer', flexGrow: 1, position: 'relative' }}
-                className="product-card img-centered border-radius-0 bg-color-white"
+                className="product-card img-centered border-radius-0 bg-color-white border-color-white"
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
                 <Col className={'d-flex m-text ms-2 mt-1 '}>{factoryName}</Col>

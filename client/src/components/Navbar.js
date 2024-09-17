@@ -32,7 +32,7 @@ const MyNavbar = observer(() => {
                         />
                     </NavLink>
                     <Row className={'d-flex justify-content-around color-white'} style={{ width: 600 }}>
-                        <Col className={'xs-text mx-3'}>
+                        <Col className={'xs-text mx-3 col-auto'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -40,7 +40,7 @@ const MyNavbar = observer(() => {
                                 ГДЕ КУПИТЬ
                             </NavLink>
                         </Col>
-                        <Col className={'xs-text mx-3'}>
+                        <Col className={'xs-text mx-3 col-auto'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -48,7 +48,7 @@ const MyNavbar = observer(() => {
                                 РАСПРОДАЖА
                             </NavLink>
                         </Col>
-                        <Col className={'xs-text mx-3'}>
+                        <Col className={'xs-text mx-3 col-auto'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -56,7 +56,7 @@ const MyNavbar = observer(() => {
                                 ДОСТАВКА
                             </NavLink>
                         </Col>
-                        <Col className={'xs-text mx-3'}>
+                        <Col className={'xs-text mx-3 col-auto'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
