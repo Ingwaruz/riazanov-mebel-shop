@@ -15,8 +15,7 @@ const ProductItem = ({ product, factoryName }) => {
             >
                 <Col className={'d-flex m-text ms-2 mt-1 '}>{factoryName}</Col>
                 <Image
-                    className="mb-5 m-lg-2 img-centered"
-                    //width={350}
+                    className="mb-5 img-centered"
                     src={process.env.REACT_APP_API_URL + product.img}
                 />
                 <Col style={{position: 'absolute', bottom: '0'}} className="d-flex mx-2 my-2 m-text">{product.name}</Col>

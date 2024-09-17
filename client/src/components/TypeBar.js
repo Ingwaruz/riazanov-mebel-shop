@@ -33,7 +33,7 @@ const TypeBar = observer(() => {
                         'color-black bg-color-white' +
                         ''}`}
                     active={type.id === product.selectedType?.id}
-                    onClick={() => product.setSelectedType(type)()}
+                    onClick={() => product.setSelectedType(type)}
                     bg={'color-white'}
                     key={type.id}
                 >

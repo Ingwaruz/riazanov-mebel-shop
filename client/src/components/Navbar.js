@@ -31,8 +31,8 @@ const MyNavbar = observer(() => {
                             src="/icons/riazanov-mebel.jpg"
                         />
                     </NavLink>
-                    <Row className={'d-flex color-white'} style={{width: 800}}>
-                        <Col className={'xs-text'}>
+                    <Row className={'d-flex justify-content-around color-white'} style={{ width: 600 }}>
+                        <Col className={'xs-text mx-3'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -40,7 +40,7 @@ const MyNavbar = observer(() => {
                                 ГДЕ КУПИТЬ
                             </NavLink>
                         </Col>
-                        <Col className={'xs-text'}>
+                        <Col className={'xs-text mx-3'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -48,7 +48,7 @@ const MyNavbar = observer(() => {
                                 РАСПРОДАЖА
                             </NavLink>
                         </Col>
-                        <Col className={'xs-text'}>
+                        <Col className={'xs-text mx-3'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -56,7 +56,7 @@ const MyNavbar = observer(() => {
                                 ДОСТАВКА
                             </NavLink>
                         </Col>
-                        <Col className={'xs-text'}>
+                        <Col className={'xs-text mx-3'}>
                             <NavLink
                                 className={'color-white'}
                                 to={SHOP_ROUTE}
@@ -65,6 +65,7 @@ const MyNavbar = observer(() => {
                             </NavLink>
                         </Col>
                     </Row>
+
                     {user.isAuth ?
                         <Nav className="ml-auto color-white">
                             <Button
