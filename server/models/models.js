@@ -9,6 +9,9 @@ const User = sequelize.define('user', {
     email: {type: DataTypes.STRING, unique: true},
     password: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
+    name: {type: DataTypes.STRING, allowNull: true},
+    second_name: {type: DataTypes.STRING, allowNull: true},
+    phone_number: {type: DataTypes.INTEGER, allowNull: true},
 })
 
 // Корзина покупателя
@@ -27,7 +30,9 @@ const Product = sequelize.define('product', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
-    img: {type: DataTypes.STRING, allowNull: false},
+    width: {type: DataTypes.INTEGER, allowNull: false},
+    depth: {type: DataTypes.INTEGER, allowNull: false},
+    height: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 // Тип товара 
@@ -57,49 +62,46 @@ const TypeFactory = sequelize.define('type_factory', {
 
 // Новые
 
-const Color = sequelize.define('type', {
+const Color = sequelize.define('color', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const Material = sequelize.define('type', {
+const Material = sequelize.define('material', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const MaterialsToType = sequelize.define('type', {
+const MaterialsToType = sequelize.define('materials_to_Type', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
+const Image = sequelize.define('image', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    file: {type: DataTypes.STRING, allowNull: false}
+})
+
+const Collection = sequelize.define('collection', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const Image = sequelize.define('type', {
+const MaterialCategory = sequelize.define('material_category', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    multiplier: {type: DataTypes.FLOAT, allowNull: false}
+})
+
+const MaterialCategoriesToFactory = sequelize.define('material_categories_to_factory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
+const Feature = sequelize.define('feature', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const Collection = sequelize.define('type', {
+const FeaturesTypeFactory = sequelize.define('features_type_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
-})
-
-const Category = sequelize.define('type', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
-})
-
-const CategoriesToFactory = sequelize.define('type', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
-})
-
-const Feature = sequelize.define('type', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
-})
-
-const FeaturesTypeFactory = sequelize.define('type', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
 // Описание связей между таблицами
