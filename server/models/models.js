@@ -55,11 +55,6 @@ const ProductInfo = sequelize.define('product_info', {
     description: {type: DataTypes.STRING, allowNull: false},
 })
 
-// Временная связующая таблица между типом товара и фабрикой
-const TypeFactory = sequelize.define('type_factory', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-})
-
 // Новые
 
 const Color = sequelize.define('color', {
@@ -104,27 +99,90 @@ const FeaturesTypeFactory = sequelize.define('features_type_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
+// Временная связующая таблица между типом товара и фабрикой
+const TypeFactory = sequelize.define('type_factory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
+// Временная связующая таблица между материалом и цветом
+const ColorMaterial = sequelize.define('color_material', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
 // Описание связей между таблицами
-User.hasOne(Basket)
-Basket.belongsTo(User)
 
-Basket.hasMany(BasketProduct)
-BasketProduct.belongsTo(Basket)
+// User
+User.hasOne(Basket, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+Basket.belongsTo(User, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
 
-Type.hasMany(Product)
-Product.belongsTo(Type)
+// Basket
+Basket.hasMany(BasketProduct, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+BasketProduct.belongsTo(Basket, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
 
-Factory.hasMany(Product)
-Product.belongsTo(Factory)
+// Type
+Type.hasMany(Product, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+Product.belongsTo(Type, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
 
-Product.hasMany(BasketProduct)
-BasketProduct.belongsTo(Product)
+// Factory
+Factory.hasMany(Product, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+Product.belongsTo(Factory, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
 
-Product.hasMany(ProductInfo)
-ProductInfo.belongsTo(Product)
 
-Type.belongsToMany(Factory, {through: TypeFactory})
-Factory.belongsToMany(Type, {through: TypeFactory})
+
+// Product
+Product.hasMany(BasketProduct, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+BasketProduct.belongsTo(Product, {
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+
+
+MaterialsToType.hasMany(Material)
+Material.belongsTo(MaterialsToType)
+
+Image.hasOne(Product)
+Product.belongsToMany(Image)
+
+Collection
+
+MaterialCategory.belongsToMany(Material, {through: 'TypeFactory'}))
+
+MaterialCategoriesToFactory
+
+Feature
+
+FeaturesTypeFactory
+
+// Промежуточные таблицы
+Type.belongsToMany(Factory, {through: 'TypeFactory'})
+Factory.belongsToMany(Type, {through: 'TypeFactory'})
+
+Color.belongsToMany(Material, {
+    through: 'ColorMaterial', // Указываем промежуточную таблицу
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
+
+Material.belongsToMany(Color, {
+    through: 'ColorMaterial', // Указываем промежуточную таблицу
+    foreignKey: { allowNull: true } // Связь не обязательна
+});
 
 module.exports = {
     User, 
@@ -134,5 +192,15 @@ module.exports = {
     Type,
     Factory,
     ProductInfo,
-    TypeFactory
+    TypeFactory,
+    Color,
+    Material,
+    MaterialsToType,
+    Image,
+    Collection,
+    MaterialCategory,
+    MaterialCategoriesToFactory,
+    Feature,
+    FeaturesTypeFactory,
+    ColorMaterial
 }
