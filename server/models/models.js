@@ -9,9 +9,9 @@ const User = sequelize.define('user', {
     email: {type: DataTypes.STRING, unique: true},
     password: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
-    name: {type: DataTypes.STRING, allowNull: true},
-    second_name: {type: DataTypes.STRING, allowNull: true},
-    phone_number: {type: DataTypes.INTEGER, allowNull: true},
+    name: {type: DataTypes.STRING, allowNull: true}, //allowNull: false
+    second_name: {type: DataTypes.STRING, allowNull: true}, //allowNull: false
+    phone_number: {type: DataTypes.STRING, allowNull: true}, //allowNull: false
 })
 
 // Корзина покупателя
@@ -29,9 +29,10 @@ const Product = sequelize.define('product', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
-    width: {type: DataTypes.INTEGER, allowNull: false},
-    depth: {type: DataTypes.INTEGER, allowNull: false},
-    height: {type: DataTypes.INTEGER, allowNull: false},
+    img: {type: DataTypes.STRING, allowNull: false}, // убрать
+    width: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
+    depth: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
+    height: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
 })
 
 // Тип товара 
@@ -63,7 +64,7 @@ const Material = sequelize.define('material', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const MaterialsToType = sequelize.define('materials_to_Type', {
+const MaterialsToType = sequelize.define('materials_to_type', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
@@ -111,36 +112,36 @@ const MaterialCategoryFactory = sequelize.define('material_category_factory', {
 // Описание связей между таблицами
 
 // User
-User.hasOne(Basket, {foreignKey: { allowNull: true }});
-Basket.belongsTo(User, {foreignKey: { allowNull: true }});
+User.hasOne(Basket, {foreignKey: { allowNull: false }});
+Basket.belongsTo(User, {foreignKey: { allowNull: false }});
 
 // Basket
-Basket.hasMany(BasketProduct, {foreignKey: { allowNull: true }});
-BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: true }});
+Basket.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
+BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
 
 // Type
-Type.hasMany(Product, {foreignKey: { allowNull: true }});
-Type.hasMany(Collection, {foreignKey: { allowNull: true }});
-Type.hasOne(MaterialsToType, {foreignKey: { allowNull: true }});
-Type.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: true }});
-Product.belongsTo(Type, {foreignKey: { allowNull: true }});
-Collection.belongsTo(Type, {foreignKey: { allowNull: true }});
-MaterialsToType.belongsTo(Type, {foreignKey: { allowNull: true }});
-FeaturesTypeFactory.belongsTo(Type, {foreignKey: { allowNull: true }});
+Type.hasMany(Product, {foreignKey: { allowNull: false }});
+Type.hasMany(Collection, {foreignKey: { allowNull: false }});
+Type.hasOne(MaterialsToType, {foreignKey: { allowNull: false }});
+Type.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: false }});
+Product.belongsTo(Type, {foreignKey: { allowNull: false }});
+Collection.belongsTo(Type, {foreignKey: { allowNull: false }});
+MaterialsToType.belongsTo(Type, {foreignKey: { allowNull: false }});
+FeaturesTypeFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
 
 // Factory
-Factory.hasMany(Product, {foreignKey: { allowNull: true }});
-Factory.hasMany(Collection, {foreignKey: { allowNull: true }});
-Factory.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: true }});
-Product.belongsTo(Factory, {foreignKey: { allowNull: true }});
-Collection.belongsTo(Factory, {foreignKey: { allowNull: true }});
-FeaturesTypeFactory.belongsTo(Factory, {foreignKey: { allowNull: true }});
+Factory.hasMany(Product, {foreignKey: { allowNull: false }});
+Factory.hasMany(Collection, {foreignKey: { allowNull: false }});
+Factory.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: false }});
+Product.belongsTo(Factory, {foreignKey: { allowNull: false }});
+Collection.belongsTo(Factory, {foreignKey: { allowNull: false }});
+FeaturesTypeFactory.belongsTo(Factory, {foreignKey: { allowNull: false }});
 
 // Product
-Product.hasMany(BasketProduct, {foreignKey: { allowNull: true }});
-Product.hasMany(Image, {foreignKey: { allowNull: true }});
-BasketProduct.belongsTo(Product, { foreignKey: { allowNull: true }});
-Image.belongsTo(Product, { foreignKey: { allowNull: true }});
+Product.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
+Product.hasMany(Image, {foreignKey: { allowNull: false }});
+BasketProduct.belongsTo(Product, { foreignKey: { allowNull: false }});
+Image.belongsTo(Product, { foreignKey: { allowNull: false }});
 
 MaterialsToType.hasMany(Material);
 Material.belongsTo(MaterialsToType);
@@ -149,14 +150,14 @@ FeaturesTypeFactory.hasMany(Feature)
 Feature.belongsTo(FeaturesTypeFactory)
 
 // Промежуточные таблицы
-Type.belongsToMany(Factory, {through: 'TypeFactory'});
-Factory.belongsToMany(Type, {through: 'TypeFactory'});
+Type.belongsToMany(Factory, {through: 'type_factory'});
+Factory.belongsToMany(Type, {through: 'type_factory'});
 
-Color.belongsToMany(Material, {through: 'ColorMaterial'});
-Material.belongsToMany(Color, {through: 'ColorMaterial'});
+Color.belongsToMany(Material, {through: 'color_material'});
+Material.belongsToMany(Color, {through: 'color_material'});
 
-MaterialCategory.belongsToMany(Material, {through: 'MaterialCategoryFactory'});
-Factory.belongsToMany(Type, {through: 'MaterialCategoryFactory'});
+MaterialCategory.belongsToMany(Material, {through: 'material_category_factory'});
+Factory.belongsToMany(Type, {through: 'material_category_factory'});
 
 module.exports = {
     User, 
