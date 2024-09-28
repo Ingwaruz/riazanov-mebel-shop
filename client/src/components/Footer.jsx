@@ -13,22 +13,26 @@ export default function Footer() {
 
                     <div>
                         <a href='' className='me-4 text-reset bg-color-gray color-white'>
-                            <MDBIcon fab icon="facebook-f" />
+                            <MDBIcon fab icon="facebook-f"/>
                         </a>
                         <a href='' className='me-4 text-reset'>
-                            <MDBIcon fab icon="twitter" />
+                            <MDBIcon fab icon="twitter"/>
                         </a>
                         <a href='' className='me-4 text-reset'>
-                            <MDBIcon fab icon="google" />
+                            <MDBIcon fab icon="google"/>
                         </a>
                         <a href='' className='me-4 text-reset'>
-                            <MDBIcon fab icon="instagram" />
+                            <MDBIcon fab icon="instagram"/>
                         </a>
                         <a href='' className='me-4 text-reset'>
-                            <MDBIcon fab icon="linkedin" />
+                            <MDBIcon fab icon="linkedin"/>
                         </a>
                         <a href='' className='me-4 text-reset'>
-                            <MDBIcon fab icon="github" />
+                            <MDBIcon fab icon="github"/>
+                        </a>
+
+                        <a href='' className='me-4 text-reset'>
+                            <MDBIcon fab icon="github"/>
                         </a>
                     </div>
                 </section>
