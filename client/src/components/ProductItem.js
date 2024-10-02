@@ -14,10 +14,10 @@ const ProductItem = ({ product, factoryName }) => {
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
                 <Col className={'d-flex m-text ms-2 mt-1 '}>{factoryName}</Col>
-                <Image
-                    className="mb-5 img-centered"
-                    src={process.env.REACT_APP_API_URL + product.img}
-                />
+                {/*<Image*/}
+                {/*    className="mb-5 img-centered"*/}
+                {/*    src={process.env.REACT_APP_API_URL + product.img}*/}
+                {/*/>*/}
                 <Col style={{position: 'absolute', bottom: '0'}} className="d-flex mx-2 my-2 m-text">{product.name}</Col>
                 {/*<Col className="d-flex xs-text m-lg-2 text-start">*/}
                 {/*    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.*/}

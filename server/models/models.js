@@ -29,7 +29,6 @@ const Product = sequelize.define('product', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
-    img: {type: DataTypes.STRING, allowNull: false}, // убрать
     width: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
     depth: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
     height: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
@@ -105,7 +104,15 @@ const ColorMaterial = sequelize.define('color_material', {
 })
 
 // Временная связующая таблица между категорией материала и фабрикой
+const MaterialCategoryMaterial = sequelize.define('material_category_material', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
 const MaterialCategoryFactory = sequelize.define('material_category_factory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
+
+const TypeCollection = sequelize.define('type_collection', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
@@ -121,10 +128,8 @@ BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
 
 // Type
 Type.hasMany(Product, {foreignKey: { allowNull: false }});
-Type.hasMany(Collection, {foreignKey: { allowNull: false }});
 Type.hasOne(MaterialsToType, {foreignKey: { allowNull: false }});
 Type.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: false }});
-Product.belongsTo(Type, {foreignKey: { allowNull: false }});
 Collection.belongsTo(Type, {foreignKey: { allowNull: false }});
 MaterialsToType.belongsTo(Type, {foreignKey: { allowNull: false }});
 FeaturesTypeFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
@@ -156,8 +161,14 @@ Factory.belongsToMany(Type, {through: 'type_factory'});
 Color.belongsToMany(Material, {through: 'color_material'});
 Material.belongsToMany(Color, {through: 'color_material'});
 
+Material.belongsToMany(MaterialCategory, {through: 'material_category_material'});
+MaterialCategory.belongsToMany(Material, {through: 'material_category_material'});
+
 MaterialCategory.belongsToMany(Material, {through: 'material_category_factory'});
 Factory.belongsToMany(Type, {through: 'material_category_factory'});
+
+Type.belongsToMany(Collection, {through: 'type_collection'});
+Collection.belongsToMany(Type, {through: 'type_collection'});
 
 module.exports = {
     User, 
@@ -178,5 +189,6 @@ module.exports = {
     // Промежуточные таблицы
     TypeFactory,
     ColorMaterial,
-    MaterialCategoryFactory
+    MaterialCategoryFactory,
+    TypeCollection
 }

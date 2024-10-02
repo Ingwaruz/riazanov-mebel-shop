@@ -1,4 +1,4 @@
-const uuid = require('uuid');
+// const uuid = require('uuid');
 const path = require('path');
 const {Product, ProductInfo} = require('../models/models');
 const ApiError = require('../error/apiError');
@@ -6,11 +6,12 @@ const ApiError = require('../error/apiError');
 class productController {
     async create(req, res, next) {
         try {
-            let {name, price, factoryId, typeId, info} = req.body
-            const {img} = req.files
-            let fileName = uuid.v4() + ".jpg"
-            img.mv(path.resolve(__dirname, '..', 'static', fileName))
-            const product = await Product.create({name, price, factoryId, typeId, img: fileName});
+            let {name, price, width, depth, height, factoryId, typeId, info} = req.body
+            // const {img} = req.files
+            // let fileName = uuid.v4() + ".jpg"
+            // img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            // const product = await Product.create({name, price, factoryId, typeId, img: fileName});
+            const product = await Product.create({name, price, width, depth, height, factoryId, typeId});
 
             if (info) {
                 info = JSON.parse(info)
@@ -18,6 +19,9 @@ class productController {
                     ProductInfo.create({
                         title: i.title,
                         description: i.description,
+                        width: i.width,
+                        depth: i.depth,
+                        height: i.height,
                         productId: product.id
                     })
                 )
