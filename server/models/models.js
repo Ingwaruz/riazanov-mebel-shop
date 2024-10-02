@@ -63,7 +63,7 @@ const Material = sequelize.define('material', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const MaterialsToType = sequelize.define('materials_to_type', {
+const MaterialToType = sequelize.define('material_to_type', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
@@ -87,32 +87,32 @@ const Feature = sequelize.define('feature', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
-const FeaturesTypeFactory = sequelize.define('features_type_factory', {
+const FeaturesToTypeToFactory = sequelize.define('features_to_type_to_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
 // Связующие таблицы
 
 // Временная связующая таблица между типом товара и фабрикой
-const TypeFactory = sequelize.define('type_factory', {
+const TypeToFactory = sequelize.define('type_to_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
 // Временная связующая таблица между материалом и цветом
-const ColorMaterial = sequelize.define('color_material', {
+const ColorToMaterial = sequelize.define('color_to_material', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
 // Временная связующая таблица между категорией материала и фабрикой
-const MaterialCategoryMaterial = sequelize.define('material_category_material', {
+const MaterialCategoryToMaterial = sequelize.define('material_category_to_material', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
-const MaterialCategoryFactory = sequelize.define('material_category_factory', {
+const MaterialCategoryToFactory = sequelize.define('material_category_to_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
-const TypeCollection = sequelize.define('type_collection', {
+const CollectionToType = sequelize.define('collection_to_type', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
@@ -128,19 +128,19 @@ BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
 
 // Type
 Type.hasMany(Product, {foreignKey: { allowNull: false }});
-Type.hasOne(MaterialsToType, {foreignKey: { allowNull: false }});
-Type.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: false }});
+Type.hasOne(MaterialToType, {foreignKey: { allowNull: false }});
+Type.hasOne(FeaturesToTypeToFactory, {foreignKey: { allowNull: false }});
 Collection.belongsTo(Type, {foreignKey: { allowNull: false }});
-MaterialsToType.belongsTo(Type, {foreignKey: { allowNull: false }});
-FeaturesTypeFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
+MaterialToType.belongsTo(Type, {foreignKey: { allowNull: false }});
+FeaturesToTypeToFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
 
 // Factory
 Factory.hasMany(Product, {foreignKey: { allowNull: false }});
 Factory.hasMany(Collection, {foreignKey: { allowNull: false }});
-Factory.hasOne(FeaturesTypeFactory, {foreignKey: { allowNull: false }});
+Factory.hasOne(FeaturesToTypeToFactory, {foreignKey: { allowNull: false }});
 Product.belongsTo(Factory, {foreignKey: { allowNull: false }});
 Collection.belongsTo(Factory, {foreignKey: { allowNull: false }});
-FeaturesTypeFactory.belongsTo(Factory, {foreignKey: { allowNull: false }});
+FeaturesToTypeToFactory.belongsTo(Factory, {foreignKey: { allowNull: false }});
 
 // Product
 Product.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
@@ -148,27 +148,27 @@ Product.hasMany(Image, {foreignKey: { allowNull: false }});
 BasketProduct.belongsTo(Product, { foreignKey: { allowNull: false }});
 Image.belongsTo(Product, { foreignKey: { allowNull: false }});
 
-MaterialsToType.hasMany(Material);
-Material.belongsTo(MaterialsToType);
+MaterialToType.hasMany(Material);
+Material.belongsTo(MaterialToType);
 
-FeaturesTypeFactory.hasMany(Feature)
-Feature.belongsTo(FeaturesTypeFactory)
+FeaturesToTypeToFactory.hasMany(Feature)
+Feature.belongsTo(FeaturesToTypeToFactory)
 
 // Промежуточные таблицы
-Type.belongsToMany(Factory, {through: 'type_factory'});
-Factory.belongsToMany(Type, {through: 'type_factory'});
+Type.belongsToMany(Factory, {through: 'type_to_factory'});
+Factory.belongsToMany(Type, {through: 'type_to_factory'});
 
-Color.belongsToMany(Material, {through: 'color_material'});
-Material.belongsToMany(Color, {through: 'color_material'});
+Color.belongsToMany(Material, {through: 'color_to_material'});
+Material.belongsToMany(Color, {through: 'color_to_material'});
 
-Material.belongsToMany(MaterialCategory, {through: 'material_category_material'});
-MaterialCategory.belongsToMany(Material, {through: 'material_category_material'});
+Material.belongsToMany(MaterialCategory, {through: 'material_category_to_material'});
+MaterialCategory.belongsToMany(Material, {through: 'material_category_to_material'});
 
-MaterialCategory.belongsToMany(Material, {through: 'material_category_factory'});
-Factory.belongsToMany(Type, {through: 'material_category_factory'});
+MaterialCategory.belongsToMany(Material, {through: 'material_category_to_factory'});
+Factory.belongsToMany(Type, {through: 'material_category_to_factory'});
 
-Type.belongsToMany(Collection, {through: 'type_collection'});
-Collection.belongsToMany(Type, {through: 'type_collection'});
+Type.belongsToMany(Collection, {through: 'collection_to_type'});
+Collection.belongsToMany(Type, {through: 'collection_to_type'});
 
 module.exports = {
     User, 
@@ -180,15 +180,16 @@ module.exports = {
     ProductInfo,
     Color,
     Material,
-    MaterialsToType,
+    MaterialToType,
     Image,
     Collection,
     MaterialCategory,
     Feature,
-    FeaturesTypeFactory,
+    FeaturesToTypeToFactory,
     // Промежуточные таблицы
-    TypeFactory,
-    ColorMaterial,
-    MaterialCategoryFactory,
-    TypeCollection
+    TypeToFactory,
+    ColorToMaterial,
+    MaterialCategoryToMaterial,
+    MaterialCategoryToFactory,
+    CollectionToType
 }
