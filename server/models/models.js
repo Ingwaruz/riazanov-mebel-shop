@@ -164,8 +164,8 @@ Material.belongsToMany(Color, {through: 'color_to_material'});
 Material.belongsToMany(MaterialCategory, {through: 'material_category_to_material'});
 MaterialCategory.belongsToMany(Material, {through: 'material_category_to_material'});
 
-MaterialCategory.belongsToMany(Material, {through: 'material_category_to_factory'});
-Factory.belongsToMany(Type, {through: 'material_category_to_factory'});
+MaterialCategory.belongsToMany(Factory, {through: 'material_category_to_factory'});
+Factory.belongsToMany(MaterialCategory, {through: 'material_category_to_factory'});
 
 Type.belongsToMany(Collection, {through: 'collection_to_type'});
 Collection.belongsToMany(Type, {through: 'collection_to_type'});
