@@ -130,7 +130,7 @@ BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
 Type.hasMany(Product, {foreignKey: { allowNull: false }});
 Type.hasOne(MaterialToType, {foreignKey: { allowNull: false }});
 Type.hasOne(FeaturesToTypeToFactory, {foreignKey: { allowNull: false }});
-Collection.belongsTo(Type, {foreignKey: { allowNull: false }});
+Product.belongsTo(Type, {foreignKey: { allowNull: false }});
 MaterialToType.belongsTo(Type, {foreignKey: { allowNull: false }});
 FeaturesToTypeToFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
 
@@ -148,11 +148,11 @@ Product.hasMany(Image, {foreignKey: { allowNull: false }});
 BasketProduct.belongsTo(Product, { foreignKey: { allowNull: false }});
 Image.belongsTo(Product, { foreignKey: { allowNull: false }});
 
-MaterialToType.hasMany(Material);
-Material.belongsTo(MaterialToType);
+Material.hasMany(MaterialToType, { foreignKey: { allowNull: false }});
+MaterialToType.belongsTo(Material, { foreignKey: { allowNull: false }});
 
-FeaturesToTypeToFactory.hasMany(Feature)
-Feature.belongsTo(FeaturesToTypeToFactory)
+Feature.hasMany(FeaturesToTypeToFactory, { foreignKey: { allowNull: false }});
+FeaturesToTypeToFactory.belongsTo(Feature, { foreignKey: { allowNull: false }});
 
 // Промежуточные таблицы
 Type.belongsToMany(Factory, {through: 'type_to_factory'});
@@ -170,6 +170,7 @@ Factory.belongsToMany(Type, {through: 'material_category_to_factory'});
 Type.belongsToMany(Collection, {through: 'collection_to_type'});
 Collection.belongsToMany(Type, {through: 'collection_to_type'});
 
+// 21 таблица
 module.exports = {
     User, 
     Basket, 
