@@ -1,40 +1,50 @@
-// const uuid = require('uuid');
+const uuid = require('uuid');
 const path = require('path');
-const {Product, ProductInfo} = require('../models/models');
+const {Product, ProductInfo, Image} = require('../models/models');
 const ApiError = require('../error/apiError');
 
 class productController {
     async create(req, res, next) {
         try {
-            let {name, price, width, depth, height, factoryId, typeId, info} = req.body
-            // const {img} = req.files
-            // let fileName = uuid.v4() + ".jpg"
-            // img.mv(path.resolve(__dirname, '..', 'static', fileName))
-            // const product = await Product.create({name, price, factoryId, typeId, img: fileName});
+            let {name, price, width, depth, height, factoryId, typeId, info} = req.body;
+            const {images} = req.files; // Здесь мы принимаем файлы
+
+            // Создание товара
             const product = await Product.create({name, price, width, depth, height, factoryId, typeId});
 
+            // Если есть дополнительные данные о продукте (info)
             if (info) {
-                info = JSON.parse(info)
+                info = JSON.parse(info);
                 info.forEach(i =>
                     ProductInfo.create({
                         title: i.title,
                         description: i.description,
-                        width: i.width,
-                        depth: i.depth,
-                        height: i.height,
-                        productId: product.id
                     })
-                )
+                );
             }
 
-            return res.json(product)
+            // Обработка изображений
+            if (images) {
+                // Проверяем, является ли `images` массивом (когда несколько файлов) или одним файлом
+                const imageFiles = Array.isArray(images) ? images : [images];
+
+                // Сохраняем каждое изображение
+                for (const image of imageFiles) {
+                    let fileName = uuid.v4() + path.extname(image.name);
+                    await image.mv(path.resolve(__dirname, '..', 'static', fileName)); // Сохраняем файл
+
+                    // Сохраняем ссылку на изображение в таблицу `Images`
+                    await Image.create({file: fileName, productId: product.id});
+                }
+            }
+
+            return res.json(product);
         } catch (e) {
-            next(ApiError.badRequest(e.message))
+            next(ApiError.badRequest(e.message));
         }
     }
 
     async getAll(req, res, next) {
-
         try {
             let {factoryId, typeId, limit, page} = req.query;
             console.log('Request query:', req.query);  // Лог запроса
@@ -62,12 +72,14 @@ class productController {
     }
 
     async getOne(req, res, next) {
-
         try {
             const {id} = req.params;
             const product = await Product.findOne({
                 where: {id},
-                include: [{model: ProductInfo, as: 'product_infos'}]
+                include: [
+                    {model: ProductInfo, as: 'product_infos'},
+                    {model: Image, as: 'images'} // Включаем изображения товара
+                ]
             });
 
             if (!product) {

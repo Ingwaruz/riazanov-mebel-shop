@@ -10,7 +10,7 @@ const productReducer = (state, action) => {
         case 'SET_FIELD':
             return { ...state, [action.field]: action.payload };
         case 'ADD_INFO':
-            return { ...state, info: [...state.info, { title: '', description: '', number: Date.now() }] };
+            return { ...state, info: [...state.info, { title: '', description: '', width: 0, depth: 0, height: 0, number: Date.now() }] };
         case 'REMOVE_INFO':
             return { ...state, info: state.info.filter(i => i.number !== action.payload) };
         case 'CHANGE_INFO':
@@ -21,7 +21,7 @@ const productReducer = (state, action) => {
                     : i)
             };
         case 'RESET':
-            return { name: '', price: 0, file: null, info: [] };
+            return { name: '', price: 0, width: 0, depth: 0, height: 0, files: [], info: [] };
         default:
             return state;
     }
@@ -35,8 +35,11 @@ const CreateProduct = observer(({ show, onHide }) => {
     // Инициализация состояния с помощью useReducer
     const [productData, dispatch] = useReducer(productReducer, {
         name: '',
-        price: 0,
-        file: null,
+        price: '',
+        width: '',
+        depth: '',
+        height: '',
+        files: [],  // Массив для загрузки нескольких файлов
         info: []
     });
 
@@ -65,14 +68,16 @@ const CreateProduct = observer(({ show, onHide }) => {
     const removeInfo = useCallback(number => dispatch({ type: 'REMOVE_INFO', payload: number }), []);
     const changeInfo = useCallback((key, value, number) => dispatch({ type: 'CHANGE_INFO', key, value, payload: { number } }), []);
 
-    const selectFile = useCallback((e) => {
-        dispatch({ type: 'SET_FIELD', field: 'file', payload: e.target.files[0] });
+    // Обработка выбора файлов
+    const selectFiles = useCallback((e) => {
+        const files = Array.from(e.target.files);
+        dispatch({ type: 'SET_FIELD', field: 'files', payload: files });
     }, []);
 
     const addProduct = async () => {
-        const { name, price, file, info } = productData;
+        const { name, price, width, depth, height, files, info } = productData;
 
-        if (!name || !price || !file || !product.selectedFactory.id || !product.selectedType.id) {
+        if (!name || !price || !width || !depth || !height || !files.length || !product.selectedFactory.id || !product.selectedType.id) {
             setError("Заполните все поля.");
             return;
         }
@@ -80,10 +85,17 @@ const CreateProduct = observer(({ show, onHide }) => {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('price', `${price}`);
-        formData.append('img', file);
+        formData.append('width', `${width}`);
+        formData.append('depth', `${depth}`);
+        formData.append('height', `${height}`);
         formData.append('factoryId', product.selectedFactory.id);
         formData.append('typeId', product.selectedType.id);
         formData.append('info', JSON.stringify(info));
+
+        // Добавление всех изображений в formData
+        files.forEach((file, index) => {
+            formData.append(`images`, file);
+        });
 
         try {
             setLoading(true);
@@ -148,9 +160,31 @@ const CreateProduct = observer(({ show, onHide }) => {
                         type="number"
                     />
                     <Form.Control
+                        value={productData.width}
+                        onChange={e => dispatch({ type: 'SET_FIELD', field: 'width', payload: Number(e.target.value) })}
+                        className="mt-3"
+                        placeholder="Введите ширину товара (мм)"
+                        type="number"
+                    />
+                    <Form.Control
+                        value={productData.depth}
+                        onChange={e => dispatch({ type: 'SET_FIELD', field: 'depth', payload: Number(e.target.value) })}
+                        className="mt-3"
+                        placeholder="Введите глубину товара (мм)"
+                        type="number"
+                    />
+                    <Form.Control
+                        value={productData.height}
+                        onChange={e => dispatch({ type: 'SET_FIELD', field: 'height', payload: Number(e.target.value) })}
+                        className="mt-3"
+                        placeholder="Введите высоту товара (мм)"
+                        type="number"
+                    />
+                    <Form.Control
                         className="mt-3"
                         type="file"
-                        onChange={selectFile}
+                        multiple
+                        onChange={selectFiles}
                     />
                     <hr />
                     <Button variant="outline-dark" onClick={addInfo}>

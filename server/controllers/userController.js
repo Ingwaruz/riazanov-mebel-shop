@@ -5,7 +5,7 @@ const {User, Basket} = require('../models/models')
 
 const generateJwt = (id, email, role) => {
     return jwt.sign(
-        {id, email, role}, 
+        {id, email, role},
         process.env.SECRET_KEY,
         {expiresIn: '24h'}
     )
@@ -37,12 +37,12 @@ class userController {
 
     async login(req, res, next) {
         const {email, password} = req.body
-        const user = await User.findOne({where: {email}})
+        const user = await User.findOne({ where: {email} })
         if (!user) {
             return next(ApiError.internal('Пользователь не найден :('))
         }
 
-        let comparePassword = bcrypt.compareSync(password, user.password)
+        let comparePassword = await bcrypt.compare(password, user.password)
         if (!comparePassword) {
             return next(ApiError.internal('Неверный пароль :('))
         }

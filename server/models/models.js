@@ -9,9 +9,9 @@ const User = sequelize.define('user', {
     email: {type: DataTypes.STRING, unique: true},
     password: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
-    name: {type: DataTypes.STRING, allowNull: true}, //allowNull: false
-    second_name: {type: DataTypes.STRING, allowNull: true}, //allowNull: false
-    phone_number: {type: DataTypes.STRING, allowNull: true}, //allowNull: false
+    name: {type: DataTypes.STRING, allowNull: true},
+    second_name: {type: DataTypes.STRING, allowNull: true},
+    phone_number: {type: DataTypes.STRING, allowNull: true},
 })
 
 // Корзина покупателя
@@ -29,9 +29,9 @@ const Product = sequelize.define('product', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
-    width: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
-    depth: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
-    height: {type: DataTypes.INTEGER, allowNull: true}, //allowNull: false
+    width: {type: DataTypes.INTEGER, allowNull: false},
+    depth: {type: DataTypes.INTEGER, allowNull: false},
+    height: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 // Тип товара 
@@ -148,9 +148,11 @@ Product.hasMany(Image, {foreignKey: { allowNull: false }});
 BasketProduct.belongsTo(Product, { foreignKey: { allowNull: false }});
 Image.belongsTo(Product, { foreignKey: { allowNull: false }});
 
+// Material
 Material.hasMany(MaterialToType, { foreignKey: { allowNull: false }});
 MaterialToType.belongsTo(Material, { foreignKey: { allowNull: false }});
 
+// Feature
 Feature.hasMany(FeaturesToTypeToFactory, { foreignKey: { allowNull: false }});
 FeaturesToTypeToFactory.belongsTo(Feature, { foreignKey: { allowNull: false }});
 
