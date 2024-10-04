@@ -31,6 +31,7 @@ class productController {
                 // Сохраняем каждое изображение
                 for (const image of imageFiles) {
                     let fileName = uuid.v4() + path.extname(image.name);
+                    // let fileName = uuid.v4() + path.extname(image.name);
                     await image.mv(path.resolve(__dirname, '..', 'static', fileName)); // Сохраняем файл
 
                     // Сохраняем ссылку на изображение в таблицу `Images`
