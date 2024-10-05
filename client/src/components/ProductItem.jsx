@@ -42,53 +42,66 @@ const ProductItem = ({ product, factoryName }) => {
 
                 <div style={{ position: 'relative', overflow: 'hidden' }}>
                     {images.length > 0 && (
-                        <>
-                            {/* Отображение текущего изображения */}
-                            <Image
-                                className="mb-5 img-centered"
-                                src={process.env.REACT_APP_API_URL + images[currentImageIndex].file}
-                                // style={{ width: '100%', height: 'auto' }}
-                            />
-                            {/* Левая стрелка */}
-                            <img
-                                src={leftArrow}
-                                alt="prev"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    prevImage();
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '50%',
-                                    left: '10px',
-                                    transform: 'translateY(-50%)',
-                                    cursor: 'pointer',
-                                    display: images.length > 1 ? 'block' : 'none',
-                                    opacity: 0.7,
-                                }}
-                            />
-
-                            {/* Правая стрелка */}
-                            <img
-                                src={rightArrow}
-                                alt="next"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    nextImage();
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '50%',
-                                    right: '10px',
-                                    transform: 'translateY(-50%)',
-                                    cursor: 'pointer',
-                                    display: images.length > 1 ? 'block' : 'none',
-                                    opacity: 0.7,
-                                }}
-                            />
-                        </>
+                        <Image
+                            className="mb-5 img-centered"
+                            src={process.env.REACT_APP_API_URL + images[currentImageIndex].file}
+                        />
                     )}
                 </div>
+
+                {/* Левая стрелка */}
+                {images.length > 1 && (
+                    <img
+                        src={leftArrow}
+                        alt="prev"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            prevImage();
+                        }}
+                        style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: 'pointer',
+                            opacity: 0.7,
+                            width: '50px',
+                            backgroundColor: 'rgba(0, 0, 0, 0)', // Прозрачный фон по умолчанию
+                            borderRadius: '50%', // Круглая форма
+                            padding: '10px',
+                            transition: 'background-color 0.3s ease', // Плавный переход
+                        }}
+                        onMouseEnter={(e) => (e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.6)')} // Темно-серый фон при наведении
+                        onMouseLeave={(e) => (e.target.style.backgroundColor = 'rgba(0, 0, 0, 0)')} // Прозрачный фон при выходе
+                    />
+                )}
+
+                {/* Правая стрелка */}
+                {images.length > 1 && (
+                    <img
+                        src={rightArrow}
+                        alt="next"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            nextImage();
+                        }}
+                        style={{
+                            position: 'absolute',
+                            top: '50%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: 'pointer',
+                            opacity: 0.7,
+                            width: '50px',
+                            backgroundColor: 'rgba(0, 0, 0, 0)', // Прозрачный фон по умолчанию
+                            borderRadius: '50%', // Круглая форма
+                            padding: '10px',
+                            transition: 'background-color 0.3s ease', // Плавный переход
+                        }}
+                        onMouseEnter={(e) => (e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.6)')} // Темно-серый фон при наведении
+                        onMouseLeave={(e) => (e.target.style.backgroundColor = 'rgba(0, 0, 0, 0)')} // Прозрачный фон при выходе
+                    />
+                )}
 
                 <Col style={{ position: 'absolute', bottom: '0' }} className="d-flex mx-2 my-2 m-text">
                     {product.name}
