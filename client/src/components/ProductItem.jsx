@@ -27,6 +27,10 @@ const ProductItem = ({ product, factoryName }) => {
         );
     };
 
+    // console.log(process.env.REACT_APP_API_URL + images[currentImageIndex].file);
+    // console.log(process.env.REACT_APP_API_URL);
+    // console.log("hello there");
+
     return (
         <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
             <Card
@@ -43,9 +47,8 @@ const ProductItem = ({ product, factoryName }) => {
                             <Image
                                 className="mb-5 img-centered"
                                 src={process.env.REACT_APP_API_URL + images[currentImageIndex].file}
-                                style={{ width: '100%', height: 'auto' }}
+                                // style={{ width: '100%', height: 'auto' }}
                             />
-
                             {/* Левая стрелка */}
                             <img
                                 src={leftArrow}

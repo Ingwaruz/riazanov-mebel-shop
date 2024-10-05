@@ -19,6 +19,7 @@ class productController {
                     ProductInfo.create({
                         title: i.title,
                         description: i.description,
+                        productId: product.id,
                     })
                 );
             }
@@ -31,7 +32,6 @@ class productController {
                 // Сохраняем каждое изображение
                 for (const image of imageFiles) {
                     let fileName = uuid.v4() + path.extname(image.name);
-                    // let fileName = uuid.v4() + path.extname(image.name);
                     await image.mv(path.resolve(__dirname, '..', 'static', fileName)); // Сохраняем файл
 
                     // Сохраняем ссылку на изображение в таблицу `Images`
@@ -57,7 +57,10 @@ class productController {
             const query = {
                 limit,
                 offset,
-                where: {}
+                where: {},
+                include: [
+                    { model: Image, as: 'images' } // Включаем изображения для каждого продукта
+                ]
             };
 
             if (factoryId) query.where.factoryId = factoryId;
@@ -78,8 +81,8 @@ class productController {
             const product = await Product.findOne({
                 where: {id},
                 include: [
-                    {model: ProductInfo, as: 'product_infos'},
-                    {model: Image, as: 'images'} // Включаем изображения товара
+                    { model: ProductInfo, as: 'product_infos' },  // Включаем дополнительную информацию о продукте
+                    { model: Image, as: 'images' }  // Включаем изображения товара
                 ]
             });
 
