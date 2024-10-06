@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const path = require('path');
-const {Product, ProductInfo, Image} = require('../models/models');
+const {Product, ProductInfo, Image, Collection} = require('../models/models');
 const ApiError = require('../error/apiError');
 
 class productController {
@@ -59,7 +59,8 @@ class productController {
                 offset,
                 where: {},
                 include: [
-                    { model: Image, as: 'images' } // Включаем изображения для каждого продукта
+                    { model: Image, as: 'images' }, // Включаем изображения для каждого продукта
+                    // { model: Collection, as: 'collections' }
                 ]
             };
 
@@ -82,7 +83,8 @@ class productController {
                 where: {id},
                 include: [
                     { model: ProductInfo, as: 'product_infos' },  // Включаем дополнительную информацию о продукте
-                    { model: Image, as: 'images' }  // Включаем изображения товара
+                    { model: Image, as: 'images' },  // Включаем изображения товара
+                    // { model: Collection, as: 'collections' }
                 ]
             });
 
