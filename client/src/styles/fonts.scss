@@ -11,13 +11,14 @@ $font-size-xl: 24px;
 
 @mixin font($size) {
   font-family: $font-family;
-  font-weight: 600;
+  font-weight: 500;
   font-optical-sizing: auto;
   font-style: normal;
   font-size: $size;
   line-height: 1.5;
   color: $color-gray;
   text-overflow: ellipsis;
+  text-align: start;
 }
 
 .xs-text {
@@ -34,8 +35,10 @@ $font-size-xl: 24px;
 
 .l-text {
   @include font($font-size-l);
+  font-weight: 600;
 }
 
 .xl-text {
   @include font($font-size-xl);
+  font-weight: 600;
 }

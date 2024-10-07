@@ -16,6 +16,7 @@ const ProductList = observer(() => {
                 return (
                     <ProductItem
                         key={productItem.id}
+                        price={productItem.price}
                         product={productItem}
                         factoryName={productFactory ? productFactory.name : "Неизвестная фабрика"}
                     />

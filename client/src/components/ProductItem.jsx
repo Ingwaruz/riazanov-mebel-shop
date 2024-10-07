@@ -6,7 +6,7 @@ import leftArrow from '../assets/left-arrow.svg';
 import rightArrow from '../assets/right-arrow.svg';
 import '../styles/commonStyles.scss'; // Подключаем SCSS файл
 
-const ProductItem = ({ product, factoryName }) => {
+const ProductItem = ({ product, factoryName, price }) => {
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -31,22 +31,24 @@ const ProductItem = ({ product, factoryName }) => {
                 className="product-card img-centered border-radius-0 bg-color-white"
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
-                <Col className={'d-flex m-text ms-2 mt-1 '}>{factoryName}</Col>
+                <Col className={'d-flex m-text mx-3 mt-2 mb-1 '}>{factoryName}</Col>
 
-                <div className="carousel-container">
-                    <div
-                        className="carousel-images"
-                        style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
-                    >
-                        {images.map((image, index) => (
-                            <Image
-                                key={index}
-                                className="carousel-image"
-                                src={process.env.REACT_APP_API_URL + image.file}
-                            />
-                        ))}
+                <Col style={{ width: 'auto' }} className="d-flex mx-3">
+                    <div className="carousel-container">
+                        <div
+                            className="carousel-images"
+                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                        >
+                            {images.map((image, index) => (
+                                <Image
+                                    key={index}
+                                    className="carousel-image"
+                                    src={process.env.REACT_APP_API_URL + image.file}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </Col>
 
                 {/* Левая стрелка */}
                 {images.length > 1 && (
@@ -75,14 +77,17 @@ const ProductItem = ({ product, factoryName }) => {
                 )}
 
                 {/* Название товара под изображением */}
-                <Col className="d-flex mx-2 my-2 m-text">
+                <Col className="d-flex m-text mx-3 my-2">
                     {product.name}
                 </Col>
 
                 {/* Кнопка "Подробнее" */}
-                <Col className="learn-more m-text p-2" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>
-                    Подробнее
+                <Col className={'d-flex l-text mx-3 mt-1 mb-2'}>
+                    {`Цена от ${price} ₽`}
                 </Col>
+                {/*<Col className="learn-more m-text p-1" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>*/}
+                {/*    Подробнее*/}
+                {/*</Col>*/}
             </Card>
         </Col>
     );
