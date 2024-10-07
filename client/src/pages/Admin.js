@@ -3,10 +3,12 @@ import {Button, Container} from "react-bootstrap";
 import CreateFactory from "../components/modals/CreateFactory";
 import CreateProduct from "../components/modals/CreateProduct";
 import CreateType from "../components/modals/CreateType";
+import CreateCollection from "../components/modals/CreateCollection";
 
 const Admin = () => {
     const [factoryVisible, setFactoryVisible] = useState(false)
     const [typeVisible, setTypeVisible] = useState(false)
+    const [collectionVisible, setCollectionVisible] = useState(false)
     const [productVisible, setProductVisible] = useState(false)
 
     return (
@@ -25,13 +27,20 @@ const Admin = () => {
             </Button>
             <Button
                 className={'mt-4 p-3 bg-color-white border-radius-0 border-color-gray color-black hover-item--lightgray m-text'}
+                onClick={() => setCollectionVisible(true)}
+            >
+                Добавить коллекцию
+            </Button>
+            <Button
+                className={'mt-4 p-3 bg-color-white border-radius-0 border-color-gray color-black hover-item--lightgray m-text'}
                 onClick={() => setProductVisible(true)}
             >
                 Добавить товар
             </Button>
-            <CreateFactory show={factoryVisible} onHide={() => setFactoryVisible(false)}/>
-            <CreateProduct show={productVisible} onHide={() => setProductVisible(false)}/>
             <CreateType show={typeVisible} onHide={() => setTypeVisible(false)}/>
+            <CreateFactory show={factoryVisible} onHide={() => setFactoryVisible(false)}/>
+            <CreateCollection show={collectionVisible} onHide={() => setCollectionVisible(false)}/>
+            <CreateProduct show={productVisible} onHide={() => setProductVisible(false)}/>
         </Container>
     );
 };

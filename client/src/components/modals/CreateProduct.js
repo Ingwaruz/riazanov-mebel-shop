@@ -54,7 +54,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     product.setTypes(types);
                     product.setFactories(factories);
                 } catch (err) {
-                    setError("Не удалось загрузить типы или фабрики.");
+                    setError("Не удалось загрузить типы и/или фабрики.");
                     console.error(err);
                 } finally {
                     setLoading(false);

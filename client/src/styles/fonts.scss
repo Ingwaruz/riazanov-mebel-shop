@@ -35,10 +35,9 @@ $font-size-xl: 24px;
 
 .l-text {
   @include font($font-size-l);
-  font-weight: 600;
+
 }
 
 .xl-text {
   @include font($font-size-xl);
-  font-weight: 600;
 }

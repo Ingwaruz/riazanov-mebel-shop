@@ -83,7 +83,7 @@ const ProductItem = ({ product, factoryName, price }) => {
 
                 {/* Кнопка "Подробнее" */}
                 <Col className={'d-flex l-text mx-3 mt-1 mb-2'}>
-                    {`Цена от ${price} ₽`}
+                    {`Цена от ${price.toLocaleString('ru-RU')} ₽`}
                 </Col>
                 {/*<Col className="learn-more m-text p-1" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>*/}
                 {/*    Подробнее*/}

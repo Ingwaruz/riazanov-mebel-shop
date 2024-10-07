@@ -48,7 +48,6 @@ class productController {
     async getAll(req, res, next) {
         try {
             let {factoryId, typeId, price, limit, page} = req.query;
-            // console.log('Request query:', req.query);  // Лог запроса
             page = page || 1;
             limit = limit || 12;
             let offset = (page - 1) * limit;
@@ -84,7 +83,7 @@ class productController {
                 include: [
                     { model: ProductInfo, as: 'product_infos' },  // Включаем дополнительную информацию о продукте
                     { model: Image, as: 'images' },  // Включаем изображения товара
-                    // { model: Collection, as: 'collections' }
+                    { model: Collection, as: 'collections' }
                 ]
             });
 

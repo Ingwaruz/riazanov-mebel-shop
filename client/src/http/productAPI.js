@@ -1,5 +1,4 @@
 import {$authHost, $host} from "./index";
-import { jwtDecode } from "jwt-decode";
 
 // Типы
 export const createType = async (type) => {
@@ -20,6 +19,17 @@ export const createFactory = async (factory) => {
 
 export const fetchFactories = async () => {
     const {data} = await $host.get('api/factory');
+    return data;
+}
+
+// Коллекции
+export const createCollection = async (collection) => {
+    const {data} = await $authHost.post('api/collection', collection);
+    return data;
+};
+
+export const fetchCollections = async () => {
+    const {data} = await $host.get('api/collection');
     return data;
 }
 
