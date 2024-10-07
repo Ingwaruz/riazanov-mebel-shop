@@ -31,6 +31,7 @@ const CreateProduct = observer(({ show, onHide }) => {
     const { product } = useContext(Context);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [filteredCollections, setFilteredCollections] = useState([]);
 
     // Инициализация состояния с помощью useReducer
     const [productData, dispatch] = useReducer(productReducer, {
@@ -65,6 +66,18 @@ const CreateProduct = observer(({ show, onHide }) => {
             fetchData();
         }
     }, [product]);
+
+    // Фильтрация по коллекциям
+    useEffect(() => {
+        if (product.selectedFactory) {
+            const relatedCollections = product.collections.filter(
+                collection => collection.factoryId === product.selectedFactory.id
+            );
+            setFilteredCollections(relatedCollections); // обновляем отфильтрованные коллекции
+        } else {
+            setFilteredCollections([]); // сброс фильтра
+        }
+    }, [product.selectedFactory, product.collections]);
 
     const addInfo = useCallback(() => dispatch({ type: 'ADD_INFO' }), []);
     const removeInfo = useCallback(number => dispatch({ type: 'REMOVE_INFO', payload: number }), []);
@@ -150,9 +163,9 @@ const CreateProduct = observer(({ show, onHide }) => {
                         </Dropdown.Menu>
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
-                        <Dropdown.Toggle>{productData.selectedCollection?.name || 'Выберите коллекцию'}</Dropdown.Toggle>
+                        <Dropdown.Toggle disabled={!product.selectedFactory}>{product.selectedCollection?.name || 'Выберите коллекцию'}</Dropdown.Toggle>
                         <Dropdown.Menu>
-                            {product.collections.map(collection => (
+                            {filteredCollections.map(collection => (
                                 <Dropdown.Item
                                     onClick={() => product.setSelectedCollection(collection)}
                                     key={collection.id}
