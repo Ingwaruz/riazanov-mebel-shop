@@ -3,6 +3,7 @@
 .carousel-container {
   position: relative;
   width: 100%;
+  height: auto;  /* Пример фиксированной высоты, можно менять в зависимости от дизайна */
   overflow: hidden;
 }
 
@@ -13,7 +14,8 @@
 
 .carousel-image {
   width: 100%;
-  object-fit: cover;
+  height: auto;  /* Изменяем на 100%, чтобы изображение заполнило контейнер */
+  object-fit: contain;
   flex-shrink: 0;
 }
 
