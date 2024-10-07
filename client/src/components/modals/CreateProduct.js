@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useReducer, useCallback, useState } from 'react';
 import { Button, Col, Dropdown, Form, Modal, Row, Spinner, Alert } from "react-bootstrap";
 import { Context } from "../../index";
-import { createProduct, fetchFactories, fetchTypes } from "../../http/productAPI";
+import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../http/productAPI";
 import { observer } from "mobx-react-lite";
 
 // Reducer для управления состоянием формы
@@ -40,21 +40,23 @@ const CreateProduct = observer(({ show, onHide }) => {
         depth: '',
         height: '',
         files: [],  // Массив для загрузки нескольких файлов
-        info: []
+        info: [],
     });
 
     // Загрузка данных (типы и фабрики) только при первой загрузке
     useEffect(() => {
-        if (!product.types.length || !product.factories.length) {
+        if (!product.types.length || !product.factories.length || !product.collections.length) {
             const fetchData = async () => {
                 try {
                     setLoading(true);
                     const types = await fetchTypes();
                     const factories = await fetchFactories();
+                    const collections = await fetchCollections(); // Получаем коллекции
                     product.setTypes(types);
                     product.setFactories(factories);
+                    product.setCollections(collections); // Сохраняем коллекции в контекст
                 } catch (err) {
-                    setError("Не удалось загрузить типы и/или фабрики.");
+                    setError("Не удалось загрузить данные.");
                     console.error(err);
                 } finally {
                     setLoading(false);
@@ -77,7 +79,7 @@ const CreateProduct = observer(({ show, onHide }) => {
     const addProduct = async () => {
         const { name, price, width, depth, height, files, info } = productData;
 
-        if (!name || !price || !width || !depth || !height || !files.length || !product.selectedFactory.id || !product.selectedType.id) {
+        if (!name || !price || !width || !depth || !height || !files.length || !product.selectedFactory.id || !product.selectedType.id || !product.selectedCollection.id ) {
             setError("Заполните все поля.");
             return;
         }
@@ -90,6 +92,7 @@ const CreateProduct = observer(({ show, onHide }) => {
         formData.append('height', `${height}`);
         formData.append('factoryId', product.selectedFactory.id);
         formData.append('typeId', product.selectedType.id);
+        formData.append('collectionId', product.selectedCollection.id);
         formData.append('info', JSON.stringify(info));
 
         // Добавление всех изображений в formData
@@ -142,6 +145,19 @@ const CreateProduct = observer(({ show, onHide }) => {
                                     key={factory.id}
                                 >
                                     {factory.name}
+                                </Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <Dropdown className="mt-2 mb-2">
+                        <Dropdown.Toggle>{productData.selectedCollection?.name || 'Выберите коллекцию'}</Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            {product.collections.map(collection => (
+                                <Dropdown.Item
+                                    onClick={() => product.setSelectedCollection(collection)}
+                                    key={collection.id}
+                                >
+                                    {collection.name}
                                 </Dropdown.Item>
                             ))}
                         </Dropdown.Menu>

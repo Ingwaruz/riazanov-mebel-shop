@@ -4,9 +4,11 @@ export default class ProductStore {
     constructor() {
         this._types = []
         this._factories = []
+        this._collections = []
         this._products = []
         this._selectedType = {}
         this._selectedFactory = {}
+        this._selectedCollection = {}
         this._page = 1
         this._totalCount = 0
         this._limit = 12
@@ -21,9 +23,15 @@ export default class ProductStore {
         this._factories = factories
     }
 
+    setCollections(collections) {
+        this._collections = collections
+    }
+
     setProducts(products) {
         this._products = products
     }
+
+
 
     setSelectedType(type) {
         this.setPage(1)  // Сброс страницы при выборе типа
@@ -33,6 +41,11 @@ export default class ProductStore {
     setSelectedFactory(factory) {
         this.setPage(1)  // Сброс страницы при выборе фабрики
         this._selectedFactory = factory
+    }
+
+    setSelectedCollection(collection) {
+        this.setPage(1)  // Сброс страницы при выборе коллекции
+        this._selectedCollection = collection
     }
 
     setPage(page) {
@@ -46,8 +59,11 @@ export default class ProductStore {
     resetFilters() {
         this.setSelectedType({})
         this.setSelectedFactory({})
+        // this.setSelectedCollection({})
         this.setPage(1)
     }
+
+
 
     get types() {
         return this._types
@@ -57,9 +73,15 @@ export default class ProductStore {
         return this._factories
     }
 
+    get collections() {
+        return this._collections
+    }
+
     get products() {
         return this._products
     }
+
+
 
     get selectedType() {
         return this._selectedType
@@ -67,6 +89,10 @@ export default class ProductStore {
 
     get selectedFactory() {
         return this._selectedFactory
+    }
+
+    get selectedCollection() {
+        return this._selectedCollection
     }
 
     get totalCount() {
