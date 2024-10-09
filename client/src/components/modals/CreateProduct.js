@@ -3,6 +3,7 @@ import { Button, Col, Dropdown, Form, Modal, Row, Spinner, Alert } from "react-b
 import { Context } from "../../index";
 import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../http/productAPI";
 import { observer } from "mobx-react-lite";
+import '../../styles/commonStyles.scss';
 
 // Reducer для управления состоянием формы
 const productReducer = (state, action) => {
@@ -137,7 +138,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form>
                     <Dropdown className="mt-2 mb-2">
-                        <Dropdown.Toggle>{product.selectedType.name || 'Выберите тип'}</Dropdown.Toggle>
+                        <Dropdown.Toggle>{product.selectedType.name || 'Выберите тип товара'}</Dropdown.Toggle>
                         <Dropdown.Menu>
                             {product.types.map(type => (
                                 <Dropdown.Item
