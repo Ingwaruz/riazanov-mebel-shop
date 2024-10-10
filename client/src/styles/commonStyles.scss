@@ -14,7 +14,7 @@
 
 .carousel-image {
   width: 100%;
-  height: auto;  /* Изменяем на 100%, чтобы изображение заполнило контейнер */
+  height: auto;
   object-fit: contain;
   flex-shrink: 0;
 }
