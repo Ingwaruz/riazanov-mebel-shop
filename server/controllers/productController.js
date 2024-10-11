@@ -82,9 +82,9 @@ class productController {
             const product = await Product.findOne({
                 where: {id},
                 include: [
-                    { model: ProductInfo, as: 'product_infos' },  // Включаем дополнительную информацию о продукте
-                    { model: Image, as: 'images' },  // Включаем изображения товара
-                    { model: Collection, as: 'collections' }
+                    { model: ProductInfo, as: 'product_infos' },  // Включаем информацию о продукте
+                    { model: Image, as: 'images' },  // Включаем изображения
+                    { model: Collection, as: 'collection' }  // Включаем коллекцию
                 ]
             });
 

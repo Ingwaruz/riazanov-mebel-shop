@@ -145,8 +145,12 @@ FeaturesToTypeToFactory.belongsTo(Factory, {foreignKey: { allowNull: false }});
 // Product
 Product.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
 Product.hasMany(Image, {foreignKey: { allowNull: false }});
+Product.hasMany(ProductInfo, {as: 'product_infos', foreignKey: 'productId'});
+Product.belongsTo(Collection, {as: 'collection', foreignKey: 'collectionId'});
 BasketProduct.belongsTo(Product, { foreignKey: { allowNull: false }});
 Image.belongsTo(Product, { foreignKey: { allowNull: false }});
+ProductInfo.belongsTo(Product, {foreignKey: 'productId'});
+Collection.hasMany(Product, {foreignKey: 'collectionId'});
 
 // Material
 Material.hasMany(MaterialToType, { foreignKey: { allowNull: false }});

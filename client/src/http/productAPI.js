@@ -46,7 +46,7 @@ export const fetchProducts = async (typeId, factoryId, page, limit = 5) => {
     return data;
 }
 
-export const fetchOneProducts = async (id) => {
+export const fetchOneProduct = async (id) => {
     const {data} = await $host.get('api/product/' + id);
     return data;
 }

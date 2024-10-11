@@ -1,19 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import { useParams } from 'react-router-dom';
-import { fetchOneProducts } from "../http/productAPI";
+import { fetchOneProduct } from "../http/productAPI";
+import leftArrow from "../assets/left-arrow.svg";
+import rightArrow from "../assets/right-arrow.svg";
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { id } = useParams();
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const images = product.images || [];
+
+    const nextImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        );
+    };
+
+    const prevImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === 0 ? images.length - 1 : prevIndex - 1
+        );
+    };
 
     useEffect(() => {
         const loadProduct = async () => {
             setLoading(true);
             try {
-                const data = await fetchOneProducts(id);
+                const data = await fetchOneProduct(id);
                 setProduct(data);
             } catch (error) {
                 console.error("Failed to fetch product:", error);
@@ -40,14 +56,61 @@ const ProductPage = () => {
     return (
         <Container className={'mt-3'}>
             <Row>
-                <Col md={4} className={'d-flex justify-content-center align-items-center'}>
-                    <Image
-                        width={350}
-                        height={350}
-                        src={product.img ? process.env.REACT_APP_API_URL + product.img : 'default_image_path'}
-                        alt={product.name || 'Product image'}
-                    />
+                <Col style={{ width: 'auto' }} className="d-flex mx-3">
+                    <div className="carousel-container">
+                        
+                        {images.length > 1 && (
+                            <img
+                                src={leftArrow}
+                                alt="prev"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    prevImage();
+                                }}
+                                className="arrow-icon left-arrow"
+                            />
+                        )}
+
+                        <div
+                            className="carousel-images"
+                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                        >
+                            {images.map((image, index) => (
+                                <Image
+                                    key={index}
+                                    className="carousel-image"
+                                    src={process.env.REACT_APP_API_URL + image.file}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </Col>
+
+                {/* Левая стрелка */}
+                {images.length > 1 && (
+                    <img
+                        src={leftArrow}
+                        alt="prev"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            prevImage();
+                        }}
+                        className="arrow-icon left-arrow"
+                    />
+                )}
+
+                {/* Правая стрелка */}
+                {images.length > 1 && (
+                    <img
+                        src={rightArrow}
+                        alt="next"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            nextImage();
+                        }}
+                        className="arrow-icon right-arrow"
+                    />
+                )}
                 <Col md={4} className={'d-flex justify-content-center align-items-center'}>
                     <h2>{product.name || 'Название отсутствует'}</h2>
                 </Col>
