@@ -6,6 +6,7 @@ import leftArrow from "../shared/assets/left-arrow.svg";
 import rightArrow from "../shared/assets/right-arrow.svg";
 import '../app/styles/commonStyles.scss';
 import '../app/styles/shared.scss';
+import ButtonM1 from "../shared/ui/buttons/button-m1";
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
@@ -107,7 +108,7 @@ const ProductPage = () => {
                         className={'d-flex flex-column'}
                     >
                         <Col className={'l-text'}>От {product.price || 'Цена отсутсвует'} руб.</Col>
-                        <Button variant={"outline-dark"}>Добавить в корзину</Button>
+                        <ButtonM1 text={'Добавить в корзину'}/>
                     </Card>
                 </Col>
             </Row>
