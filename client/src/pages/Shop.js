@@ -1,12 +1,12 @@
 import React, {useContext, useEffect} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import TypeBar from "../components/TypeBar";
-import FactoryBar from "../components/FactoryBar";
-import ProductList from "../components/ProductList";
+import TypeBar from "../entities/components/TypeBar";
+import FactoryBar from "../entities/components/FactoryBar";
+import ProductList from "../widgets/ProductList";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {fetchFactories, fetchProducts, fetchTypes} from "../http/productAPI";
-import Pages from "../components/Pages";
+import {fetchFactories, fetchProducts, fetchTypes} from "../processes/productAPI";
+import Pages from "../entities/components/Pages";
 
 const Shop = observer(() => {
     const {product} = useContext(Context);

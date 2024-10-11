@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Form, Modal, Spinner, Alert } from "react-bootstrap";
-import { createCollection, fetchFactories } from "../../http/productAPI";
+import { createCollection, fetchFactories } from "../../processes/productAPI";
 
 const CreateCollection = ({ show, onHide }) => {
     const [value, setValue] = useState('');

@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Button, Container} from "react-bootstrap";
-import CreateFactory from "../components/modals/CreateFactory";
-import CreateProduct from "../components/modals/CreateProduct";
-import CreateType from "../components/modals/CreateType";
-import CreateCollection from "../components/modals/CreateCollection";
+import CreateFactory from "../widgets/modals/CreateFactory";
+import CreateProduct from "../widgets/modals/CreateProduct";
+import CreateType from "../widgets/modals/CreateType";
+import CreateCollection from "../widgets/modals/CreateCollection";
 
 const Admin = () => {
     const [factoryVisible, setFactoryVisible] = useState(false)

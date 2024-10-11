@@ -1,16 +1,16 @@
 import React, {useContext, useEffect, useState} from "react";
 import {BrowserRouter} from "react-router-dom";
-import AppRouter from "./components/AppRouter";
-import Navbar from "./components/Navbar";
-import MyNavbar from "./components/Navbar";
+import AppRouter from "../entities/components/AppRouter";
+import Navbar from "../widgets/Navbar";
+import MyNavbar from "../widgets/Navbar";
 import {observer} from "mobx-react-lite";
-import {Context} from "./index";
-import {check} from "./http/userAPI";
+import {Context} from "../index";
+import {check} from "../processes/userAPI";
 import {Spinner} from "react-bootstrap";
-import './styles/fonts.scss';
-import './styles/commonStyles.scss';
-import './styles/colors.scss';
-import Footer from "./components/Footer";
+import '../shared/styles/fonts.scss';
+import '../shared/styles/commonStyles.scss';
+import '../shared/styles/colors.scss';
+import Footer from "../widgets/Footer";
 
 
 const App = observer(() => {

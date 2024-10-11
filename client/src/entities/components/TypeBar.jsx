@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import {Col, ListGroup} from 'react-bootstrap';
 import { observer } from 'mobx-react-lite';
-import { Context } from "../index";
+import { Context } from "../../index";
 
 const TypeBar = observer(() => {
     const { product } = useContext(Context);

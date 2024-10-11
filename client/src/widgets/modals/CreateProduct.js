@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useReducer, useCallback, useState } from 'react';
 import { Button, Col, Dropdown, Form, Modal, Row, Spinner, Alert } from "react-bootstrap";
 import { Context } from "../../index";
-import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../http/productAPI";
+import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../processes/productAPI";
 import { observer } from "mobx-react-lite";
-import '../../styles/commonStyles.scss';
+import '../../shared/styles/commonStyles.scss';
 
 // Reducer для управления состоянием формы
 const productReducer = (state, action) => {

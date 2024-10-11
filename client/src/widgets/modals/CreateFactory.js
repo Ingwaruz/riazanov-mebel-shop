@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
-import {createType} from "../../http/productAPI";
+import {createFactory} from "../../processes/productAPI";
 
-const CreateType = ({show, onHide}) => {
+const CreateFactory = ({show, onHide}) => {
 
     const [value, setValue] = useState('')
-    const addType = () => {
-        createType({name: value}).then(data => {
+    const addFactory = () => {
+        createFactory({name: value}).then(data => {
             setValue('')
             onHide()
         })
@@ -21,7 +21,7 @@ const CreateType = ({show, onHide}) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Добавить тип
+                    Добавить производителя
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -29,16 +29,16 @@ const CreateType = ({show, onHide}) => {
                     <Form.Control
                         value={value}
                         onChange={e => setValue(e.target.value)}
-                        placeholder={'Введите название типа товара...'}
+                        placeholder={'Введите производителя...'}
                     />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant={'outline-danger'} onClick={onHide}>Закрыть</Button>
-                <Button variant={'outline-success'} onClick={addType}>Добавить</Button>
+                <Button variant={'outline-success'} onClick={addFactory}>Добавить</Button>
             </Modal.Footer>
         </Modal>
     );
 };
 
-export default CreateType;
+export default CreateFactory;
