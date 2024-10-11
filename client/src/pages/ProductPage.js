@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import { fetchOneProduct } from "../processes/productAPI";
 import leftArrow from "../shared/assets/left-arrow.svg";
 import rightArrow from "../shared/assets/right-arrow.svg";
-import '../shared/styles/commonStyles.scss';
+import '../app/styles/commonStyles.scss';
+import '../app/styles/shared.scss';
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
@@ -56,8 +57,8 @@ const ProductPage = () => {
 
     return (
         <div className={'container-fluid mx-3 my-3'}>
-            <Row xs={12} sm={6} md={4} lg={3} className="d-flex">
-                <Col>
+            <Row className="d-flex">
+                <Col xs={12} sm={6} md={4} lg={3}>
                     <div className="carousel-container">
 
                         <div
@@ -103,31 +104,36 @@ const ProductPage = () => {
 
                 <Col xs={12} sm={6} md={4} lg={3}>
                     <Card
-                        className={'d-flex flex-column align-items-center justify-content-around'}
+                        className={'d-flex flex-column'}
                     >
                         <Col className={'l-text'}>От {product.price || 'Цена отсутсвует'} руб.</Col>
-                        <Button variant={"hover-item-gray"}>Добавить в корзину</Button>
+                        <Button variant={"outline-dark"}>Добавить в корзину</Button>
                     </Card>
                 </Col>
             </Row>
-            <Row xs={12} sm={6} md={4} lg={3} className={'d-flex justify-content-center align-items-center l-text'}>
-                <Col>
+            <Row className={'d-flex justify-content-center align-items-center l-text'}>
+                <Col xs={12} sm={6} md={4} lg={3}>
                     {product.name || 'Название отсутствует'}
                 </Col>
             </Row>
-            <Row className={'d-flex flex-column xl-text'}>
-                Характеристики
+            <Row className="d-flex flex-column xl-text">
+                <Col xs={12} sm={6} md={4} lg={3}>Характеристики</Col>
                 {product.info && product.info.length > 0 ? (
-                    product.info.map((info, index) =>
-                        <Row key={info.id}
-                             style={{background: index % 2 === 0 ? 'lightgray' : 'transparent'}}>
+                    product.info.map((info, index) => (
+                        <Col xs={12} sm={6} md={6} lg={6}>
+                            key={info.id}
+                            style={{ background: index % 2 === 0 ? 'lightgray' : 'transparent' }}
+                        >
                             {info.title}: {info.description}
-                        </Row>
-                    )
+                        </Col>
+                    ))
                 ) : (
-                    <Row> Характеристики не найдены.</Row>
+                    <Col xs={12} sm={12} md={12} lg={12}>
+                        Характеристики не найдены.
+                    </Col>
                 )}
             </Row>
+
         </div>
     );
 };

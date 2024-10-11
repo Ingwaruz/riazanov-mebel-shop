@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PRODUCT_ROUTE } from '../utils/consts';
 import leftArrow from '../../shared/assets/left-arrow.svg';
 import rightArrow from '../../shared/assets/right-arrow.svg';
-import '../../shared/styles/commonStyles.scss'; // Подключаем SCSS файл
+import '../../app/styles/commonStyles.scss'; // Подключаем SCSS файл
 
 const ProductItem = ({ product, factoryName, price }) => {
     const navigate = useNavigate();

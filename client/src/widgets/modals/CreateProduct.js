@@ -3,7 +3,7 @@ import { Button, Col, Dropdown, Form, Modal, Row, Spinner, Alert } from "react-b
 import { Context } from "../../index";
 import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../processes/productAPI";
 import { observer } from "mobx-react-lite";
-import '../../shared/styles/commonStyles.scss';
+import '../../app/styles/commonStyles.scss';
 
 // Reducer для управления состоянием формы
 const productReducer = (state, action) => {

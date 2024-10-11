@@ -1,0 +1,33 @@
+@import 'colors';
+
+.hover-item {
+  transition: background-color 0.2s ease-out;
+  cursor: pointer;
+
+  &--white {
+    &:hover {
+      background-color: $color-white !important;
+      color: $color-gray !important;
+    }
+  }
+
+  &--black {
+    &:hover {
+      background-color: $color-black !important;
+      color: $color-white !important;
+    }
+  }
+
+  &--gray {
+    &:hover {
+      background-color: $color-gray !important;
+      color: $color-white !important;
+    }
+  }
+
+  &--lightgray {
+    &:hover {
+      background-color: $color-lightgray !important;
+    }
+  }
+}
