@@ -48,20 +48,22 @@ const ProductPage = () => {
 
     // Return early if loading
     if (loading) {
-        return <div className={'container-fluid mx-3 my-3 xl-text'}>Загрузка...</div>;
+        return <div className={'container-fluid xl-text'}>Загрузка...</div>;
     }
 
     // Return early if error
     if (error) {
-        return <div className={'container-fluid mx-3 my-3 xl-text'}>{error}</div>;
+        return <div className={'container-fluid xl-text'}>{error}</div>;
     }
 
     return (
-        <div className={'container-fluid mx-3 my-3'}>
-            <Row className="d-flex">
-                <Col xs={12} sm={6} md={4} lg={3}>
-                    <div className="carousel-container">
-
+        <div className={'container-fluid'}>
+            <Col className={'d-flex flex-column xxl-text my-3 mx-5 '}>
+                {product.name || 'Название отсутствует'}
+            </Col>
+            <Row className="d-flex mx-5">
+                <Col xs={12} sm={9} md={9} lg={9}>
+                    <div className="carousel-container w-35">
                         <div
                             className="carousel-images"
                             style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
@@ -74,54 +76,71 @@ const ProductPage = () => {
                                 />
                             ))}
                         </div>
+                        <div className="carousel-container w-15">
+                            <div
+                                className="carousel-images mt-3"
+                                // style={{transform: ``}}
+                            >
+                                {images.map((image, index) => (
+                                    <div>
+                                        <Image
+                                        key={index}
+                                        // onClick={}
+                                        className="carousel-image"
+                                        src={process.env.REACT_APP_API_URL + image.file}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-                        {/*Левая стрелка*/}
-                        {images.length > 1 && (
-                            <img
-                                src={leftArrow}
-                                alt="prev"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    prevImage();
-                                }}
-                                className="arrow-icon left-arrow"
-                            />
-                        )}
+                            {/*Левая стрелка*/}
+                            {images.length > 1 && (
+                                <img
+                                    src={leftArrow}
+                                    alt="prev"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        prevImage();
+                                    }}
+                                    className="arrow-icon left-arrow"
+                                />
+                            )}
 
-                        {/*Правая стрелка*/}
-                        {images.length > 1 && (
-                            <img
-                                src={rightArrow}
-                                alt="next"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    nextImage();
-                                }}
-                                className="arrow-icon right-arrow"
-                            />
-                        )}
-                    </div>
+                            {/*Правая стрелка*/}
+                            {images.length > 1 && (
+                                <img
+                                    src={rightArrow}
+                                    alt="next"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        nextImage();
+                                    }}
+                                    className="arrow-icon right-arrow"
+                                />
+                            )}
+                        </div>
                 </Col>
 
-                <Col xs={12} sm={6} md={4} lg={3}>
+                <Col xs={12} sm={9} md={6} lg={3} className={''}>
                     <Card
-                        className={'d-flex flex-column'}
+                        className={'d-flex flex- border-radius-0 p-2'}
                     >
-                        <Col className={'l-text'}>От {product.price || 'Цена отсутсвует'} руб.</Col>
+                        <Col className={'xxl-text'}> {`От ${product.price} ₽` || 'Цена отсутсвует'}</Col>
+                        <Col className={'s-text '}>
+                            Цена товара зависит от выбранной ткани и может отличаться от указанной
+                        </Col>
+
                         <ButtonM1 text={'Добавить в корзину'}/>
                     </Card>
                 </Col>
             </Row>
-            <Row className={'d-flex justify-content-center align-items-center l-text'}>
-                <Col xs={12} sm={6} md={4} lg={3}>
-                    {product.name || 'Название отсутствует'}
-                </Col>
-            </Row>
-            <Row className="d-flex flex-column xl-text">
+
+            <Row className="d-flex flex-column xl-text mx-5">
                 <Col xs={12} sm={6} md={4} lg={3}>Характеристики</Col>
                 {product.info && product.info.length > 0 ? (
                     product.info.map((info, index) => (
-                        <Col xs={12} sm={6} md={6} lg={6}>
+                        <Col xs={12} sm={6} md={4} lg={3}>
                             key={info.id}
                             style={{ background: index % 2 === 0 ? 'lightgray' : 'transparent' }}
                         >
