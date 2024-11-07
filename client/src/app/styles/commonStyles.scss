@@ -3,7 +3,7 @@
 .carousel-container {
   position: relative;
   width: 100%;
-  height: auto;  /* Пример фиксированной высоты, можно менять в зависимости от дизайна */
+  height: auto;
   overflow: hidden;
 }
 
@@ -21,7 +21,6 @@
 .carousel-images {
   display: flex;
   transition: transform 0.5s ease-in-out;
-
 }
 
 .carousel-image {
@@ -29,6 +28,23 @@
   height: auto;
   object-fit: contain;
   flex-shrink: 0;
+}
+
+.thumbnail-container {
+  display: flex;
+  gap: 10px;
+}
+
+.thumbnail {
+  width: calc(100% / 5); /* Делим на 5, чтобы вместить 5 картинок */
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.thumbnail.active {
+  border-color: $color-gray; /* Цвет рамки для активного изображения */
+  opacity: 0.7;
 }
 
 .arrow-icon {

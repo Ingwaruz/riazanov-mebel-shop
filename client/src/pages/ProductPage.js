@@ -15,6 +15,17 @@ const ProductPage = () => {
     const { id } = useParams();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = product.images || [];
+    const [startIndex, setStartIndex] = useState(0);
+
+    const handleThumbnailClick = (index) => {
+        setCurrentImageIndex(index);
+        // Проверка: если выбранный индекс выходит за пределы видимого ряда
+        if (index < startIndex) {
+            setStartIndex(index); // Смещаем влево
+        } else if (index >= startIndex + 5) {
+            setStartIndex(index - 4); // Смещаем вправо
+        }
+    };
 
     const nextImage = () => {
         setCurrentImageIndex((prevIndex) =>
@@ -72,78 +83,78 @@ const ProductPage = () => {
                                 <Image
                                     key={index}
                                     className="carousel-image"
-                                    src={process.env.REACT_APP_API_URL + image.file}
+                                    src={`${process.env.REACT_APP_API_URL}${image.file}`}
                                 />
                             ))}
                         </div>
+
                         <div className="carousel-container w-15">
-                            <div
-                                className="carousel-images mt-3"
-                                // style={{transform: ``}}
-                            >
-                                {images.map((image, index) => (
-                                    <div>
+                            <div className="carousel-images mt-3 thumbnail-container">
+                                {images.slice(startIndex, startIndex + 5).map((image, index) => (
+                                    <div
+                                        key={startIndex + index}
+                                        onClick={() => handleThumbnailClick(startIndex + index)}
+                                        className={`thumbnail ${currentImageIndex === startIndex + index ? "active" : ""}`}
+                                    >
                                         <Image
-                                        key={index}
-                                        // onClick={}
-                                        className="carousel-image"
-                                        src={process.env.REACT_APP_API_URL + image.file}
+                                            className="carousel-image"
+                                            src={`${process.env.REACT_APP_API_URL}${image.file}`}
                                         />
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                            {/*Левая стрелка*/}
-                            {images.length > 1 && (
-                                <img
-                                    src={leftArrow}
-                                    alt="prev"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        prevImage();
-                                    }}
-                                    className="arrow-icon left-arrow"
-                                />
-                            )}
+                    {/*Левая стрелка*/}
+                    {images.length > 1 && (
+                        <img
+                            src={leftArrow}
+                            alt="prev"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                prevImage();
+                            }}
+                            className="arrow-icon left-arrow"
+                        />
+                    )}
 
-                            {/*Правая стрелка*/}
-                            {images.length > 1 && (
-                                <img
-                                    src={rightArrow}
-                                    alt="next"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        nextImage();
-                                    }}
-                                    className="arrow-icon right-arrow"
-                                />
-                            )}
-                        </div>
-                </Col>
+                    {/*Правая стрелка*/}
+                    {images.length > 1 && (
+                        <img
+                            src={rightArrow}
+                            alt="next"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                nextImage();
+                            }}
+                            className="arrow-icon right-arrow"
+                        />
+                    )}
+        </div>
+</Col>
 
-                <Col xs={12} sm={9} md={6} lg={3} className={''}>
-                    <Card
-                        className={'d-flex flex- border-radius-0 p-2'}
-                    >
-                        <Col className={'xxl-text'}> {`От ${product.price} ₽` || 'Цена отсутсвует'}</Col>
-                        <Col className={'s-text '}>
-                            Цена товара зависит от выбранной ткани и может отличаться от указанной
-                        </Col>
+    <Col xs={12} sm={9} md={6} lg={3} className={''}>
+        <Card
+            className={'d-flex flex- border-radius-0 p-2'}
+        >
+            <Col className={'xxl-text'}> {`От ${product.price} ₽` || 'Цена отсутсвует'}</Col>
+            <Col className={'s-text '}>
+                Цена товара зависит от выбранной ткани и может отличаться от указанной
+            </Col>
 
-                        <ButtonM1 text={'Добавить в корзину'}/>
-                    </Card>
-                </Col>
-            </Row>
+            <ButtonM1 text={'Добавить в корзину'}/>
+        </Card>
+    </Col>
+</Row>
 
-            <Row className="d-flex flex-column xl-text mx-5">
-                <Col xs={12} sm={6} md={4} lg={3}>Характеристики</Col>
-                {product.info && product.info.length > 0 ? (
-                    product.info.map((info, index) => (
-                        <Col xs={12} sm={6} md={4} lg={3}>
+    <Row className="d-flex flex-column xl-text mx-5">
+        <Col xs={12} sm={6} md={4} lg={3}>Характеристики</Col>
+        {product.info && product.info.length > 0 ? (
+            product.info.map((info, index) => (
+                <Col xs={12} sm={6} md={4} lg={3}>
                             key={info.id}
-                            style={{ background: index % 2 === 0 ? 'lightgray' : 'transparent' }}
-                        >
+                            style={{background: index % 2 === 0 ? 'lightgray' : 'transparent'}}
+                            >
                             {info.title}: {info.description}
                         </Col>
                     ))
