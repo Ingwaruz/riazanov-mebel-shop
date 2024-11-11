@@ -7,6 +7,7 @@ import rightArrow from "../shared/assets/right-arrow.svg";
 import '../app/styles/commonStyles.scss';
 import '../app/styles/shared.scss';
 import ButtonM1 from "../shared/ui/buttons/button-m1";
+import TabList from '../widgets/TabList';
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
@@ -19,11 +20,10 @@ const ProductPage = () => {
 
     const handleThumbnailClick = (index) => {
         setCurrentImageIndex(index);
-        // Проверка: если выбранный индекс выходит за пределы видимого ряда
         if (index < startIndex) {
-            setStartIndex(index); // Смещаем влево
+            setStartIndex(index);
         } else if (index >= startIndex + 5) {
-            setStartIndex(index - 4); // Смещаем вправо
+            setStartIndex(index - 4);
         }
     };
 
@@ -48,28 +48,49 @@ const ProductPage = () => {
             } catch (error) {
                 console.error("Failed to fetch product:", error);
                 setError("Не удалось загрузить данные продукта.");
-                setProduct({ info: [] });  // Fallback to empty array
+                setProduct({ info: [] });
             } finally {
                 setLoading(false);
             }
         };
-
         loadProduct();
     }, [id]);
 
-    // Return early if loading
-    if (loading) {
-        return <div className={'container-fluid xl-text'}>Загрузка...</div>;
-    }
+    if (loading) return <div className="container-fluid xl-text">Загрузка...</div>;
+    if (error) return <div className="container-fluid xl-text">{error}</div>;
 
-    // Return early if error
-    if (error) {
-        return <div className={'container-fluid xl-text'}>{error}</div>;
-    }
+    const tabs = [
+        {
+            key: 'description',
+            title: 'Описание',
+            content: product.description || 'Описание отсутствует.'
+        },
+        {
+            key: 'specifications',
+            title: 'Характеристики',
+            content: (
+                <Row className="d-flex flex-column xl-text">
+                    {product.info && product.info.length > 0 ? (
+                        product.info.map((info, index) => (
+                            <Col
+                                xs={12} sm={6} md={4} lg={3} key={info.id}
+                                style={{ background: index % 2 === 0 ? 'lightgray' : 'transparent' }}
+                            >
+                                {info.title}: {info.description}
+                            </Col>
+                        ))
+                    ) : (
+                        <Col xs={12}>Характеристики не найдены.</Col>
+                    )}
+                </Row>
+            )
+        }
+        // Добавляйте дополнительные вкладки здесь
+    ];
 
     return (
-        <div className={'container-fluid'}>
-            <Col className={'d-flex flex-column xxl-text my-3 mx-5 '}>
+        <div className="container-fluid">
+            <Col className="d-flex flex-column xxl-text my-3 mx-5">
                 {product.name || 'Название отсутствует'}
             </Col>
             <Row className="d-flex mx-5">
@@ -77,7 +98,7 @@ const ProductPage = () => {
                     <div className="carousel-container w-35">
                         <div
                             className="carousel-images"
-                            style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
+                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                         >
                             {images.map((image, index) => (
                                 <Image
@@ -87,7 +108,6 @@ const ProductPage = () => {
                                 />
                             ))}
                         </div>
-
                         <div className="carousel-container w-15">
                             <div className="carousel-images mt-3 thumbnail-container">
                                 {images.slice(startIndex, startIndex + 5).map((image, index) => (
@@ -104,67 +124,27 @@ const ProductPage = () => {
                                 ))}
                             </div>
                         </div>
-
-                    {/*Левая стрелка*/}
-                    {images.length > 1 && (
-                        <img
-                            src={leftArrow}
-                            alt="prev"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                prevImage();
-                            }}
-                            className="arrow-icon left-arrow"
-                        />
-                    )}
-
-                    {/*Правая стрелка*/}
-                    {images.length > 1 && (
-                        <img
-                            src={rightArrow}
-                            alt="next"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                nextImage();
-                            }}
-                            className="arrow-icon right-arrow"
-                        />
-                    )}
-        </div>
-</Col>
-
-    <Col xs={12} sm={9} md={6} lg={3} className={''}>
-        <Card
-            className={'d-flex flex- border-radius-0 p-2'}
-        >
-            <Col className={'xxl-text'}> {`От ${product.price} ₽` || 'Цена отсутсвует'}</Col>
-            <Col className={'s-text '}>
-                Цена товара зависит от выбранной ткани и может отличаться от указанной
-            </Col>
-
-            <ButtonM1 text={'Добавить в корзину'}/>
-        </Card>
-    </Col>
-</Row>
-
-    <Row className="d-flex flex-column xl-text mx-5">
-        <Col xs={12} sm={6} md={4} lg={3}>Характеристики</Col>
-        {product.info && product.info.length > 0 ? (
-            product.info.map((info, index) => (
-                <Col xs={12} sm={6} md={4} lg={3}>
-                            key={info.id}
-                            style={{background: index % 2 === 0 ? 'lightgray' : 'transparent'}}
-                            >
-                            {info.title}: {info.description}
-                        </Col>
-                    ))
-                ) : (
-                    <Col xs={12} sm={12} md={12} lg={12}>
-                        Характеристики не найдены.
-                    </Col>
-                )}
+                        {images.length > 1 && (
+                            <>
+                                <img src={leftArrow} alt="prev" onClick={prevImage} className="arrow-icon left-arrow" />
+                                <img src={rightArrow} alt="next" onClick={nextImage} className="arrow-icon right-arrow" />
+                            </>
+                        )}
+                    </div>
+                </Col>
+                <Col xs={12} sm={9} md={6} lg={3}>
+                    <Card className="d-flex border-radius-0 p-2 sticky-card">
+                        <Col className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</Col>
+                        <Col className="s-text">Цена товара зависит от выбранной ткани и может отличаться от указанной</Col>
+                        <ButtonM1 text="Добавить в корзину" />
+                    </Card>
+                </Col>
             </Row>
-
+            <Row className="d-flex flex-column xl-text mx-5">
+                <Col xs={12}>
+                    <TabList tabs={tabs} />
+                </Col>
+            </Row>
         </div>
     );
 };

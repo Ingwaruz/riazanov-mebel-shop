@@ -130,3 +130,9 @@
     background-color: darken($color-lightgray, 10%);
   }
 }
+
+.sticky-card {
+  position: -webkit-sticky; /* Для поддержки Safari */
+  position: sticky;
+  top: 20px; /* Отступ сверху */
+}
