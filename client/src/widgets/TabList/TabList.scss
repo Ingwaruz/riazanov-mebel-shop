@@ -3,18 +3,20 @@
 .tab-list-nav {
   display: flex;
   width: 100%; /* Чтобы Nav занимал всю ширину */
-  border-radius: 0;
 }
 
 .tab-list-nav .nav-item {
   flex: 1; /* Равномерное распределение ширины для всех Nav.Item */
-  border-radius: 0;
 }
 
 .tab-link {
   width: 100%; /* Чтобы каждая ссылка занимала всю ширину родителя */
   text-align: center; /* Центровка текста */
-  border-radius: 0;
+  color: $color-gray;
+
+  &:hover {
+    color: $color-gray;
+  }
 }
 
 .tab-list-nav {
@@ -27,4 +29,14 @@
       }
     }
   }
+}
+
+.characteristic-line {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 2px;
+  margin-bottom: 5px;
+  border-bottom: 1px dotted $color-gray;
+  color: $color-gray; /* или любой другой цвет */
 }

@@ -63,11 +63,6 @@ const ProductPage = () => {
         {
             key: 'description',
             title: 'Описание',
-            content: product.description || 'Описание отсутствует.'
-        },
-        {
-            key: 'specifications',
-            title: 'Характеристики',
             content: (
                 <Row className="d-flex flex-column xl-text">
                     {product.info && product.info.length > 0 ? (
@@ -80,10 +75,33 @@ const ProductPage = () => {
                             </Col>
                         ))
                     ) : (
-                        <Col xs={12}>Характеристики не найдены.</Col>
+                        <Col xs={12}>Описание отсутствует.</Col>
                     )}
                 </Row>
             )
+        },
+        {
+            key: 'specifications',
+            title: 'Характеристики',
+            content: product.width && product.depth && product.height
+                ? (
+                    <div>
+                        <div className="characteristic-line">
+                            <span>Ширина</span>
+                            <span>{product.width} см</span>
+                        </div>
+                        <div className="characteristic-line">
+                            <span>Глубина</span>
+                            <span>{product.depth} см</span>
+                        </div>
+                        <div className="characteristic-line">
+                            <span>Высота</span>
+                            <span>{product.height} см</span>
+                        </div>
+                    </div>
+                )
+                : 'Описание отсутствует.'
+
         }
         // Добавляйте дополнительные вкладки здесь
     ];
@@ -91,7 +109,7 @@ const ProductPage = () => {
     return (
         <div className="container-fluid">
             <Row className="d-flex mx-5">
-                <Row className="d-flex flex-column xxl-text my-3 mx-5 p-1">
+                <Row className="d-flex flex-column xxl-text m-0 my-4">
                     {product.name || 'Название отсутствует'}
                 </Row>
                 <Col xs={12} sm={9} md={9} lg={9}>

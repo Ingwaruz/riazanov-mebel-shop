@@ -9,7 +9,7 @@ const TabList = ({ tabs }) => {
 
     return (
         <Tab.Container activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
-            <Nav variant="pills" className="mb-3 tab-list-nav bg-color-lightgray color-gray">
+            <Nav variant="pills" className="mb-3 tab-list-nav bg-color-lightgray">
                 {tabs.map((tab) => (
                     <Nav.Item key={tab.key} className="flex-fill text-center">
                         <Nav.Link eventKey={tab.key} className="tab-link">
