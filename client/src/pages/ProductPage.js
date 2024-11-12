@@ -7,7 +7,7 @@ import rightArrow from "../shared/assets/right-arrow.svg";
 import '../app/styles/commonStyles.scss';
 import '../app/styles/shared.scss';
 import ButtonM1 from "../shared/ui/buttons/button-m1";
-import TabList from '../widgets/TabList';
+import TabList from '../widgets/TabList/TabList';
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
@@ -90,15 +90,15 @@ const ProductPage = () => {
 
     return (
         <div className="container-fluid">
-            <Col className="d-flex flex-column xxl-text my-3 mx-5">
-                {product.name || 'Название отсутствует'}
-            </Col>
             <Row className="d-flex mx-5">
+                <Row className="d-flex flex-column xxl-text my-3 mx-5 p-1">
+                    {product.name || 'Название отсутствует'}
+                </Row>
                 <Col xs={12} sm={9} md={9} lg={9}>
                     <div className="carousel-container w-35">
                         <div
                             className="carousel-images"
-                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                            style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
                         >
                             {images.map((image, index) => (
                                 <Image
@@ -126,23 +126,24 @@ const ProductPage = () => {
                         </div>
                         {images.length > 1 && (
                             <>
-                                <img src={leftArrow} alt="prev" onClick={prevImage} className="arrow-icon left-arrow" />
-                                <img src={rightArrow} alt="next" onClick={nextImage} className="arrow-icon right-arrow" />
+                                <img src={leftArrow} alt="prev" onClick={prevImage} className="arrow-icon left-arrow"/>
+                                <img src={rightArrow} alt="next" onClick={nextImage}
+                                     className="arrow-icon right-arrow"/>
                             </>
                         )}
+                    </div>
+                    <div
+                        className="d-flex flex-column xl-text mt-5"
+                    >
+                        <TabList tabs={tabs}/>
                     </div>
                 </Col>
                 <Col xs={12} sm={9} md={6} lg={3}>
                     <Card className="d-flex border-radius-0 p-2 sticky-card">
-                        <Col className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</Col>
-                        <Col className="s-text">Цена товара зависит от выбранной ткани и может отличаться от указанной</Col>
+                    <div className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</div>
+                        <div className="s-text">Цена товара зависит от выбранной ткани и может отличаться от указанной</div>
                         <ButtonM1 text="Добавить в корзину" />
                     </Card>
-                </Col>
-            </Row>
-            <Row className="d-flex flex-column xl-text mx-5">
-                <Col xs={12}>
-                    <TabList tabs={tabs} />
                 </Col>
             </Row>
         </div>
