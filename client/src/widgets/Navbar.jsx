@@ -50,8 +50,12 @@ const MyNavbar = observer(() => {
                         />
                     </NavLink>
 
-                    <Row className={'d-flex justify-content-around color-white'} style={{ width: 600 }}>
-                        <Col className={'xs-text mx-3 col-auto'}>
+                    <Row
+                        className={'d-flex justify-content-around color-white flex-wrap'}
+                        style={{ width: '100%', maxWidth: 900 }}
+                    >
+
+                    <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
                                 className="color-white text-decoration-none"
@@ -133,12 +137,7 @@ const MyNavbar = observer(() => {
                                 className="ms-lg-4 s-text color-white border-radius-0 hover-item--white border-color-white bg-color-gray"
                                 onClick={logOut}
                             >
-                                <Image
-                                    className="icon color-white"
-                                    width={30}
-                                    src="/icons/exit.svg"
-                                    alt="Главная"
-                                />
+                                ВЫЙТИ
                             </Button>
                         </Nav>
                     ) : (

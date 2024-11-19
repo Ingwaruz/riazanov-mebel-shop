@@ -6,6 +6,7 @@ import leftArrow from "../shared/assets/left-arrow.svg";
 import rightArrow from "../shared/assets/right-arrow.svg";
 import '../app/styles/commonStyles.scss';
 import '../app/styles/shared.scss';
+import '../app/styles/colors.scss';
 import ButtonM1 from "../shared/ui/buttons/button-m1";
 import TabList from '../widgets/TabList/TabList';
 
@@ -64,12 +65,13 @@ const ProductPage = () => {
             key: 'description',
             title: 'Описание',
             content: (
-                <Row className="d-flex flex-column xl-text">
-                    {product.info && product.info.length > 0 ? (
-                        product.info.map((info, index) => (
+                <>
+                    {product.product_infos && product.product_infos.length > 0 ? (
+                        product.product_infos.map((info, index) => (
                             <Col
-                                xs={12} sm={6} md={4} lg={3} key={info.id}
+                                key={info.id}
                                 style={{ background: index % 2 === 0 ? 'lightgray' : 'transparent' }}
+                                className="d-flex flex-column xl-text ps-3 p-2"
                             >
                                 {info.title}: {info.description}
                             </Col>
@@ -77,7 +79,7 @@ const ProductPage = () => {
                     ) : (
                         <Col xs={12}>Описание отсутствует.</Col>
                     )}
-                </Row>
+                </>
             )
         },
         {
@@ -157,7 +159,10 @@ const ProductPage = () => {
                     </div>
                 </Col>
                 <Col xs={12} sm={9} md={6} lg={3}>
-                    <Card className="d-flex border-radius-0 p-2 sticky-card">
+                    <Card
+                        style={{ boxShadow: '0px 0px 32px rgba(0, 0, 0, 0.08)' }}
+                        className="border-white d-flex border-radius-0 p-2 sticky-card"
+                    >
                     <div className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</div>
                         <div className="s-text">Цена товара зависит от выбранной ткани и может отличаться от указанной</div>
                         <ButtonM1 text="Добавить в корзину" />

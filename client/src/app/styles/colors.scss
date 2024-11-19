@@ -1,10 +1,18 @@
+$color-blue: #5262A6; // слоняра
 $color-white: #FFFFFF;
 $color-black: #1D1D1B;
-$color-gray: #212529;
+$color-gray: #3D4158; // слоняра
 $color-lightgray: #d3d3d3;
 $color-light: #F8F9FA;
-$color-green: #9AD36D;
-$color-yellow: #EFCA4D;
+
+$focus_input_color: #C5C5C5;
+$add_color: #FED953;
+
+//--main_color: #5262A6;
+//--main_color_hover: #424F86;
+//--main_color_active: #36406D;
+//--main_font_color: #3D4158;
+//--main_link_color: #4777E2;
 
 $colors: (
   white: $color-white,
