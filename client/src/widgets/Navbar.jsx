@@ -37,19 +37,27 @@ const MyNavbar = observer(() => {
                 className={'s-text bg-main_color'}
             >
                 <div className={'container-fluid'}>
-                    <NavLink
-                        className={'s-text ps-3 color_white'}
-                        to={SHOP_ROUTE}
-                        onClick={() => product.resetFilters()} // Фильтры сбрасываются при переходе
-                    >
-                        <Image
-                            className="icon"
-                            width={50}
-                            src="/icons/riazanov-mebel.jpg"
-                            alt="Главная"
-                        />
-                    </NavLink>
-
+                    <div>
+                        <NavLink
+                            className={'s-text ps-3 color_white'}
+                            to={SHOP_ROUTE}
+                            onClick={() => product.resetFilters()} // Фильтры сбрасываются при переходе
+                        >
+                            <i className="fas fa-shop fa-2x"></i>
+                        </NavLink>
+                        <NavLink
+                            className="ms-5 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
+                            style={{border: 'none'}}
+                        >
+                            <i className="fas fa-user fa-2x"></i>
+                        </NavLink>
+                        <NavLink
+                            className="ms-5 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
+                            style={{border: 'none'}}
+                        >
+                            <i className="fas fa-cart-arrow-down fa-2x"></i>
+                        </NavLink>
+                    </div>
                     <Row
                         className={'d-flex justify-content-around color_white flex-wrap'}
                         style={{ width: '100%', maxWidth: 900 }}
@@ -126,7 +134,7 @@ const MyNavbar = observer(() => {
                     </Row>
 
                     {user.isAuth ? (
-                        <Nav className="ml-auto color_white">
+                        <Nav className="ml-auto color_white me-3">
                             <Button
                                 className="ms-lg-4 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
                                 onClick={() => navigate(ADMIN_ROUTE)}
@@ -136,8 +144,9 @@ const MyNavbar = observer(() => {
                             <Button
                                 className="ms-lg-4 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
                                 onClick={logOut}
+                                style={{border: 'none'}}
                             >
-                                ВЫЙТИ
+                                <i class="fas fa-arrow-right-from-bracket fa-2x"></i>
                             </Button>
                         </Nav>
                     ) : (

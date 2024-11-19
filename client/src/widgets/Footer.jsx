@@ -8,7 +8,7 @@ export default function Footer() {
         <MDBFooter className='text-center text-lg-start text-muted mt-5 bg-main_color color_white'>
             <div className={'container-fluid p-0'}>
                 <section className='d-flex c justify-content-lg-between justify-content-center p-3 border-bottom'>
-                    <div className='d-none d-lg-block d-flex justify-content-center l-text color_white'>
+                    <div className='d-none d-lg-block d-flex justify-content-center l-text color_white ms-3'>
                         <span>Следите за нами в социальных сетях:</span>
                     </div>
 

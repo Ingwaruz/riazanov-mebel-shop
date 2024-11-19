@@ -12,22 +12,20 @@ const FactoryBar = observer(() => {
     const sortedFactories = product.factories.slice().sort((a, b) => a.id - b.id);
 
     return (
-        <Col
-            className="d-flex flex-md-row flex-column"
-        >
-            {sortedFactories.map(factory =>
+        <Col className="d-flex flex-md-row flex-column">
+            {sortedFactories.map(factory => (
                 <Card
                     key={factory.id}
-                    className="p-2 s-text border-radius-0 hover-item--lightgray w-100 text-center"
+                    className={`p-2 s-text border-radius-0 w-100 text-center ${
+                        factory.id === product.selectedFactory?.id
+                            ? 'bg-main_color_active border-main_color text-white'
+                            : 'bg-color_white hover-item--main_color_active text-dark'
+                    }`}
                     onClick={() => product.setSelectedFactory(factory)}
-                    border={factory.id === product.selectedFactory.id ?
-                        'bg-focus_input_color border-main_color'
-                        :
-                        'bg-color_white border-focus_input_color'}
                 >
                     {factory.name}
                 </Card>
-            )}
+            ))}
         </Col>
     );
 });

@@ -17,10 +17,10 @@ const TypeBar = observer(() => {
             className={'border-radius-0 ms-0 mt-0'}
         >
             <ListGroup.Item
-                className={`hover-item--lightgray ps-3 s-text ${!product.selectedType ? 
+                className={`ps-3 s-text ${!product.selectedType ? 
                     'border-focus_input_color' 
                     : 
-                    'bg-color_white'
+                    'bg-color_white hover-item--main_color_active'
                 }`}
                 onClick={() => { product.resetFilters() }}
                 active={!product.selectedType} // Активно, если тип не выбран
@@ -30,9 +30,9 @@ const TypeBar = observer(() => {
             {product.types.map(type =>
                 <ListGroup.Item
                     className={`ps-3 s-text ${type.id === product.selectedType?.id ? 
-                        'bg-focus_input_color border-main_color' 
+                        'bg-main_color_active border-main_color' 
                         : 
-                        'bg-color_white'
+                        'bg-color_white hover-item--main_color_active'
                         }`}
                     active={type.id === product.selectedType?.id}
                     onClick={() => product.setSelectedType(type)}
