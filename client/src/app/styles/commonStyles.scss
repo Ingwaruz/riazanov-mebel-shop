@@ -43,7 +43,7 @@
 }
 
 .thumbnail.active {
-  border-color: $color-gray; /* Цвет рамки для активного изображения */
+  border-color: $main_color; /* Цвет рамки для активного изображения */
   opacity: 0.7;
 }
 
@@ -59,7 +59,7 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: $color-lightgray;
+    background-color: $focus_input_color;
   }
 }
 
@@ -105,14 +105,14 @@
 
 //.type-item {
 //  cursor: pointer;
-//  border: 1px solid $color-lightgray;
-//  color: $color-black;
-//  background-color: $color-white;
+//  border: 1px solid $focus_input_color;
+//  color: $main_font_color;
+//  background-color: $color_white;
 //
 //  &.active-item {
-//    background-color: $color-lightgray;
-//    border-color: $color-lightgray;
-//    color: $color-black;
+//    background-color: $focus_input_color;
+//    border-color: $focus_input_color;
+//    color: $main_font_color;
 //}
 //}
 
@@ -122,12 +122,12 @@
   right: 0;
   transform: translateX(-50%) translateY(20px);  /* Скрыта ниже карточки */
   opacity: 0;
-  background-color: $color-lightgray;
+  background-color: $focus_input_color;
   color: white;
   //transition: opacity 0.3s ease, transform 0.3s ease;
 
   &:hover {
-    background-color: darken($color-lightgray, 10%);
+    background-color: darken($focus_input_color, 10%);
   }
 }
 

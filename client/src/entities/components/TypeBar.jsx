@@ -18,9 +18,9 @@ const TypeBar = observer(() => {
         >
             <ListGroup.Item
                 className={`hover-item--lightgray ps-3 s-text ${!product.selectedType ? 
-                    'bg-color-white border-color-lightgray' 
+                    'main_font_color bg-color_white border-focus_input_color' 
                     : 
-                    'bg-color-white'
+                    'main_font_color bg-color_white'
                 }`}
                 onClick={() => { product.resetFilters() }}
                 active={!product.selectedType} // Активно, если тип не выбран
@@ -29,14 +29,14 @@ const TypeBar = observer(() => {
             </ListGroup.Item>
             {product.types.map(type =>
                 <ListGroup.Item
-                    className={`hover-item--lightgray s-text color-gray ps-3 ${type.id === product.selectedType?.id ? 
-                        'color-black bg-color-lightgray border-color-gray' 
+                    className={`hover-item--lightgray s-text main_color ps-3 ${type.id === product.selectedType?.id ? 
+                        'main_font_color bg-focus_input_color border-main_color' 
                         : 
-                        'color-black bg-color-white' +
+                        'main_font_color bg-color_white' +
                         ''}`}
                     active={type.id === product.selectedType?.id}
                     onClick={() => product.setSelectedType(type)}
-                    bg={'color-white'}
+                    bg={'color_white'}
                     key={type.id}
                 >
                     {type.name.toUpperCase()}

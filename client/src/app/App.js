@@ -32,7 +32,7 @@ const App = observer(() => {
     return (
     <BrowserRouter>
         <MyNavbar />
-        <AppRouter />
+        <AppRouter className="color"/>
         <Footer />
     </BrowserRouter>
   );

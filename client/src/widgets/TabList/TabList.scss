@@ -12,10 +12,10 @@
 .tab-link {
   width: 100%; /* Чтобы каждая ссылка занимала всю ширину родителя */
   text-align: center; /* Центровка текста */
-  color: $color-gray;
+  color: $main_color;
 
   &:hover {
-    color: $color-gray;
+    color: $main_color;
   }
 }
 
@@ -23,8 +23,8 @@
   .nav-item {
     .tab-link {
       &.active {
-        background-color: $color-gray; /* Применяет цвет заднего фона */
-        color: $color-white; /* Задает белый цвет текста */
+        background-color: $main_color; /* Применяет цвет заднего фона */
+        color: $color_white; /* Задает белый цвет текста */
         border-radius: 0; /* Убирает скругление */
       }
     }
@@ -37,6 +37,6 @@
   width: 100%;
   padding-bottom: 2px;
   margin-bottom: 5px;
-  border-bottom: 1px dotted $color-gray;
-  color: $color-gray; /* или любой другой цвет */
+  border-bottom: 1px dotted $main_color;
+  color: $main_color; /* или любой другой цвет */
 }

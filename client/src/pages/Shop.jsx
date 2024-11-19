@@ -49,7 +49,7 @@ const Shop = observer(() => {
 
     return (
         <div className={'container-fluid'}>
-            <Row className="">
+            <Row className="mt-2">
                 <Col md={2}>
                     <TypeBar/>
                 </Col>

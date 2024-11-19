@@ -34,11 +34,11 @@ const MyNavbar = observer(() => {
             <BootstrapNavbar
                 data-bs-theme="dark"
                 style={{ height: 75, boxShadow: '0 4px 4px rgba(0, 0, 0, 0.4)' }}
-                className={'s-text bg-color-gray'}
+                className={'s-text bg-main_color'}
             >
                 <div className={'container-fluid'}>
                     <NavLink
-                        className={'s-text ps-3 color-white'}
+                        className={'s-text ps-3 color_white'}
                         to={SHOP_ROUTE}
                         onClick={() => product.resetFilters()} // Фильтры сбрасываются при переходе
                     >
@@ -51,14 +51,14 @@ const MyNavbar = observer(() => {
                     </NavLink>
 
                     <Row
-                        className={'d-flex justify-content-around color-white flex-wrap'}
+                        className={'d-flex justify-content-around color_white flex-wrap'}
                         style={{ width: '100%', maxWidth: 900 }}
                     >
 
                     <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color-white text-decoration-none"
+                                className="color_white text-decoration-none"
                                 onClick={() =>
                                     handleModalShow(
                                         'Где купить',
@@ -84,7 +84,7 @@ const MyNavbar = observer(() => {
                         <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color-white text-decoration-none"
+                                className="color_white text-decoration-none"
                                 onClick={() =>
                                     handleModalShow(
                                         'Распродажа',
@@ -98,7 +98,7 @@ const MyNavbar = observer(() => {
                         <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color-white text-decoration-none"
+                                className="color_white text-decoration-none"
                                 onClick={() =>
                                     handleModalShow(
                                         'Доставка',
@@ -112,7 +112,7 @@ const MyNavbar = observer(() => {
                         <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color-white text-decoration-none"
+                                className="color_white text-decoration-none"
                                 onClick={() =>
                                     handleModalShow(
                                         'Контакты',
@@ -126,15 +126,15 @@ const MyNavbar = observer(() => {
                     </Row>
 
                     {user.isAuth ? (
-                        <Nav className="ml-auto color-white">
+                        <Nav className="ml-auto color_white">
                             <Button
-                                className="ms-lg-4 s-text color-white border-radius-0 hover-item--white border-color-white bg-color-gray"
+                                className="ms-lg-4 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
                                 onClick={() => navigate(ADMIN_ROUTE)}
                             >
                                 АДМИН ПАНЕЛЬ
                             </Button>
                             <Button
-                                className="ms-lg-4 s-text color-white border-radius-0 hover-item--white border-color-white bg-color-gray"
+                                className="ms-lg-4 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
                                 onClick={logOut}
                             >
                                 ВЫЙТИ
@@ -143,7 +143,7 @@ const MyNavbar = observer(() => {
                     ) : (
                         <Nav className="ml-auto">
                             <Button
-                                className={'border-radius-0 s-text hover-item--white color-white border-color-white bg-color-gray'}
+                                className={'border-radius-0 s-text hover-item--white color_white border-color_white bg-main_color'}
                                 onClick={() => navigate(LOGIN_ROUTE)}
                             >
                                 Авторизация

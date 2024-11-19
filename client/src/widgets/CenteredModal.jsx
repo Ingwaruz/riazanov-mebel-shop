@@ -19,7 +19,7 @@ const CenteredModal = ({ show, onHide, title, children }) => {
                 <Button
                     variant="secondary"
                     onClick={onHide}
-                    className='m-text color-white'
+                    className='m-text color_white'
                 >
                     Закрыть
                 </Button>

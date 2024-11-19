@@ -14,25 +14,25 @@ const Admin = () => {
     return (
         <Container className={'d-flex flex-column'}>
             <Button
-                className={'mt-4 p-3 bg-color-white border-radius-0 border-color-gray color-black hover-item--lightgray m-text'}
+                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color_active main_font_color hover-item--lightgray m-text'}
                 onClick={() => setFactoryVisible(true)}
             >
                 Добавить производителя
             </Button>
             <Button
-                className={'mt-4 p-3 bg-color-white border-radius-0 border-color-gray color-black hover-item--lightgray m-text'}
+                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color main_font_color hover-item--lightgray m-text'}
                 onClick={() => setTypeVisible(true)}
             >
                 Добавить тип
             </Button>
             <Button
-                className={'mt-4 p-3 bg-color-white border-radius-0 border-color-gray color-black hover-item--lightgray m-text'}
+                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color main_font_color hover-item--lightgray m-text'}
                 onClick={() => setCollectionVisible(true)}
             >
                 Добавить коллекцию
             </Button>
             <Button
-                className={'mt-4 p-3 bg-color-white border-radius-0 border-color-gray color-black hover-item--lightgray m-text'}
+                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color main_font_color hover-item--lightgray m-text'}
                 onClick={() => setProductVisible(true)}
             >
                 Добавить товар
