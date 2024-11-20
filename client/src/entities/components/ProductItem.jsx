@@ -27,67 +27,58 @@ const ProductItem = ({ product, factoryName, price }) => {
     return (
         <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
             <Card
-                style={{ cursor: 'pointer', flexGrow: 1, position: 'relative', border: '0' }}
+                style={{
+                    cursor: 'pointer',
+                    flexGrow: 1,
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    height: '100%', // Задаём высоту карточки
+                    border: '0',
+                }}
                 className="product-card img-centered border-radius-0 bg-color_white"
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
-                <Col className={'d-flex m-text mx-3 mt-2 mb-1 '}>{factoryName}</Col>
+                {/* Верхняя часть карточки */}
+                <div>
+                    <Col className={'d-flex m-text mx-3 mt-2 mb-1 '}>{factoryName}</Col>
 
-                <Col style={{ width: 'auto' }} className="d-flex mx-3">
-                    <div className="carousel-container">
-                        <div
-                            className="carousel-images"
-                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
-                        >
-                            {images.map((image, index) => (
-                                <Image
-                                    key={index}
-                                    className="carousel-image"
-                                    src={process.env.REACT_APP_API_URL + image.file}
-                                />
-                            ))}
+                    <Col className="d-flex justify-content-center align-items-center mx-3 w-auto">
+                        <div className="carousel-container">
+                            <div
+                                className="d-flex carousel-images"
+                                style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                            >
+                                {images.map((image, index) => (
+                                    <Image
+                                        key={index}
+                                        className="carousel-image"
+                                        src={process.env.REACT_APP_API_URL + image.file}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </Col>
+                    </Col>
 
-                {/* Левая стрелка */}
-                {images.length > 1 && (
-                    <img
-                        src={leftArrow}
-                        alt="prev"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            prevImage();
-                        }}
-                        className="arrow-icon left-arrow"
-                    />
-                )}
+                    {/* Левая стрелка */}
+                    {images.length > 1 && (
+                        <i className="fas fa-angle-left arrow-icon left-arrow main_color"></i>
+                    )}
 
-                {/* Правая стрелка */}
-                {images.length > 1 && (
-                    <img
-                        src={rightArrow}
-                        alt="next"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            nextImage();
-                        }}
-                        className="arrow-icon right-arrow"
-                    />
-                )}
+                    {/* Правая стрелка */}
+                    {images.length > 1 && (
+                        <i className="fas fa-angle-right arrow-icon arrow-icon right-arrow main_color"></i>
+                    )}
+                </div>
 
-                {/* Название товара под изображением */}
-                <Col className="d-flex m-text mx-3 my-2">
-                    {product.name}
-                </Col>
-
-                {/* Кнопка "Подробнее" */}
-                <Col className={'d-flex l-text mx-3 mt-1 mb-2'}>
-                    {`Цена от ${price.toLocaleString('ru-RU')} ₽`}
-                </Col>
-                {/*<Col className="learn-more m-text p-1" onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}>*/}
-                {/*    Подробнее*/}
-                {/*</Col>*/}
+                {/* Нижняя часть карточки */}
+                <div>
+                    <Col className="d-flex m-text mx-3 my-2">{product.name}</Col>
+                    <Col className={'d-flex l-text mx-3 mt-1 mb-2'}>
+                        {`Цена от ${price.toLocaleString('ru-RU')} ₽`}
+                    </Col>
+                </div>
             </Card>
         </Col>
     );

@@ -4,6 +4,7 @@ import CreateFactory from "../widgets/modals/CreateFactory";
 import CreateProduct from "../widgets/modals/CreateProduct";
 import CreateType from "../widgets/modals/CreateType";
 import CreateCollection from "../widgets/modals/CreateCollection";
+import ButtonM2 from "../shared/ui/buttons/button-m1";
 
 const Admin = () => {
     const [factoryVisible, setFactoryVisible] = useState(false)
@@ -13,30 +14,23 @@ const Admin = () => {
 
     return (
         <Container className={'d-flex flex-column'}>
-            <Button
-                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color_active main_font_color hover-item--lightgray m-text'}
+            <ButtonM2
+                text="Добавить производителя"
                 onClick={() => setFactoryVisible(true)}
-            >
-                Добавить производителя
-            </Button>
-            <Button
-                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color main_font_color hover-item--lightgray m-text'}
+            />
+            <ButtonM2
+                text="Добавить тип"
                 onClick={() => setTypeVisible(true)}
-            >
-                Добавить тип
-            </Button>
-            <Button
-                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color main_font_color hover-item--lightgray m-text'}
+            />
+            <ButtonM2
+                text="Добавить коллекцию"
                 onClick={() => setCollectionVisible(true)}
-            >
-                Добавить коллекцию
-            </Button>
-            <Button
-                className={'mt-4 p-3 bg-color_white border-radius-0 border-main_color main_font_color hover-item--lightgray m-text'}
+            />
+            <ButtonM2
+                text="Добавить товар"
                 onClick={() => setProductVisible(true)}
-            >
-                Добавить товар
-            </Button>
+            />
+
             <CreateType show={typeVisible} onHide={() => setTypeVisible(false)}/>
             <CreateFactory show={factoryVisible} onHide={() => setFactoryVisible(false)}/>
             <CreateCollection show={collectionVisible} onHide={() => setCollectionVisible(false)}/>

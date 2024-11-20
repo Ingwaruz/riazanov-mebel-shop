@@ -11,8 +11,8 @@ const ButtonM3 = ({ width, height, text, onClick }) => {
 
             className='
             d-flex align-items-center justify-content-center
-            m-text bg-main_color main_color_hover hover-item--main_color_active
-            border-radius-0 p-2 mt-3
+            m-text bg-main_color_hover hover-item--main_color
+            border-radius-0 p-4 mt-3 color_white
             '
             onClick={onClick}
         >

@@ -70,7 +70,7 @@ const CreateCollection = ({ show, onHide }) => {
                         className="mb-3"
                     />
                     <Dropdown className="mb-2 color-white">
-                        <Dropdown.Toggle className="mb-2 border-main_color bg-main_color hover-item--main_color_hover border-radius-0">
+                        <Dropdown.Toggle className="mb-2 border-main_color bg-main_color_hover hover-item--main_color border-radius-0">
                             {selectedFactory?.name || 'Выберите производителя'}
                         </Dropdown.Toggle>
                         <Dropdown.Menu>

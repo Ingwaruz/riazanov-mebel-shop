@@ -139,7 +139,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                 <Form>
                     <Dropdown className="mt-2 mb-2">
                         <Dropdown.Toggle
-                            className="border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                            className="border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
                         >
                             {product.selectedType.name || 'Выберите тип товара'}
                         </Dropdown.Toggle>
@@ -156,7 +156,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
                         <Dropdown.Toggle
-                            className="border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                            className="border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
                         >
                             {product.selectedFactory.name || 'Выберите производителя'}
                         </Dropdown.Toggle>
@@ -173,7 +173,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
                         <Dropdown.Toggle
-                            className="border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                            className="border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
                             disabled={!product.selectedFactory}>
                             {product.selectedCollection?.name || 'Выберите коллекцию'}
                         </Dropdown.Toggle>
@@ -230,7 +230,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     />
                     <hr />
                     <Button
-                        className="color-white border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                        className="color-white border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
                         onClick={addInfo}
                     >
                         Добавить новое свойство

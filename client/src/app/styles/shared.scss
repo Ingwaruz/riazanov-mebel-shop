@@ -3,19 +3,19 @@
 .hover-item {
   transition: background-color 0.2s ease-out;
 
-  //&--main_color {
-  //  &:hover {
-  //    background-color: $main_color !important;
-  //    color: $main_color !important;
-  //    cursor: pointer;
-  //    opacity: 0.8;
-  //    transition: 0.4s;
-  //  }
-  //}
-  //
+  &--main_color {
+    &:hover {
+      background-color: $main_color !important;
+      color: $color_white !important;
+      transition: background-color 0.3s ease-out;
+      cursor: pointer;
+    }
+  }
+
   &--main_color_hover {
     &:hover {
       background-color: $main_color_hover !important;
+      color: $color_white !important;
       transition: background-color 0.3s ease-out;
       cursor: pointer;
     }
@@ -25,7 +25,7 @@
     &:hover {
       background-color: $main_color_active !important;
       color: $color_white !important;
-      opacity: 0.7;
+      transition: background-color 0.3s ease-out;
       cursor: pointer;
     }
   }
