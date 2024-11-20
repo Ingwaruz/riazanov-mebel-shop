@@ -37,7 +37,7 @@ const MyNavbar = observer(() => {
                 className={'s-text bg-main_color'}
             >
                 <div className={'container-fluid'}>
-                    <div>
+                    <Col className="col-auto">
                         <NavLink
                             className={'s-text ps-3 color_white'}
                             to={SHOP_ROUTE}
@@ -47,17 +47,19 @@ const MyNavbar = observer(() => {
                         </NavLink>
                         <NavLink
                             className="ms-5 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
+                            to={SHOP_ROUTE}
                             style={{border: 'none'}}
                         >
                             <i className="fas fa-user fa-2x"></i>
                         </NavLink>
                         <NavLink
                             className="ms-5 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
+                            to={SHOP_ROUTE}
                             style={{border: 'none'}}
                         >
                             <i className="fas fa-cart-arrow-down fa-2x"></i>
                         </NavLink>
-                    </div>
+                    </Col>
                     <Row
                         className={'d-flex justify-content-around color_white flex-wrap'}
                         style={{ width: '100%', maxWidth: 900 }}

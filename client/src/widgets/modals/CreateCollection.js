@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Form, Modal, Spinner, Alert } from "react-bootstrap";
 import { createCollection, fetchFactories } from "../../processes/productAPI";
+import "../../app/styles/colors.scss";
 
 const CreateCollection = ({ show, onHide }) => {
     const [value, setValue] = useState('');
@@ -68,8 +69,8 @@ const CreateCollection = ({ show, onHide }) => {
                         placeholder={'Введите название коллекции...'}
                         className="mb-3"
                     />
-                    <Dropdown className="mb-2">
-                        <Dropdown.Toggle>
+                    <Dropdown className="mb-2 color-white">
+                        <Dropdown.Toggle className="mb-2 border-main_color bg-main_color hover-item--main_color_hover border-radius-0">
                             {selectedFactory?.name || 'Выберите производителя'}
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
@@ -86,8 +87,8 @@ const CreateCollection = ({ show, onHide }) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="outline-danger" onClick={onHide}>Закрыть</Button>
-                <Button variant="outline-success" onClick={addCollection} disabled={loading}>Добавить</Button>
+                <Button className="border-radius-0" variant="outline-danger" onClick={onHide}>Закрыть</Button>
+                <Button className="border-radius-0" variant="outline-success" onClick={addCollection} disabled={loading}>Добавить</Button>
             </Modal.Footer>
         </Modal>
     );

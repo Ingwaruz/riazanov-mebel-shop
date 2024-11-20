@@ -138,7 +138,11 @@ const CreateProduct = observer(({ show, onHide }) => {
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form>
                     <Dropdown className="mt-2 mb-2">
-                        <Dropdown.Toggle>{product.selectedType.name || 'Выберите тип товара'}</Dropdown.Toggle>
+                        <Dropdown.Toggle
+                            className="border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                        >
+                            {product.selectedType.name || 'Выберите тип товара'}
+                        </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {product.types.map(type => (
                                 <Dropdown.Item
@@ -151,7 +155,11 @@ const CreateProduct = observer(({ show, onHide }) => {
                         </Dropdown.Menu>
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
-                        <Dropdown.Toggle>{product.selectedFactory.name || 'Выберите производителя'}</Dropdown.Toggle>
+                        <Dropdown.Toggle
+                            className="border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                        >
+                            {product.selectedFactory.name || 'Выберите производителя'}
+                        </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {product.factories.map(factory => (
                                 <Dropdown.Item
@@ -164,7 +172,11 @@ const CreateProduct = observer(({ show, onHide }) => {
                         </Dropdown.Menu>
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
-                        <Dropdown.Toggle disabled={!product.selectedFactory}>{product.selectedCollection?.name || 'Выберите коллекцию'}</Dropdown.Toggle>
+                        <Dropdown.Toggle
+                            className="border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                            disabled={!product.selectedFactory}>
+                            {product.selectedCollection?.name || 'Выберите коллекцию'}
+                        </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {filteredCollections.map(collection => (
                                 <Dropdown.Item
@@ -217,7 +229,10 @@ const CreateProduct = observer(({ show, onHide }) => {
                         onChange={selectFiles}
                     />
                     <hr />
-                    <Button variant="outline-dark" onClick={addInfo}>
+                    <Button
+                        className="color-white border-main_color bg-main_color hover-item--main_color_hover border-radius-0"
+                        onClick={addInfo}
+                    >
                         Добавить новое свойство
                     </Button>
                     {productData.info.map(i => (
@@ -249,8 +264,8 @@ const CreateProduct = observer(({ show, onHide }) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="outline-danger" onClick={onHide}>Закрыть</Button>
-                <Button variant="outline-success" onClick={addProduct} disabled={loading}>Добавить</Button>
+                <Button className="border-radius-0" variant="outline-danger" onClick={onHide}>Закрыть</Button>
+                <Button className="border-radius-0" variant="outline-success" onClick={addProduct} disabled={loading}>Добавить</Button>
             </Modal.Footer>
         </Modal>
     );

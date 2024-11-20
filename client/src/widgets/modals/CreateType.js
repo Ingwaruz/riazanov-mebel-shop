@@ -34,8 +34,8 @@ const CreateType = ({show, onHide}) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant={'outline-danger'} onClick={onHide}>Закрыть</Button>
-                <Button variant={'outline-success'} onClick={addType}>Добавить</Button>
+                <Button className="border-radius-0" variant={'outline-danger'} onClick={onHide}>Закрыть</Button>
+                <Button className="border-radius-0" variant={'outline-success'} onClick={addType}>Добавить</Button>
             </Modal.Footer>
         </Modal>
     );
