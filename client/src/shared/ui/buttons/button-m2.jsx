@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../../app/styles/colors.scss';
 
 const ButtonM2 = ({ width, height, text, onClick }) => {
     return (
@@ -10,9 +11,15 @@ const ButtonM2 = ({ width, height, text, onClick }) => {
             }}
 
             className='
-            d-flex align-items-center justify-content-center
-            m-text bg-main_color_hover hover-item--main_color
-            border-radius-0 p-4 mt-3 color_white
+            d-flex
+            align-items-center
+            justify-content-center
+            m-text
+            bg-main_color_hover
+            hover-item--main_color
+            color_white
+            border-radius-0
+            p-3 mt-3
             '
             onClick={onClick}
         >

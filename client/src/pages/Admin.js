@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Container} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import CreateFactory from "../widgets/modals/CreateFactory";
 import CreateProduct from "../widgets/modals/CreateProduct";
 import CreateType from "../widgets/modals/CreateType";
@@ -13,9 +13,11 @@ const Admin = () => {
     const [productVisible, setProductVisible] = useState(false)
 
     return (
-        <Container className={'d-flex flex-column'}>
+        <Container className={'d-flex flex-column mt-4'}>
+
             <ButtonM2
                 text="Добавить производителя"
+                //height={{height: '100px'}}
                 onClick={() => setFactoryVisible(true)}
             />
             <ButtonM2
