@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Card, Col, Image } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 import { PRODUCT_ROUTE } from '../utils/consts';
-import leftArrow from '../../shared/assets/left-arrow.svg';
-import rightArrow from '../../shared/assets/right-arrow.svg';
-import '../../app/styles/commonStyles.scss'; // Подключаем SCSS файл
+import '../../app/styles/commonStyles.scss';
+import leftArrow from "../../shared/assets/left-arrow.svg";
+import rightArrow from "../../shared/assets/right-arrow.svg";
 
 const ProductItem = ({ product, factoryName, price }) => {
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [startIndex, setStartIndex] = useState(0);
 
     const images = product.images || [];
 
@@ -22,6 +23,15 @@ const ProductItem = ({ product, factoryName, price }) => {
         setCurrentImageIndex((prevIndex) =>
             prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
+    };
+
+    const handleThumbnailClick = (index) => {
+        setCurrentImageIndex(index);
+        if (index < startIndex) {
+            setStartIndex(index);
+        } else if (index >= startIndex + 5) {
+            setStartIndex(index - 4);
+        }
     };
 
     return (
@@ -48,7 +58,7 @@ const ProductItem = ({ product, factoryName, price }) => {
                         <div className="carousel-container">
                             <div
                                 className="d-flex carousel-images"
-                                style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                                style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
                             >
                                 {images.map((image, index) => (
                                     <Image
@@ -58,17 +68,34 @@ const ProductItem = ({ product, factoryName, price }) => {
                                     />
                                 ))}
                             </div>
+                            <div className="carousel-container w-15">
+                                <div className="carousel-images mt-3 thumbnail-container">
+                                    {images.slice(startIndex, startIndex + 5).map((image, index) => (
+                                        <div
+                                            key={startIndex + index}
+                                            onClick={() => handleThumbnailClick(startIndex + index)}
+                                            className={`thumbnail ${currentImageIndex === startIndex + index ? "active" : ""}`}
+                                        >
+                                            <Image
+                                                className="carousel-image"
+                                                src={`${process.env.REACT_APP_API_URL}${image.file}`}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </Col>
 
                     {/* Левая стрелка */}
+
                     {images.length > 1 && (
-                        <i className="fas fa-angle-left arrow-icon left-arrow main_color"></i>
+                        <i onClick={prevImage} className="fas fa-angle-left arrow-icon left-arrow main_color"></i>
                     )}
 
                     {/* Правая стрелка */}
                     {images.length > 1 && (
-                        <i className="fas fa-angle-right arrow-icon arrow-icon right-arrow main_color"></i>
+                        <i onClick={nextImage} className="fas fa-angle-right arrow-icon arrow-icon right-arrow main_color"></i>
                     )}
                 </div>
 

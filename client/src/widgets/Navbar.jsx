@@ -157,7 +157,7 @@ const MyNavbar = observer(() => {
                                 className={'border-radius-0 s-text hover-item--white color_white border-color_white bg-main_color'}
                                 onClick={() => navigate(LOGIN_ROUTE)}
                             >
-                                Авторизация
+                                ВОЙТИ
                             </Button>
                         </Nav>
                     )}

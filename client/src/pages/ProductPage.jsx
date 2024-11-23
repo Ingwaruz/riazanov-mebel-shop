@@ -149,8 +149,7 @@ const ProductPage = () => {
                         {images.length > 1 && (
                             <>
                                 <img src={leftArrow} alt="prev" onClick={prevImage} className="arrow-icon left-arrow"/>
-                                <img src={rightArrow} alt="next" onClick={nextImage}
-                                     className="arrow-icon right-arrow"/>
+                                <img src={rightArrow} alt="next" onClick={nextImage} className="arrow-icon right-arrow"/>
                             </>
                         )}
                     </div>
