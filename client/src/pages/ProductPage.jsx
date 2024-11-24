@@ -147,10 +147,18 @@ const ProductPage = () => {
                             </div>
                         </div>
                         {images.length > 1 && (
-                            <>
-                                <img src={leftArrow} alt="prev" onClick={prevImage} className="arrow-icon left-arrow"/>
-                                <img src={rightArrow} alt="next" onClick={nextImage} className="arrow-icon right-arrow"/>
-                            </>
+                            <i
+                                onClick={prevImage}
+                                className="fas fa-angle-left arrow-icon left-arrow main_color"
+                            ></i>
+                        )}
+
+                        {/* Правая стрелка */}
+                        {images.length > 1 && (
+                            <i
+                                onClick={nextImage}
+                                className="fas fa-angle-right arrow-icon right-arrow main_color"
+                            ></i>
                         )}
                     </div>
                     <div
