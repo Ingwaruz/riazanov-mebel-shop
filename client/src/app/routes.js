@@ -1,5 +1,5 @@
 import {ADMIN_ROUTE, BASKET_ROUTE, LOGIN_ROUTE, PRODUCT_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "../entities/utils/consts";
-import ProductPage from "../pages/ProductPage";
+import ProductPage from "../pages/ProductPage/ProductPage";
 import Admin from "../pages/Admin";
 import Basket from "../pages/Basket";
 import Shop from "../pages/Shop";

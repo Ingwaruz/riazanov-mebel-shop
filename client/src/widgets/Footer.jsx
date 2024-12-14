@@ -21,10 +21,10 @@ export default function Footer() {
                             className='me-4 text-reset fa-2x'>
                             <MDBIcon fab icon="instagram"/>
                         </a>
-                        <a href='https://l.instagram.com/?u=https%3A%2F%2Fwww.instagram.com%2Forimex_blg%2Fprofilecard%2F%3Figsh%3DMzZxNW5yaWU1OXdh%26fbclid%3DPAZXh0bgNhZW0CMTEAAaZ6AhcUO1euo0Uox7pgrpkCeA6UR6wS6sX81cfNZcMrC6oNgg5CWgGGLOc_aem_Y7zBA36zYXyQb9UCtxPKBA&e=AT3a7fOMHynKgonE-ZLkSg8a-FCuDMoyT4qf9uT1iH7R78lWfl3Z0I9TQ87H_66Ocy29QexUsnxEhKmRWlgxsExHlH0vya-_4TF-iJsJ06Rto4ClOtW1HrA'
-                            className='me-4 text-reset fa-2x'>
-                            <MDBIcon fab icon="instagram"/>
-                        </a>
+                        {/*<a href='https://l.instagram.com/?u=https%3A%2F%2Fwww.instagram.com%2Forimex_blg%2Fprofilecard%2F%3Figsh%3DMzZxNW5yaWU1OXdh%26fbclid%3DPAZXh0bgNhZW0CMTEAAaZ6AhcUO1euo0Uox7pgrpkCeA6UR6wS6sX81cfNZcMrC6oNgg5CWgGGLOc_aem_Y7zBA36zYXyQb9UCtxPKBA&e=AT3a7fOMHynKgonE-ZLkSg8a-FCuDMoyT4qf9uT1iH7R78lWfl3Z0I9TQ87H_66Ocy29QexUsnxEhKmRWlgxsExHlH0vya-_4TF-iJsJ06Rto4ClOtW1HrA'*/}
+                        {/*    className='me-4 text-reset fa-2x'>*/}
+                        {/*    <MDBIcon fab icon="instagram"/>*/}
+                        {/*</a>*/}
                         <a href='https://l.instagram.com/?u=https%3A%2F%2Fwa.me%2F79143983470%3Ffbclid%3DPAZXh0bgNhZW0CMTEAAabLeLDV1ZH84f7Kf0xNMoXPAnaTyVfB3DuaNlexOms4sexkkhbnGep8OIg_aem_ftH0aGTz_aH8762MDBjkrg&e=AT3e_QKFocyG007LWAQd5eLKqn3S9wZrJE6PKKYEGP7-UQi7B8qTHYAg8TwwEHRaNBehlgTztWZsWU72R4m6yOGIiEvG-aNvr0_GMuAt0BGWwPfJANmvObg'
                             className='me-4 text-reset fa-2x'>
                             <MDBIcon fab icon="whatsapp"/>

@@ -1,0 +1,61 @@
+@import '../../app/styles/colors';
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+
+  .carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+
+    .carousel-image {
+      flex-shrink: 0;
+      width: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .arrow-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.7;
+    width: 50px;
+    border-radius: 50%;
+    padding: 16px;
+
+    &:hover {
+      background-color: $focus_input_color;
+    }
+
+    &.left-arrow {
+      left: 10px;
+    }
+
+    &.right-arrow {
+      right: 10px;
+    }
+  }
+}
+
+.thumbnail-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+    border: 1px solid $main_color_active;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+
+    &.active {
+      border-color: $main_color;
+      opacity: 0.7;
+    }
+  }
+}

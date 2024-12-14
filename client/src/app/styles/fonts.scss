@@ -3,12 +3,12 @@
 
 $font-family: "Montserrat", sans-serif;
 
-$font-size-xs: 12px;
-$font-size-s: 14px;
-$font-size-m: 16px;
-$font-size-l: 20px;
-$font-size-xl: 24px;
-$font-size-xxl: 32px;
+$font-size-xs: 0.75rem; // 12px / 16
+$font-size-s: 0.875rem; // 14px / 16
+$font-size-m: 1rem; // 16px / 16
+$font-size-l: 1.25rem; // 20px / 16
+$font-size-xl: 1.5rem; // 24px / 16
+$font-size-xxl: 2rem; // 32px / 16
 
 @mixin font($size) {
   font-family: $font-family;

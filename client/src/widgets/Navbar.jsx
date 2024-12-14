@@ -68,7 +68,7 @@ const MyNavbar = observer(() => {
                     <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color_white text-decoration-none"
+                                className="color_white text-decoration-none m-text"
                                 onClick={() =>
                                     handleModalShow(
                                         'Где купить',
@@ -94,21 +94,55 @@ const MyNavbar = observer(() => {
                         <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color_white text-decoration-none"
+                                className="color_white text-decoration-none m-text"
                                 onClick={() =>
                                     handleModalShow(
-                                        'Распродажа',
-                                        'Информация о текущих скидках появится здесь.'
+                                        'Акции',
+                                        <>
+                                            <p>
+                                                <span style={{fontWeight: '600'}}
+                                                      className="xl-text d-flex justify-content-center">Скидка 30% на всё</span>
+                                                <br/>
+                                                <span className="l-text d-flex justify-content-center">
+                                                    Инвалидам I и II группы,
+                                                </span>
+                                                <span className="l-text d-flex justify-content-center">
+                                                    участникам СВО
+                                                </span>
+                                                <span className="l-text d-flex justify-content-center">
+                                                и их близким родственникам
+                                                </span>
+                                                <br/>
+                                                <span style={{fontWeight: '600'}}
+                                                      className="xl-text d-flex justify-content-center">Скидка 20% на всё</span>
+                                                <br/>
+                                                <span className="l-text d-flex justify-content-center">
+                                                    Пенсионерам,
+                                                </span>
+                                                <span className="l-text d-flex justify-content-center">
+                                                    ветеранам,
+                                                </span>
+                                                <span className="l-text d-flex justify-content-center">
+                                                    инвалидам III группы
+                                                </span> <br/>
+                                                <span style={{fontWeight: '600'}}
+                                                      className="xl-text d-flex justify-content-center">Бесплатная доставка</span>
+                                                <br/>
+                                                <span className="l-text d-flex justify-content-center">
+                                                    Всем перечисленных группам лиц
+                                                </span>
+                                            </p>
+                                        </>
                                     )
                                 }
                             >
-                                РАСПРОДАЖА
+                                АКЦИИ
                             </Button>
                         </Col>
                         <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color_white text-decoration-none"
+                                className="color_white text-decoration-none m-text"
                                 onClick={() =>
                                     handleModalShow(
                                         'Доставка',
@@ -122,7 +156,7 @@ const MyNavbar = observer(() => {
                         <Col className={'xs-text mx-3 col-auto'}>
                             <Button
                                 variant="link"
-                                className="color_white text-decoration-none"
+                                className="color_white text-decoration-none m-text"
                                 onClick={() =>
                                     handleModalShow(
                                         'Контакты',
@@ -138,7 +172,7 @@ const MyNavbar = observer(() => {
                     {user.isAuth ? (
                         <Nav className="ml-auto color_white me-3">
                             <Button
-                                className="ms-lg-4 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
+                                className="ms-lg-4 color_white border-radius-0 hover-item--white border-color_white bg-main_color m-text"
                                 onClick={() => navigate(ADMIN_ROUTE)}
                             >
                                 АДМИН ПАНЕЛЬ
@@ -154,7 +188,7 @@ const MyNavbar = observer(() => {
                     ) : (
                         <Nav className="ml-auto">
                             <Button
-                                className={'border-radius-0 s-text hover-item--white color_white border-color_white bg-main_color'}
+                                className={'border-radius-0 hover-item--white color_white border-color_white bg-main_color m-text'}
                                 onClick={() => navigate(LOGIN_ROUTE)}
                             >
                                 ВОЙТИ

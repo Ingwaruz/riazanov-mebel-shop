@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
 import {createFactory} from "../../processes/productAPI";
+import ButtonM2 from "../../shared/ui/buttons/button-m2";
 
 const CreateFactory = ({show, onHide}) => {
 
@@ -34,8 +35,9 @@ const CreateFactory = ({show, onHide}) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="border-radius-0" variant={'outline-danger'} onClick={onHide}>Закрыть</Button>
-                <Button className="border-radius-0" variant={'outline-success'} onClick={addFactory}>Добавить</Button>
+                {/*<Button variant={'outline-danger'} onClick={onHide}>Закрыть</Button>*/}
+                {/*<Button variant={'outline-success'} onClick={addFactory}>Добавить</Button>*/}
+                <ButtonM2 text="Добавить" onClick={addFactory}/>
             </Modal.Footer>
         </Modal>
     );

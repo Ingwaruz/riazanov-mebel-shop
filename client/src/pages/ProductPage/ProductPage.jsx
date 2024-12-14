@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import { useParams } from 'react-router-dom';
-import { fetchOneProduct } from "../processes/productAPI";
-import leftArrow from "../shared/assets/left-arrow.svg";
-import rightArrow from "../shared/assets/right-arrow.svg";
-import '../app/styles/commonStyles.scss';
-import '../app/styles/shared.scss';
-import '../app/styles/colors.scss';
-import ButtonM1 from "../shared/ui/buttons/button-m1";
-import TabList from '../widgets/TabList/TabList';
+import { fetchOneProduct } from "../../processes/productAPI";
+import '../../app/styles/shared.scss';
+import '../../app/styles/colors.scss';
+import ButtonM1 from "../../shared/ui/buttons/button-m1";
+import TabList from '../../widgets/TabList/TabList';
+import "./productPage.scss";
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
@@ -105,7 +103,6 @@ const ProductPage = () => {
                     </div>
                 )
                 : 'Описание отсутствует.'
-
         }
         // Добавляйте дополнительные вкладки здесь
     ];
@@ -120,7 +117,7 @@ const ProductPage = () => {
                     <div className="carousel-container w-35">
                         <div
                             className="carousel-images"
-                            style={{transform: `translateX(-${currentImageIndex * 100}%)`}}
+                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                         >
                             {images.map((image, index) => (
                                 <Image
@@ -149,7 +146,7 @@ const ProductPage = () => {
                         {images.length > 1 && (
                             <i
                                 onClick={prevImage}
-                                className="fas fa-angle-left arrow-icon left-arrow main_color"
+                                className="fa-2x fas fa-angle-left arrow-icon left-arrow main_font_color"
                             ></i>
                         )}
 
@@ -157,14 +154,12 @@ const ProductPage = () => {
                         {images.length > 1 && (
                             <i
                                 onClick={nextImage}
-                                className="fas fa-angle-right arrow-icon right-arrow main_color"
+                                className="fa-2x fas fa-angle-right arrow-icon right-arrow main_font_color"
                             ></i>
                         )}
                     </div>
-                    <div
-                        className="d-flex flex-column xl-text mt-5"
-                    >
-                        <TabList tabs={tabs}/>
+                    <div className="d-flex flex-column xl-text mt-5">
+                        <TabList tabs={tabs} />
                     </div>
                 </Col>
                 <Col xs={12} sm={9} md={6} lg={3}>
@@ -172,7 +167,7 @@ const ProductPage = () => {
                         style={{ boxShadow: '0px 0px 32px rgba(0, 0, 0, 0.08)' }}
                         className="border-white d-flex border-radius-0 p-2 sticky-card"
                     >
-                    <div className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</div>
+                        <div className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</div>
                         <div className="s-text">Цена товара зависит от выбранной ткани и может отличаться от указанной</div>
                         <ButtonM1 text="Добавить в корзину" />
                     </Card>

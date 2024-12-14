@@ -4,6 +4,7 @@ import { Context } from "../../index";
 import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../processes/productAPI";
 import { observer } from "mobx-react-lite";
 import '../../app/styles/commonStyles.scss';
+import ButtonM2 from "../../shared/ui/buttons/button-m2";
 
 // Reducer для управления состоянием формы
 const productReducer = (state, action) => {
@@ -139,7 +140,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                 <Form>
                     <Dropdown className="mt-2 mb-2">
                         <Dropdown.Toggle
-                            className="border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
+                            className="border-main_color bg-main_color_hover hover-item--main_color"
                         >
                             {product.selectedType.name || 'Выберите тип товара'}
                         </Dropdown.Toggle>
@@ -156,7 +157,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
                         <Dropdown.Toggle
-                            className="border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
+                            className="border-main_color bg-main_color_hover hover-item--main_color"
                         >
                             {product.selectedFactory.name || 'Выберите производителя'}
                         </Dropdown.Toggle>
@@ -173,7 +174,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     </Dropdown>
                     <Dropdown className="mt-2 mb-2">
                         <Dropdown.Toggle
-                            className="border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
+                            className="border-main_color bg-main_color_hover hover-item--main_color"
                             disabled={!product.selectedFactory}>
                             {product.selectedCollection?.name || 'Выберите коллекцию'}
                         </Dropdown.Toggle>
@@ -230,7 +231,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     />
                     <hr />
                     <Button
-                        className="color-white border-main_color bg-main_color_hover hover-item--main_color border-radius-0"
+                        className="color-white border-main_color bg-main_color_hover hover-item--main_color "
                         onClick={addInfo}
                     >
                         Добавить новое свойство
@@ -264,8 +265,9 @@ const CreateProduct = observer(({ show, onHide }) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="border-radius-0" variant="outline-danger" onClick={onHide}>Закрыть</Button>
-                <Button className="border-radius-0" variant="outline-success" onClick={addProduct} disabled={loading}>Добавить</Button>
+                {/*<Button variant="outline-danger" onClick={onHide}>Закрыть</Button>*/}
+                {/*<Button variant="outline-success" onClick={addProduct} disabled={loading}>Добавить</Button>*/}
+                <ButtonM2 text="Добавить" onClick={addProduct}/>
             </Modal.Footer>
         </Modal>
     );

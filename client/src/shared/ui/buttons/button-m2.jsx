@@ -7,19 +7,15 @@ const ButtonM2 = ({ width, height, text, onClick }) => {
             style={{
                 width,
                 height,
-                border: '1px solid'
+                border: '1px solid',
+                borderRadius: '0.5rem'
             }}
 
+            // Добавить m-text, временно убирал
             className='
-            d-flex
-            align-items-center
-            justify-content-center
-            m-text
-            bg-main_color_hover
-            hover-item--main_color
-            color_white
-            border-radius-0
-            p-3 mt-3
+            d-flex align-items-center justify-content-center
+             bg-main_color_hover hover-item--main_color
+            p-2 mt-2 color_white
             '
             onClick={onClick}
         >

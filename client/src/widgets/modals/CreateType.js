@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
 import {createType} from "../../processes/productAPI";
+import ButtonM1 from "../../shared/ui/buttons/button-m1";
+import ButtonM2 from "../../shared/ui/buttons/button-m2";
 
 const CreateType = ({show, onHide}) => {
 
@@ -34,8 +36,9 @@ const CreateType = ({show, onHide}) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="border-radius-0" variant={'outline-danger'} onClick={onHide}>Закрыть</Button>
-                <Button className="border-radius-0" variant={'outline-success'} onClick={addType}>Добавить</Button>
+                {/*<Button variant={'outline-danger'} onClick={onHide}>Закрыть</Button>*/}
+                {/*<Button variant={'outline-success'} onClick={addType}>Добавить</Button>*/}
+                <ButtonM2 text="Добавить" onClick={addType}/>
             </Modal.Footer>
         </Modal>
     );

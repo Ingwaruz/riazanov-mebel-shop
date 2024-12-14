@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Col, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { PRODUCT_ROUTE } from '../utils/consts';
-import '../../app/styles/commonStyles.scss';
+import { PRODUCT_ROUTE } from '../../utils/consts';
+import "./productItem.scss";
 
 const ProductItem = ({ product, factoryName, price }) => {
     const navigate = useNavigate();
@@ -39,43 +39,30 @@ const ProductItem = ({ product, factoryName, price }) => {
         <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
             <Card
                 style={{
-                    cursor: 'pointer',
-                    flexGrow: 1,
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column',
                     justifyContent: 'space-between',
-                    height: '100%',
-                    border: '0',
                 }}
-                className="product-card img-centered border-radius-0 bg-color_white"
+                className="d-flex position-relative product-card img-centered border-radius-0 bg-color_white border-0 h-100 flex-column cursor-pointer flex-grow-1"
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
                 {/* Верхняя часть карточки */}
-                <div style={{ flexShrink: 0 }}>
-                    <Col className="d-flex m-text mx-3 mt-2 mb-1">{factoryName}</Col>
+                <div>
+                    <Col className="d-flex m-text mx-3 mt-2 mb-1 flex-shrink-0">
+                        {factoryName}
+                    </Col>
                 </div>
 
                 {/* Центрируем изображение */}
                 <div
                     style={{
                         flex: '1',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        overflow: 'hidden',
                     }}
+                    className="d-flex justify-content-center align-items-center overflow-hidden"
                 >
                     {images.length > 0 && (
                         <Image
                             key={currentImageIndex}
-                            className="carousel-image px-3"
+                            className="carousel-image px-3 object-fit-contain mh-100 mw-100"
                             src={process.env.REACT_APP_API_URL + images[currentImageIndex].file}
-                            style={{
-                                maxHeight: '100%',
-                                maxWidth: '100%',
-                                objectFit: 'contain', // Центрирование и пропорциональное отображение
-                            }}
                         />
                     )}
                 </div>
