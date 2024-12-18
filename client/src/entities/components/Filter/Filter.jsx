@@ -1,81 +1,88 @@
-import React, { useState } from 'react';
-import { Accordion, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Accordion, Form, Row, Col } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import { fetchTypes, fetchFactories, fetchFilteredProducts } from '../../../processes/productAPI';
 import './filter.scss';
 
-const Filter = () => {
+const Filter = ({ onFilterChange }) => {
+    const [types, setTypes] = useState([]);
+    const [factories, setFactories] = useState([]);
     const [sizeRange, setSizeRange] = useState({
-        length: [0, 500],
         width: [0, 500],
+        depth: [0, 500],
         height: [0, 500],
     });
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedSubcategories, setSelectedSubcategories] = useState({});
+    const [selectedType, setSelectedType] = useState(null);
+    const [selectedFactory, setSelectedFactory] = useState(null);
+
+    useEffect(() => {
+        const loadInitialData = async () => {
+            try {
+                const [typesData, factoriesData] = await Promise.all([
+                    fetchTypes(),
+                    fetchFactories()
+                ]);
+                setTypes(typesData);
+                setFactories(factoriesData);
+            } catch (error) {
+                console.error('Ошибка при загрузке данных фильтра:', error);
+            }
+        };
+        loadInitialData();
+    }, []);
+
+    useEffect(() => {
+        const applyFilters = async () => {
+            const filters = {
+                typeId: selectedType?.id,
+                factoryId: selectedFactory?.id,
+                size: JSON.stringify({
+                    width: sizeRange.width,
+                    depth: sizeRange.depth,
+                    height: sizeRange.height
+                })
+            };
+            
+            try {
+                const filteredProducts = await fetchFilteredProducts(filters);
+                onFilterChange && onFilterChange(filteredProducts);
+            } catch (error) {
+                console.error('Ошибка при применении фильтров:', error);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            applyFilters();
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [selectedType, selectedFactory, sizeRange, onFilterChange]);
 
     const handleRangeChange = (type, values) => {
         setSizeRange((prev) => ({ ...prev, [type]: values }));
     };
 
-    const handleCategorySelect = (category) => {
-        setSelectedCategory(category);
-        const newSubcategories = {};
-        ["Подкатегория 1", "Подкатегория 2"].forEach((subcategory) => {
-            newSubcategories[subcategory] = true;
-        });
-        setSelectedSubcategories(newSubcategories);
-    };
-
-    const toggleSubcategory = (subcategory) => {
-        setSelectedSubcategories((prev) => ({
-            ...prev,
-            [subcategory]: !prev[subcategory],
-        }));
-    };
-
     return (
         <div className="filter-container">
             <Accordion defaultActiveKey="0" className='main_font_color'>
-
-                {/* Categories Section */}
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>
                         <span className="m-text main-font-color text-uppercase">Категории товаров</span>
                     </Accordion.Header>
                     <Accordion.Body>
                         <Form>
-                            {["Диваны", "Письки"].map((category, index) => (
-                                <Accordion key={index} flush className="mb-2">
-                                    <Accordion.Item eventKey={`category-${index}`}>
-                                        <Accordion.Header>
-                                            <span className="m-text main-font-color text-uppercase">
-                                                <Form.Check
-                                                    type="checkbox"
-                                                    name="categories"
-                                                    id={`category-${index}`}
-                                                    label={category}
-                                                    className="m-text d-inline-block me-2"
-                                                    checked={selectedCategory === category}
-                                                    onChange={() => handleCategorySelect(category)}
-                                                />
-                                            </span>
-                                        </Accordion.Header>
-                                        <Accordion.Body>
-                                            {"Подкатегория 1 Подкатегория 2".split(" ").map((subcategory, subIndex) => (
-                                                <Form.Check
-                                                    type="checkbox"
-                                                    id={`subcategory-${index}-${subIndex}`}
-                                                    label={subcategory}
-                                                    className="mb-2 s-text"
-                                                    key={subIndex}
-                                                    checked={selectedSubcategories[subcategory] || false}
-                                                    onChange={() => toggleSubcategory(subcategory)}
-                                                />
-                                            ))}
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                </Accordion>
+                            {types.map((type) => (
+                                <Form.Check
+                                    key={type.id}
+                                    type="checkbox"
+                                    id={`type-${type.id}`}
+                                    label={type.name}
+                                    checked={selectedType?.id === type.id}
+                                    onChange={() => setSelectedType(selectedType?.id === type.id ? null : type)}
+                                    className="mb-2 m-text"
+                                />
                             ))}
                         </Form>
                     </Accordion.Body>
@@ -87,20 +94,17 @@ const Filter = () => {
                         <span className="m-text main-font-color text-uppercase">Размеры</span>
                     </Accordion.Header>
                     <Accordion.Body>
-                        {["length", "width", "height"].map((type) => (
+                        {Object.entries(sizeRange).map(([type, values]) => (
                             <div key={type} className="mb-4">
                                 <p className="m-text mb-1 text-capitalize">
-                                    {type === "length" ? "Длина" : type === "width" ? "Ширина" : "Высота"}
+                                    {type === "width" ? "Ширина" : type === "depth" ? "Глубина" : "Высота"}
                                 </p>
                                 <Row className="align-items-center">
-                                    <Col xs={6}  className="mb-2 s-text main_font_color">
+                                    <Col xs={6} className="mb-2 s-text main_font_color">
                                         <Form.Control
                                             type="number"
-                                            value={sizeRange[type][0]}
-                                            onChange={(e) => {
-                                                const value = Number(e.target.value);
-                                                handleRangeChange(type, [value, sizeRange[type][1]]);
-                                            }}
+                                            value={values[0]}
+                                            onChange={(e) => handleRangeChange(type, [Number(e.target.value), values[1]])}
                                             placeholder="Минимум"
                                             style={{ appearance: 'none' }}
                                             inputMode="numeric"
@@ -109,11 +113,8 @@ const Filter = () => {
                                     <Col xs={6} className="mb-2 s-text main_font_color">
                                         <Form.Control
                                             type="number"
-                                            value={sizeRange[type][1]}
-                                            onChange={(e) => {
-                                                const value = Number(e.target.value);
-                                                handleRangeChange(type, [sizeRange[type][0], value]);
-                                            }}
+                                            value={values[1]}
+                                            onChange={(e) => handleRangeChange(type, [values[0], Number(e.target.value)])}
                                             placeholder="Максимум"
                                             style={{ appearance: 'none' }}
                                             inputMode="numeric"
@@ -124,8 +125,8 @@ const Filter = () => {
                                             range
                                             min={0}
                                             max={500}
-                                            value={sizeRange[type]}
-                                            onChange={(values) => handleRangeChange(type, values)}
+                                            value={values}
+                                            onChange={(newValues) => handleRangeChange(type, newValues)}
                                             allowCross={false}
                                             trackStyle={[{ backgroundColor: '#36406D' }]}
                                             handleStyle={[
@@ -140,36 +141,26 @@ const Filter = () => {
                     </Accordion.Body>
                 </Accordion.Item>
 
-                {/* Material Section */}
-                <Accordion.Item eventKey="2">
-                    <Accordion.Header>
-                        <span className="m-text main-font-color text-uppercase">Материал</span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <p className="m-text">Заготовка для материалов и тканей</p>
-                    </Accordion.Body>
-                </Accordion.Item>
-
-                {/* Manufacturer Section */}
                 <Accordion.Item eventKey="3">
                     <Accordion.Header>
-                        <span className="m-text main-font-color text-uppercase object-fit-contain">Производитель</span>
+                        <span className="m-text main-font-color text-uppercase">Производитель</span>
                     </Accordion.Header>
                     <Accordion.Body>
                         <Form>
-                            {["Фабрика 1", "Фабрика 2", "Фабрика 3"].map((manufacturer, index) => (
+                            {factories.map((factory) => (
                                 <Form.Check
+                                    key={factory.id}
                                     type="checkbox"
-                                    id={`manufacturer-${index}`}
-                                    label={manufacturer}
-                                    className="mb-2"
-                                    key={index}
+                                    id={`factory-${factory.id}`}
+                                    label={factory.name}
+                                    checked={selectedFactory?.id === factory.id}
+                                    onChange={() => setSelectedFactory(selectedFactory?.id === factory.id ? null : factory)}
+                                    className="mb-2 m-text"
                                 />
                             ))}
                         </Form>
                     </Accordion.Body>
                 </Accordion.Item>
-
             </Accordion>
         </div>
     );

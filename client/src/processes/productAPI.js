@@ -62,4 +62,11 @@ export const fetchOneProduct = async (id) => {
     return data;
 }
 
+export const fetchFilteredProducts = async (filters) => {
+    const {data} = await $host.get('api/product/filter', {
+        params: filters
+    });
+    return data;
+};
+
 

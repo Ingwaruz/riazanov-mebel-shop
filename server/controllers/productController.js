@@ -1,7 +1,8 @@
 const uuid = require('uuid');
 const path = require('path');
-const {Product, ProductInfo, Image, Collection} = require('../models/models');
+const {Product, ProductInfo, Image, Collection, Type, Factory} = require('../models/models');
 const ApiError = require('../error/apiError');
+const {Op} = require('sequelize');
 
 class productController {
     async create(req, res, next) {
@@ -47,31 +48,49 @@ class productController {
 
     async getAll(req, res, next) {
         try {
-            let {factoryId, typeId, price, limit, page} = req.query;
+            let {factoryId, typeId, price, limit, page, size} = req.query;
             page = page || 1;
             limit = limit || 12;
             let offset = (page - 1) * limit;
-            let products;
+            
+            const whereClause = {};
+            
+            if (factoryId) whereClause.factoryId = factoryId;
+            if (typeId) whereClause.typeId = typeId;
+            
+            // Добавляем фильтрацию по размерам
+            if (size) {
+                const {width, depth, height} = JSON.parse(size);
+                if (width) {
+                    whereClause.width = {
+                        [Op.between]: width
+                    };
+                }
+                if (depth) {
+                    whereClause.depth = {
+                        [Op.between]: depth
+                    };
+                }
+                if (height) {
+                    whereClause.height = {
+                        [Op.between]: height
+                    };
+                }
+            }
 
-            const query = {
+            const products = await Product.findAndCountAll({
+                where: whereClause,
                 limit,
                 offset,
-                where: {},
                 include: [
-                    { model: Image, as: 'images' }, // Включаем изображения для каждого продукта
-                    // { model: Collection, as: 'collections' }
+                    { model: Image, as: 'images' },
+                    { model: Type },
+                    { model: Factory }
                 ]
-            };
-
-            if (factoryId) query.where.factoryId = factoryId;
-            if (typeId) query.where.typeId = typeId;
-            //if (collectionId) query.where.collectionId = collectionId;
-
-            products = await Product.findAndCountAll(query);
+            });
 
             return res.json(products);
         } catch (e) {
-            console.log('Error occurred:', e);  // Лог ошибки
             next(ApiError.badRequest(e.message));
         }
     }
@@ -93,6 +112,58 @@ class productController {
             }
 
             return res.json(product);
+        } catch (e) {
+            next(ApiError.badRequest(e.message));
+        }
+    }
+
+    async getFiltered(req, res, next) {
+        try {
+            let {typeId, factoryId, size} = req.query;
+            
+            const whereClause = {};
+            
+            if (typeId) {
+                whereClause.typeId = typeId;
+            }
+            
+            if (factoryId) {
+                whereClause.factoryId = factoryId;
+            }
+            
+            if (size) {
+                const {width, depth, height} = JSON.parse(size);
+                
+                if (width) {
+                    whereClause.width = {
+                        [Op.between]: width
+                    };
+                }
+                
+                if (depth) {
+                    whereClause.depth = {
+                        [Op.between]: depth
+                    };
+                }
+                
+                if (height) {
+                    whereClause.height = {
+                        [Op.between]: height
+                    };
+                }
+            }
+
+            const products = await Product.findAndCountAll({
+                where: whereClause,
+                include: [
+                    { model: Image, as: 'images' },
+                    { model: Type },
+                    { model: Factory },
+                    { model: Collection, as: 'collection' }
+                ]
+            });
+
+            return res.json(products);
         } catch (e) {
             next(ApiError.badRequest(e.message));
         }

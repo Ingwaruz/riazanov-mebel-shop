@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import TypeBar from "../entities/components/TypeBar";
 import FactoryBar from "../entities/components/FactoryBar";
@@ -29,31 +29,21 @@ const Shop = observer(() => {
         }
     };
 
-    // Функция для загрузки продуктов при изменении фильтров или страницы
-    const loadProducts = async () => {
-        try {
-            const products = await fetchProducts(product.selectedType.id, product.selectedFactory.id, product.page, 12);
-            product.setProducts(products.rows);
-            product.setTotalCount(products.count);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
-
     useEffect(() => {
         loadInitialData();
     }, []);
 
-    useEffect(() => {
-        loadProducts();
-    }, [product.page, product.selectedType, product.selectedFactory]);
+    const handleFilterChange = (filteredProducts) => {
+        // Обновляем состояние товаров в store
+        product.setProducts(filteredProducts.rows);
+        product.setTotalCount(filteredProducts.count);
+    };
 
     return (
         <div className={'container-fluid'}>
             <Row className="mt-2">
                 <Col lg={2} md={4} sm={4} xs={12}>
-                    {/*<TypeBar/>*/}
-                    <Filter/>
+                    <Filter onFilterChange={handleFilterChange} />
                 </Col>
                 <Col lg={10} md={8} sm={8} xs={12}>
                     <ProductList/>
