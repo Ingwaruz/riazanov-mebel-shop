@@ -7,6 +7,7 @@ import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import {fetchFactories, fetchProducts, fetchTypes} from "../processes/productAPI";
 import Pages from "../entities/components/Pages";
+import Filter from "../entities/components/Filter/Filter";
 
 const Shop = observer(() => {
     const {product} = useContext(Context);
@@ -50,11 +51,11 @@ const Shop = observer(() => {
     return (
         <div className={'container-fluid'}>
             <Row className="mt-2">
-                <Col md={2}>
-                    <TypeBar/>
+                <Col lg={2} md={4} sm={4} xs={12}>
+                    {/*<TypeBar/>*/}
+                    <Filter/>
                 </Col>
-                <Col md={10}>
-                    <FactoryBar/>
+                <Col lg={10} md={8} sm={8} xs={12}>
                     <ProductList/>
                     <Pages/>
                 </Col>

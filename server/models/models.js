@@ -40,6 +40,11 @@ const Type = sequelize.define('type', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
 })
 
+const Subtype = sequelize.define('subtype', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true, allowNull: false}
+})
+
 // Фабрика
 const Factory = sequelize.define('factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -128,9 +133,11 @@ BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
 
 // Type
 Type.hasMany(Product, {foreignKey: { allowNull: false }});
+Type.hasMany(Subtype, {foreignKey: { allowNull: false }});
 Type.hasOne(MaterialToType, {foreignKey: { allowNull: false }});
 Type.hasOne(FeaturesToTypeToFactory, {foreignKey: { allowNull: false }});
 Product.belongsTo(Type, {foreignKey: { allowNull: false }});
+Subtype.belongsTo(Type, {foreignKey: { allowNull: false }});
 MaterialToType.belongsTo(Type, {foreignKey: { allowNull: false }});
 FeaturesToTypeToFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
 
@@ -176,13 +183,14 @@ Factory.belongsToMany(MaterialCategory, {through: 'material_category_to_factory'
 Type.belongsToMany(Collection, {through: 'collection_to_type'});
 Collection.belongsToMany(Type, {through: 'collection_to_type'});
 
-// 21 таблица
+// 21 таблицы
 module.exports = {
     User, 
     Basket, 
     BasketProduct,
     Product,
     Type,
+    Subtype,
     Factory,
     ProductInfo,
     Color,

@@ -16,7 +16,7 @@ const FactoryBar = observer(() => {
             {sortedFactories.map(factory => (
                 <Card
                     key={factory.id}
-                    className={`p-2 s-text border-radius-0 w-100 text-center ${
+                    className={`p-2 m-text border-radius-0 w-100 text-center ${
                         factory.id === product.selectedFactory?.id
                             ? 'bg-main_color_active border-main_color text-white'
                             : 'bg-color_white hover-item--main_color_active text-dark'

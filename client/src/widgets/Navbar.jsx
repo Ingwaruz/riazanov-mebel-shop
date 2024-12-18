@@ -34,7 +34,7 @@ const MyNavbar = observer(() => {
             <BootstrapNavbar
                 data-bs-theme="dark"
                 style={{ height: 75, boxShadow: '0 4px 4px rgba(0, 0, 0, 0.4)' }}
-                className={'s-text bg-main_color'}
+                className={'s-text bg-main_color mb-4'}
             >
                 <div className={'container-fluid'}>
                     <Col className="col-auto">
@@ -76,13 +76,13 @@ const MyNavbar = observer(() => {
                                             <p>
                                                 <span style={{fontWeight: '600'}} className="l-text">Благовещенск</span>
                                                 <br />
-                                                    1. ТРЦ Острова, улица Мухина, 144 <br />
+                                                    1. ТРЦ Острова, улица Мухина 144, 3 этаж <br />
                                             </p>
                                             <p>
                                                 <span style={{fontWeight: '600'}} className="l-text">Хабаровск</span>
                                                 <br/>
-                                                    1. Улица Волочаевская, 8д, 2 этаж<br />
-                                                    2. Проспект 60-летия Октября, 206, 3 этаж
+                                                    1. Улица Волочаевская 8д, 2 этаж<br />
+                                                    2. Проспект 60-летия Октября 206, 3 этаж
                                             </p>
                                         </>
                                     )

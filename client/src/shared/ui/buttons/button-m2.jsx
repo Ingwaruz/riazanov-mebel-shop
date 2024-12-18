@@ -11,10 +11,9 @@ const ButtonM2 = ({ width, height, text, onClick }) => {
                 borderRadius: '0.5rem'
             }}
 
-            // Добавить m-text, временно убирал
             className='
             d-flex align-items-center justify-content-center
-             bg-main_color_hover hover-item--main_color
+            m-text bg-main_color_hover hover-item--main_color
             p-2 mt-2 color_white
             '
             onClick={onClick}

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import '../app/styles/colors.scss';
+import ButtonM1 from "../shared/ui/buttons/button-m1";
+import ButtonM2 from "../shared/ui/buttons/button-m2";
 
 const CenteredModal = ({ show, onHide, title, children }) => {
     return (
@@ -10,19 +12,18 @@ const CenteredModal = ({ show, onHide, title, children }) => {
             centered
         >
             <Modal.Header closeButton>
-                <Modal.Title className='xl-text' style={{fontWeight : `600`}}>{title}</Modal.Title>
+                <Modal.Title className='xl-text' style={{ fontWeight: '600' }}>
+                    {title}
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body className='m-text'>
                 {children}
             </Modal.Body>
             <Modal.Footer>
-                <Button
-                    variant="secondary"
-                    onClick={onHide}
-                    className='m-text color_white'
-                >
-                    Закрыть
-                </Button>
+                {/*<ButtonM2*/}
+                {/*    text="Закрыть"*/}
+                {/*    onClick={onHide}*/}
+                {/*/>*/}
             </Modal.Footer>
         </Modal>
     );

@@ -8,7 +8,7 @@ const ProductList = observer(() => {
     const { product } = useContext(Context);
 
     return (
-        <Row className="g-4 d-flex flex-wrap justify-content-start mt-3">
+        <Row className="g-4 d-flex flex-wrap justify-content-start">
             {product.products.map(productItem => {
                 // Находим фабрику по factoryId товара
                 const productFactory = product.factories.find(f => f.id === productItem.factoryId);
