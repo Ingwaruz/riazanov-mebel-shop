@@ -4,11 +4,13 @@ import CreateFactory from "../widgets/modals/CreateFactory";
 import CreateProduct from "../widgets/modals/CreateProduct";
 import CreateType from "../widgets/modals/CreateType";
 import CreateCollection from "../widgets/modals/CreateCollection";
+import CreateSubtype from "../widgets/modals/CreateSubtype";
 import ButtonM2 from "../shared/ui/buttons/button-m1";
 
 const Admin = () => {
     const [factoryVisible, setFactoryVisible] = useState(false)
     const [typeVisible, setTypeVisible] = useState(false)
+    const [subtypeVisible, setSubtypeVisible] = useState(false)
     const [collectionVisible, setCollectionVisible] = useState(false)
     const [productVisible, setProductVisible] = useState(false)
 
@@ -25,6 +27,10 @@ const Admin = () => {
                 onClick={() => setTypeVisible(true)}
             />
             <ButtonM2
+                text="Добавить подтип"
+                onClick={() => setSubtypeVisible(true)}
+            />
+            <ButtonM2
                 text="Добавить коллекцию"
                 onClick={() => setCollectionVisible(true)}
             />
@@ -34,6 +40,7 @@ const Admin = () => {
             />
 
             <CreateType show={typeVisible} onHide={() => setTypeVisible(false)}/>
+            <CreateSubtype show={subtypeVisible} onHide={() => setSubtypeVisible(false)}/>
             <CreateFactory show={factoryVisible} onHide={() => setFactoryVisible(false)}/>
             <CreateCollection show={collectionVisible} onHide={() => setCollectionVisible(false)}/>
             <CreateProduct show={productVisible} onHide={() => setProductVisible(false)}/>

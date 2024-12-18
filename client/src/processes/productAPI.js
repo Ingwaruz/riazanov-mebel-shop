@@ -12,15 +12,15 @@ export const fetchTypes = async () => {
 }
 
 // Подтип
-// export const createSubtype = async (type) => {
-//     const {data} = await $authHost.post('api/subtype', type);
-//     return data;
-// }
-//
-// export const fetchSubtypes = async () => {
-//     const {data} = await $host.get('api/subtype');
-//     return data;
-// }
+export const createSubtype = async (subtype) => {
+    const {data} = await $authHost.post('api/subtype', subtype);
+    return data;
+}
+
+export const fetchSubtypes = async () => {
+    const {data} = await $host.get('api/subtype');
+    return data;
+}
 
 // Производители
 export const createFactory = async (factory) => {
