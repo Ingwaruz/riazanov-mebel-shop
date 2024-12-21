@@ -6,6 +6,8 @@ import CreateType from "../widgets/modals/CreateType";
 import CreateCollection from "../widgets/modals/CreateCollection";
 import CreateSubtype from "../widgets/modals/CreateSubtype";
 import ButtonM2 from "../shared/ui/buttons/button-m1";
+import ImportProducts from "../widgets/modals/ImportProducts";
+import CreateFeature from "../widgets/modals/CreateFeature";
 
 const Admin = () => {
     const [factoryVisible, setFactoryVisible] = useState(false)
@@ -13,6 +15,8 @@ const Admin = () => {
     const [subtypeVisible, setSubtypeVisible] = useState(false)
     const [collectionVisible, setCollectionVisible] = useState(false)
     const [productVisible, setProductVisible] = useState(false)
+    const [importVisible, setImportVisible] = useState(false)
+    const [featureVisible, setFeatureVisible] = useState(false)
 
     return (
         <Container className={'d-flex flex-column mt-4'}>
@@ -38,12 +42,22 @@ const Admin = () => {
                 text="Добавить товар"
                 onClick={() => setProductVisible(true)}
             />
+            <ButtonM2
+                text="Импортировать товары"
+                onClick={() => setImportVisible(true)}
+            />
+            <ButtonM2
+                text="Добавить характеристику"
+                onClick={() => setFeatureVisible(true)}
+            />
 
             <CreateType show={typeVisible} onHide={() => setTypeVisible(false)}/>
             <CreateSubtype show={subtypeVisible} onHide={() => setSubtypeVisible(false)}/>
             <CreateFactory show={factoryVisible} onHide={() => setFactoryVisible(false)}/>
             <CreateCollection show={collectionVisible} onHide={() => setCollectionVisible(false)}/>
             <CreateProduct show={productVisible} onHide={() => setProductVisible(false)}/>
+            <ImportProducts show={importVisible} onHide={() => setImportVisible(false)}/>
+            <CreateFeature show={featureVisible} onHide={() => setFeatureVisible(false)}/>
         </Container>
     );
 };

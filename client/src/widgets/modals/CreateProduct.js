@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useReducer, useCallback, useState } from 'react';
 import { Button, Col, Dropdown, Form, Modal, Row, Spinner, Alert } from "react-bootstrap";
 import { Context } from "../../index";
-import { createProduct, fetchFactories, fetchTypes, fetchCollections } from "../../processes/productAPI";
+import { createProduct, fetchFactories, fetchTypes, fetchCollections, fetchFeaturesByTypeAndFactory } from "../../processes/productAPI";
 import { observer } from "mobx-react-lite";
 import '../../app/styles/commonStyles.scss';
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
@@ -34,6 +34,9 @@ const CreateProduct = observer(({ show, onHide }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [filteredCollections, setFilteredCollections] = useState([]);
+    const [description, setDescription] = useState('');
+    const [features, setFeatures] = useState([]);
+    const [availableFeatures, setAvailableFeatures] = useState([]);
 
     // Инициализация состояния с помощью useReducer
     const [productData, dispatch] = useReducer(productReducer, {
@@ -57,7 +60,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     const collections = await fetchCollections(); // Получаем коллекции
                     product.setTypes(types);
                     product.setFactories(factories);
-                    product.setCollections(collections); // Сохраняем коллекции в контекст
+                    product.setCollections(collections); // Сохраняем колл��кции в контекст
                 } catch (err) {
                     setError("Не удалось загрузить данные.");
                     console.error(err);
@@ -80,6 +83,14 @@ const CreateProduct = observer(({ show, onHide }) => {
             setFilteredCollections([]); // сброс фильтра
         }
     }, [product.selectedFactory, product.collections]);
+
+    useEffect(() => {
+        if (product.selectedType && product.selectedFactory) {
+            // Загружаем доступные характеристики для выбранного типа и фабрики
+            fetchFeaturesByTypeAndFactory(product.selectedType.id, product.selectedFactory.id)
+                .then(data => setAvailableFeatures(data));
+        }
+    }, [product.selectedType, product.selectedFactory]);
 
     const addInfo = useCallback(() => dispatch({ type: 'ADD_INFO' }), []);
     const removeInfo = useCallback(number => dispatch({ type: 'REMOVE_INFO', payload: number }), []);
@@ -109,6 +120,8 @@ const CreateProduct = observer(({ show, onHide }) => {
         formData.append('typeId', product.selectedType.id);
         formData.append('collectionId', product.selectedCollection.id);
         formData.append('info', JSON.stringify(info));
+        formData.append('description', description);
+        formData.append('features', JSON.stringify(features));
 
         // Добавление всех изображений в formData
         files.forEach((file, index) => {
@@ -261,6 +274,36 @@ const CreateProduct = observer(({ show, onHide }) => {
                                 </Button>
                             </Col>
                         </Row>
+                    ))}
+                    <Form.Control
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        className="mt-3"
+                        placeholder="Введите описание"
+                        as="textarea"
+                        rows={3}
+                    />
+                    
+                    {availableFeatures.map(feature => (
+                        <Form.Group key={feature.id} className="mt-3">
+                            <Form.Label>{feature.name}</Form.Label>
+                            <Form.Control
+                                onChange={e => {
+                                    const newFeatures = [...features];
+                                    const index = newFeatures.findIndex(f => f.featureId === feature.id);
+                                    if (index !== -1) {
+                                        newFeatures[index].value = e.target.value;
+                                    } else {
+                                        newFeatures.push({
+                                            featureId: feature.id,
+                                            value: e.target.value
+                                        });
+                                    }
+                                    setFeatures(newFeatures);
+                                }}
+                                placeholder={`Введите ${feature.name}`}
+                            />
+                        </Form.Group>
                     ))}
                 </Form>
             </Modal.Body>

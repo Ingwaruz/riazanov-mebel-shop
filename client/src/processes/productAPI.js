@@ -69,4 +69,31 @@ export const fetchFilteredProducts = async (filters) => {
     return data;
 };
 
+export const importProducts = async (formData) => {
+    const {data} = await $authHost.post('api/product/import', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return data;
+};
+
+// Характеристики
+export const createFeature = async (feature) => {
+    const {data} = await $authHost.post('api/feature', feature);
+    return data;
+}
+
+export const fetchFeatures = async () => {
+    const {data} = await $host.get('api/feature');
+    return data;
+}
+
+export const fetchFeaturesByTypeAndFactory = async (typeId, factoryId) => {
+    const {data} = await $host.get('api/feature/byTypeAndFactory', {
+        params: { typeId, factoryId }
+    });
+    return data;
+}
+
 

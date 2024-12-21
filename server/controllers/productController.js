@@ -3,26 +3,28 @@ const path = require('path');
 const {Product, ProductInfo, Image, Collection, Type, Factory} = require('../models/models');
 const ApiError = require('../error/apiError');
 const {Op} = require('sequelize');
+const csv = require('csv-parser');
+const fs = require('fs');
 
 class productController {
     async create(req, res, next) {
         try {
-            let {name, price, width, depth, height, factoryId, typeId, collectionId, info} = req.body;
-            const {images} = req.files; // Здесь мы принимаем файлы
+            const {name, price, width, depth, height, factoryId, typeId, collectionId, description, features} = req.body;
+            const {images} = req.files;
 
-            // Создание товар
-            const product = await Product.create({name, price, width, depth, height, factoryId, typeId, collectionId});
+            const product = await Product.create({
+                name, price, width, depth, height, factoryId, typeId, collectionId, description
+            });
 
-            // Если есть дополнительные данные о продукте (info)
-            if (info) {
-                info = JSON.parse(info);
-                info.forEach(i =>
-                    ProductInfo.create({
-                        title: i.title,
-                        description: i.description,
-                        productId: product.id,
-                    })
-                );
+            if (features) {
+                const featuresData = JSON.parse(features);
+                for (let feature of featuresData) {
+                    await ProductInfo.create({
+                        featureId: feature.featureId,
+                        value: feature.value,
+                        productId: product.id
+                    });
+                }
             }
 
             // Обработка изображений
@@ -165,6 +167,72 @@ class productController {
 
             return res.json(products);
         } catch (e) {
+            next(ApiError.badRequest(e.message));
+        }
+    }
+
+    async importFromCsv(req, res, next) {
+        try {
+            if (!req.files || !req.files.file) {
+                return next(ApiError.badRequest('Файл не найден'));
+            }
+
+            const file = req.files.file;
+            const tempDir = path.resolve(__dirname, '..', 'temp');
+            
+            // Создаем директорию temp, если она не существует
+            if (!fs.existsSync(tempDir)) {
+                fs.mkdirSync(tempDir, { recursive: true });
+            }
+            
+            const tempPath = path.join(tempDir, file.name);
+            
+            // Сохраняем файл временно
+            await file.mv(tempPath);
+            
+            const results = [];
+            const errors = [];
+
+            // Создаем Promise для обработки CSV
+            await new Promise((resolve, reject) => {
+                fs.createReadStream(tempPath)
+                    .pipe(csv())
+                    .on('data', (data) => results.push(data))
+                    .on('end', resolve)
+                    .on('error', reject);
+            });
+
+            // Удаляем временный файл
+            fs.unlinkSync(tempPath);
+
+            // Обрабатываем каждую строку
+            for (const row of results) {
+                try {
+                    await Product.create({
+                        name: row.name,
+                        price: parseInt(row.price),
+                        width: parseInt(row.width),
+                        depth: parseInt(row.depth),
+                        height: parseInt(row.height),
+                        factoryId: parseInt(row.factoryId),
+                        typeId: parseInt(row.typeId),
+                        collectionId: row.collectionId ? parseInt(row.collectionId) : null
+                    });
+                } catch (error) {
+                    errors.push(`Ошибка в строке ${results.indexOf(row) + 1}: ${error.message}`);
+                }
+            }
+
+            res.json({
+                success: true,
+                imported: results.length - errors.length,
+                errors
+            });
+        } catch (e) {
+            // Если произошла ошибка, пытаемся удалить временный файл
+            if (tempPath && fs.existsSync(tempPath)) {
+                fs.unlinkSync(tempPath);
+            }
             next(ApiError.badRequest(e.message));
         }
     }

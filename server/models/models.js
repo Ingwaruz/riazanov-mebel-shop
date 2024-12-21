@@ -32,6 +32,7 @@ const Product = sequelize.define('product', {
     width: {type: DataTypes.INTEGER, allowNull: false},
     depth: {type: DataTypes.INTEGER, allowNull: false},
     height: {type: DataTypes.INTEGER, allowNull: false},
+    description: {type: DataTypes.TEXT},
 })
 
 // Тип товара 
@@ -54,8 +55,8 @@ const Factory = sequelize.define('factory', {
 // Дополнительная информация по товару
 const ProductInfo = sequelize.define('product_info', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    title: {type: DataTypes.STRING, allowNull: false},
-    description: {type: DataTypes.STRING, allowNull: false},
+    value: {type: DataTypes.STRING, allowNull: false},
+    featureId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 const Color = sequelize.define('color', {
@@ -89,10 +90,10 @@ const MaterialCategory = sequelize.define('material_category', {
 
 const Feature = sequelize.define('feature', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
+    name: {type: DataTypes.STRING, allowNull: false},
 })
 
-const FeaturesToTypeToFactory = sequelize.define('features_to_type_to_factory', {
+const FeatureToTypeFactory = sequelize.define('feature_to_type_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
@@ -135,19 +136,15 @@ BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
 Type.hasMany(Product, {foreignKey: { allowNull: false }});
 Type.hasMany(Subtype, {foreignKey: { allowNull: false }});
 Type.hasOne(MaterialToType, {foreignKey: { allowNull: false }});
-Type.hasOne(FeaturesToTypeToFactory, {foreignKey: { allowNull: false }});
 Product.belongsTo(Type, {foreignKey: { allowNull: false }});
 Subtype.belongsTo(Type, {foreignKey: { allowNull: false }});
 MaterialToType.belongsTo(Type, {foreignKey: { allowNull: false }});
-FeaturesToTypeToFactory.belongsTo(Type, {foreignKey: { allowNull: false }});
 
 // Factory
 Factory.hasMany(Product, {foreignKey: { allowNull: false }});
 Factory.hasMany(Collection, {foreignKey: { allowNull: false }});
-Factory.hasOne(FeaturesToTypeToFactory, {foreignKey: { allowNull: false }});
 Product.belongsTo(Factory, {foreignKey: { allowNull: false }});
 Collection.belongsTo(Factory, {foreignKey: { allowNull: false }});
-FeaturesToTypeToFactory.belongsTo(Factory, {foreignKey: { allowNull: false }});
 
 // Product
 Product.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
@@ -164,8 +161,10 @@ Material.hasMany(MaterialToType, { foreignKey: { allowNull: false }});
 MaterialToType.belongsTo(Material, { foreignKey: { allowNull: false }});
 
 // Feature
-Feature.hasMany(FeaturesToTypeToFactory, { foreignKey: { allowNull: false }});
-FeaturesToTypeToFactory.belongsTo(Feature, { foreignKey: { allowNull: false }});
+Feature.belongsToMany(Type, { through: FeatureToTypeFactory });
+Feature.belongsToMany(Factory, { through: FeatureToTypeFactory });
+Type.belongsToMany(Feature, { through: FeatureToTypeFactory });
+Factory.belongsToMany(Feature, { through: FeatureToTypeFactory });
 
 // Промежуточные таблицы
 Type.belongsToMany(Factory, {through: 'type_to_factory'});
@@ -182,6 +181,9 @@ Factory.belongsToMany(MaterialCategory, {through: 'material_category_to_factory'
 
 Type.belongsToMany(Collection, {through: 'collection_to_type'});
 Collection.belongsToMany(Type, {through: 'collection_to_type'});
+
+ProductInfo.belongsTo(Feature);
+Feature.hasMany(ProductInfo);
 
 // 21 таблица
 module.exports = {
@@ -200,7 +202,7 @@ module.exports = {
     Collection,
     MaterialCategory,
     Feature,
-    FeaturesToTypeToFactory,
+    FeatureToTypeFactory,
     // Промежуточные таблицы
     TypeToFactory,
     ColorToMaterial,
