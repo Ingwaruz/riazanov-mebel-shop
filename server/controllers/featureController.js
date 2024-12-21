@@ -3,11 +3,9 @@ const ApiError = require('../error/ApiError');
 const { Op } = require('sequelize');
 const sequelize = require('../db');
 
-// Функция для форматирования названия
+// Функция для форматирования названия - всё в нижний регистр
 const formatFeatureName = (name) => {
-    return name.trim()
-        .toLowerCase()
-        .replace(/^./, str => str.toUpperCase());
+    return name.trim().toLowerCase();
 };
 
 class FeatureController {
@@ -16,7 +14,7 @@ class FeatureController {
             console.log('Received data:', req.body);
             let {name, typeId, factoryId} = req.body;
 
-            // Форматируем название
+            // Форматируем название в нижний регистр
             name = formatFeatureName(name);
             typeId = parseInt(typeId);
             factoryId = parseInt(factoryId);
@@ -30,7 +28,7 @@ class FeatureController {
                 where: { 
                     name: sequelize.where(
                         sequelize.fn('LOWER', sequelize.col('name')), 
-                        name.toLowerCase()
+                        name
                     ) 
                 }
             });
@@ -38,7 +36,7 @@ class FeatureController {
             // Если характеристики нет, создаем новую
             if (!feature) {
                 feature = await Feature.create({ 
-                    name: formatFeatureName(name) // С заглавной буквы
+                    name: name // Сохраняем в нижнем регистре
                 });
             }
 
@@ -52,7 +50,7 @@ class FeatureController {
 
                 return res.json({
                     id: feature.id,
-                    name: feature.name, // Возвращаем как есть
+                    name: feature.name,
                     typeId,
                     factoryId
                 });
