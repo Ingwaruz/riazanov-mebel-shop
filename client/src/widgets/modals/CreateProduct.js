@@ -60,7 +60,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                     const collections = await fetchCollections(); // Получаем коллекции
                     product.setTypes(types);
                     product.setFactories(factories);
-                    product.setCollections(collections); // Сохраняем колл��кции в контекст
+                    product.setCollections(collections); // Сохраняем коллекции в контекст
                 } catch (err) {
                     setError("Не удалось загрузить данные.");
                     console.error(err);
@@ -85,11 +85,24 @@ const CreateProduct = observer(({ show, onHide }) => {
     }, [product.selectedFactory, product.collections]);
 
     useEffect(() => {
-        if (product.selectedType && product.selectedFactory) {
-            // Загружаем доступные характеристики для выбранного типа и фабрики
-            fetchFeaturesByTypeAndFactory(product.selectedType.id, product.selectedFactory.id)
-                .then(data => setAvailableFeatures(data));
-        }
+        const loadFeatures = async () => {
+            try {
+                if (product.selectedType?.id && product.selectedFactory?.id) {
+                    const features = await fetchFeaturesByTypeAndFactory(
+                        product.selectedType.id,
+                        product.selectedFactory.id
+                    );
+                    setAvailableFeatures(features);
+                } else {
+                    setAvailableFeatures([]);
+                }
+            } catch (error) {
+                console.error('Error loading features:', error);
+                setAvailableFeatures([]);
+            }
+        };
+
+        loadFeatures();
     }, [product.selectedType, product.selectedFactory]);
 
     const addInfo = useCallback(() => dispatch({ type: 'ADD_INFO' }), []);

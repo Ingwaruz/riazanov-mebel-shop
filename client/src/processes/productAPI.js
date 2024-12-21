@@ -80,8 +80,22 @@ export const importProducts = async (formData) => {
 
 // Характеристики
 export const createFeature = async (feature) => {
-    const {data} = await $authHost.post('api/feature', feature);
-    return data;
+    try {
+        const {data} = await $authHost.post('api/feature', {
+            name: feature.name,
+            typeId: feature.typeId,
+            factoryId: feature.factoryId
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('API response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error creating feature:', error.response?.data || error);
+        throw error;
+    }
 }
 
 export const fetchFeatures = async () => {
@@ -90,10 +104,30 @@ export const fetchFeatures = async () => {
 }
 
 export const fetchFeaturesByTypeAndFactory = async (typeId, factoryId) => {
-    const {data} = await $host.get('api/feature/byTypeAndFactory', {
-        params: { typeId, factoryId }
-    });
-    return data;
-}
+    try {
+        const {data} = await $host.get('api/feature/byTypeAndFactory', {
+            params: {
+                typeId: Number(typeId),
+                factoryId: Number(factoryId)
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error('Error fetching features:', error);
+        return [];
+    }
+};
+
+export const searchFeatures = async (query) => {
+    try {
+        const {data} = await $host.get('api/feature/search', {
+            params: { query }
+        });
+        return data;
+    } catch (error) {
+        console.error('Error searching features:', error);
+        return [];
+    }
+};
 
 

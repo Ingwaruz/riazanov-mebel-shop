@@ -90,11 +90,22 @@ const MaterialCategory = sequelize.define('material_category', {
 
 const Feature = sequelize.define('feature', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, allowNull: false},
+    name: {type: DataTypes.STRING, allowNull: false}
 })
 
 const FeatureToTypeFactory = sequelize.define('feature_to_type_factory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    featureId: {type: DataTypes.INTEGER, allowNull: false},
+    typeId: {type: DataTypes.INTEGER, allowNull: false},
+    factoryId: {type: DataTypes.INTEGER, allowNull: false}
+}, {
+    indexes: [
+        // Добавляем составной уникальный индекс
+        {
+            unique: true,
+            fields: ['featureId', 'typeId', 'factoryId']
+        }
+    ]
 })
 
 // Связующие таблицы
@@ -122,7 +133,7 @@ const CollectionToType = sequelize.define('collection_to_type', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
-// Описание связей между таблицами
+// ����писание связей между таблицами
 
 // User
 User.hasOne(Basket, {foreignKey: { allowNull: false }});
@@ -161,10 +172,14 @@ Material.hasMany(MaterialToType, { foreignKey: { allowNull: false }});
 MaterialToType.belongsTo(Material, { foreignKey: { allowNull: false }});
 
 // Feature
-Feature.belongsToMany(Type, { through: FeatureToTypeFactory });
-Feature.belongsToMany(Factory, { through: FeatureToTypeFactory });
-Type.belongsToMany(Feature, { through: FeatureToTypeFactory });
-Factory.belongsToMany(Feature, { through: FeatureToTypeFactory });
+Feature.hasMany(FeatureToTypeFactory);
+FeatureToTypeFactory.belongsTo(Feature);
+
+Type.hasMany(FeatureToTypeFactory);
+FeatureToTypeFactory.belongsTo(Type);
+
+Factory.hasMany(FeatureToTypeFactory);
+FeatureToTypeFactory.belongsTo(Factory);
 
 // Промежуточные таблицы
 Type.belongsToMany(Factory, {through: 'type_to_factory'});
@@ -185,7 +200,6 @@ Collection.belongsToMany(Type, {through: 'collection_to_type'});
 ProductInfo.belongsTo(Feature);
 Feature.hasMany(ProductInfo);
 
-// 21 таблица
 module.exports = {
     User, 
     Basket, 

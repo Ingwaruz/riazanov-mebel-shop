@@ -46,13 +46,12 @@ const ImportProducts = ({ show, onHide }) => {
                 </Form.Group>
             </Modal.Body>
             <Modal.Footer>
-                <ButtonM1 onClick={onHide}>Отмена</ButtonM1>
+                <ButtonM2 onClick={onHide} text="Отмена" />
                 <ButtonM2 
                     onClick={handleImport} 
                     disabled={!file || loading}
-                >
-                    {loading ? 'Импорт...' : 'Импортировать'}
-                </ButtonM2>
+                    text={loading ? 'Импорт...' : 'Импортировать'}
+                />
             </Modal.Footer>
         </Modal>
     );
