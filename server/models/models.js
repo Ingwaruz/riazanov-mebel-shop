@@ -197,8 +197,8 @@ Factory.belongsToMany(MaterialCategory, {through: 'material_category_to_factory'
 Type.belongsToMany(Collection, {through: 'collection_to_type'});
 Collection.belongsToMany(Type, {through: 'collection_to_type'});
 
-ProductInfo.belongsTo(Feature);
-Feature.hasMany(ProductInfo);
+ProductInfo.belongsTo(Feature, { foreignKey: 'featureId' });
+Feature.hasMany(ProductInfo, { foreignKey: 'featureId' });
 
 module.exports = {
     User, 

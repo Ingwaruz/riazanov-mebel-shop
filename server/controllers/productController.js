@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const path = require('path');
-const {Product, ProductInfo, Image, Collection, Type, Factory} = require('../models/models');
+const {Product, ProductInfo, Image, Collection, Type, Factory, Feature} = require('../models/models');
 const ApiError = require('../error/apiError');
 const {Op} = require('sequelize');
 const csv = require('csv-parser');
@@ -103,9 +103,15 @@ class productController {
             const product = await Product.findOne({
                 where: {id},
                 include: [
-                    { model: ProductInfo, as: 'product_infos' },  // Включаем информацию о продукте
-                    { model: Image, as: 'images' },  // Включаем изображения
-                    { model: Collection, as: 'collection' }  // Включаем коллекцию
+                    { 
+                        model: ProductInfo, 
+                        as: 'product_infos',
+                        include: [
+                            { model: Feature }  // Добавляем связанную модель Feature
+                        ]
+                    },
+                    { model: Image, as: 'images' },
+                    { model: Collection, as: 'collection' }
                 ]
             });
 

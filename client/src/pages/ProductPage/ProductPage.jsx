@@ -64,19 +64,9 @@ const ProductPage = () => {
             title: 'Описание',
             content: (
                 <>
-                    {product.product_infos && product.product_infos.length > 0 ? (
-                        product.product_infos.map((info, index) => (
-                            <Col
-                                key={info.id}
-                                style={{ background: index % 2 === 0 ? 'lightgray' : 'transparent' }}
-                                className="d-flex flex-column xl-text ps-3 p-2"
-                            >
-                                {info.title}: {info.description}
-                            </Col>
-                        ))
-                    ) : (
+                    {product.description && (
                         <Col className="mt-3" xs={12}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            {product.description}
                         </Col>
                     )}
                 </>
@@ -85,26 +75,32 @@ const ProductPage = () => {
         {
             key: 'specifications',
             title: 'Характеристики',
-            content: product.width && product.depth && product.height
-                ? (
-                    <div>
-                        <div className="characteristic-line">
-                            <span>Ширина</span>
-                            <span>{product.width} см</span>
-                        </div>
-                        <div className="characteristic-line">
-                            <span>Глубина</span>
-                            <span>{product.depth} см</span>
-                        </div>
-                        <div className="characteristic-line">
-                            <span>Высота</span>
-                            <span>{product.height} см</span>
-                        </div>
+            content: (
+                <div>
+                    {/* Основные размеры */}
+                    <div className="characteristic-line">
+                        <span>Ширина</span>
+                        <span>{product.width} мм</span>
                     </div>
-                )
-                : 'Описание отсутствует.'
+                    <div className="characteristic-line">
+                        <span>Глубина</span>
+                        <span>{product.depth} мм</span>
+                    </div>
+                    <div className="characteristic-line">
+                        <span>Высота</span>
+                        <span>{product.height} мм</span>
+                    </div>
+
+                    {/* Характеристики из product_infos */}
+                    {product.product_infos?.map(info => (
+                        <div key={info.id} className="characteristic-line">
+                            <span>{info.feature?.name.charAt(0).toUpperCase() + info.feature?.name.slice(1).toLowerCase()}</span>
+                            <span>{info.value}</span>
+                        </div>
+                    ))}
+                </div>
+            )
         }
-        // Добавляйте дополнительные вкладки здесь
     ];
 
     return (

@@ -86,18 +86,18 @@ const CreateProduct = observer(({ show, onHide }) => {
 
     useEffect(() => {
         const loadFeatures = async () => {
-            try {
-                if (product.selectedType?.id && product.selectedFactory?.id) {
+            if (product.selectedType?.id && product.selectedFactory?.id) {
+                try {
                     const features = await fetchFeaturesByTypeAndFactory(
                         product.selectedType.id,
                         product.selectedFactory.id
                     );
                     setAvailableFeatures(features);
-                } else {
+                } catch (error) {
+                    console.error('Error loading features:', error);
                     setAvailableFeatures([]);
                 }
-            } catch (error) {
-                console.error('Error loading features:', error);
+            } else {
                 setAvailableFeatures([]);
             }
         };
@@ -323,7 +323,7 @@ const CreateProduct = observer(({ show, onHide }) => {
             <Modal.Footer>
                 {/*<Button variant="outline-danger" onClick={onHide}>Закрыть</Button>*/}
                 {/*<Button variant="outline-success" onClick={addProduct} disabled={loading}>Добавить</Button>*/}
-                <ButtonM2 text="Добавить" onClick={addProduct}/>
+                <ButtonM2 onClick={addProduct} text="Добавить"/>
             </Modal.Footer>
         </Modal>
     );
