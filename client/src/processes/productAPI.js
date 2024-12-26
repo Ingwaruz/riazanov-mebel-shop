@@ -70,12 +70,20 @@ export const fetchFilteredProducts = async (filters) => {
 };
 
 export const importProducts = async (formData) => {
-    const {data} = await $authHost.post('api/product/import', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
-    return data;
+    try {
+        console.log('Sending request to:', process.env.REACT_APP_API_URL + 'api/product/import');
+        console.log('FormData contents:', Array.from(formData.entries()));
+        
+        const {data} = await $authHost.post('api/product/import', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error('Error details:', error.response || error);
+        throw error;
+    }
 };
 
 // Характеристики

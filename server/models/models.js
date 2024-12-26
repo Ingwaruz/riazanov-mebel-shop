@@ -201,6 +201,10 @@ Collection.belongsToMany(Type, {through: 'collection_to_type'});
 ProductInfo.belongsTo(Feature, { foreignKey: 'featureId' });
 Feature.hasMany(ProductInfo, { foreignKey: 'featureId' });
 
+// Добавляем связь с Subtype
+Product.belongsTo(Subtype, { foreignKey: 'subtypeId' });
+Subtype.hasMany(Product, { foreignKey: 'subtypeId' });
+
 module.exports = {
     User, 
     Basket, 

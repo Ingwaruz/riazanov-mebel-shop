@@ -17,11 +17,19 @@ const ImportProducts = ({ show, onHide }) => {
             setLoading(true);
             const formData = new FormData();
             formData.append('file', file);
-            await importProducts(formData);
+            
+            console.log('File being sent:', file);
+            console.log('FormData being sent:', formData);
+            console.log('Authorization token:', localStorage.getItem('token'));
+            
+            const result = await importProducts(formData);
+            console.log('Import result:', result);
+            
             onHide();
             alert('Товары успешно импортированы');
         } catch (error) {
-            alert('Ошибка при импорте: ' + error.message);
+            console.error('Import error details:', error.response || error);
+            alert('Ошибка при импорте: ' + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
