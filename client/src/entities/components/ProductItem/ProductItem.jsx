@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PRODUCT_ROUTE } from '../../utils/consts';
 import "./productItem.scss";
 
-const ProductItem = ({ product, factoryName, price }) => {
+const ProductItem = ({ product, price }) => {
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [startIndex, setStartIndex] = useState(0);
@@ -45,23 +45,23 @@ const ProductItem = ({ product, factoryName, price }) => {
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
                 {/* Верхняя часть карточки */}
-                <div>
+                {/* <div>
                     <Col className="d-flex m-text mx-3 mt-2 mb-1 flex-shrink-0">
                         {factoryName}
                     </Col>
-                </div>
+                </div> */}
 
                 {/* Центрируем изображение */}
                 <div
                     style={{
                         flex: '1',
                     }}
-                    className="d-flex justify-content-center align-items-center overflow-hidden"
+                    className="d-flex justify-content-center align-items-center overflow-hidden image-container"
                 >
                     {images.length > 0 && (
                         <Image
                             key={currentImageIndex}
-                            className="carousel-image px-3 object-fit-contain mh-100 mw-100"
+                            className="px-3 object-fit-contain w-100 h-100"
                             src={process.env.REACT_APP_API_URL + images[currentImageIndex].file}
                         />
                     )}
@@ -81,7 +81,7 @@ const ProductItem = ({ product, factoryName, price }) => {
                                     }`}
                                 >
                                     <Image
-                                        className="carousel-image"
+                                        className="carousel-images"
                                         src={process.env.REACT_APP_API_URL + image.file}
                                     />
                                 </div>

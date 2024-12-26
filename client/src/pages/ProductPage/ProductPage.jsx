@@ -132,7 +132,7 @@ const ProductPage = () => {
                                         className={`thumbnail ${currentImageIndex === startIndex + index ? "active" : ""}`}
                                     >
                                         <Image
-                                            className="carousel-image"
+                                            className="carousel-images"
                                             src={`${process.env.REACT_APP_API_URL}${image.file}`}
                                         />
                                     </div>

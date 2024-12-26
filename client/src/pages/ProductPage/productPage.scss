@@ -7,14 +7,10 @@
   overflow: hidden;
 
   .carousel-images {
-    display: flex;
+    width: 100%; /* Миниатюра занимает всю ширину ячейки */
+    height: 100%; /* Миниатюра занимает всю высоту ячейки */
+    object-fit: cover; /* Сохраняем пропорции */
     transition: transform 0.5s ease-in-out;
-
-    .carousel-image {
-      flex-shrink: 0;
-      width: 100%;
-      object-fit: contain;
-    }
   }
 
   .arrow-icon {
