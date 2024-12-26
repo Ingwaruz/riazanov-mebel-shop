@@ -80,15 +80,15 @@ const ProductPage = () => {
                     {/* Основные размеры */}
                     <div className="characteristic-line">
                         <span>Ширина</span>
-                        <span>{product.width} мм</span>
+                        <span>{product.width} см</span>
                     </div>
                     <div className="characteristic-line">
                         <span>Глубина</span>
-                        <span>{product.depth} мм</span>
+                        <span>{product.depth} см</span>
                     </div>
                     <div className="characteristic-line">
                         <span>Высота</span>
-                        <span>{product.height} мм</span>
+                        <span>{product.height} см</span>
                     </div>
 
                     {/* Характеристики из product_infos */}
@@ -163,8 +163,15 @@ const ProductPage = () => {
                         style={{ boxShadow: '0px 0px 32px rgba(0, 0, 0, 0.08)' }}
                         className="border-white d-flex border-radius-0 p-2 sticky-card"
                     >
-                        <div className="xxl-text">{`От ${product.price} ₽` || 'Цена отсутствует'}</div>
-                        <div className="s-text">Цена товара зависит от выбранной ткани и может отличаться от указанной</div>
+                        <div className="xxl-text">{`~ ${product.price} ₽`}</div>
+                        {product.min_price && (
+                            <div className="l-text text-muted mt-2">
+                                {`От ${product.min_price} ₽`}
+                            </div>
+                        )}
+                        <div className="s-text">
+                            Цена товара зависит от выбранной ткани и может отличаться от указанной
+                        </div>
                         <ButtonM1 text="Добавить в корзину" />
                     </Card>
                 </Col>

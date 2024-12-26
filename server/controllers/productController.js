@@ -9,11 +9,22 @@ const fs = require('fs');
 class productController {
     async create(req, res, next) {
         try {
-            const {name, price, width, depth, height, factoryId, typeId, collectionId, description, features} = req.body;
-            const {images} = req.files;
+            const {name, price, min_price, width, depth, height, factoryId, typeId, collectionId, description, features} = req.body;
+            console.log('Creating product with data:', {
+                name, price, min_price, width, depth, height, factoryId, typeId, collectionId, description
+            });
 
             const product = await Product.create({
-                name, price, width, depth, height, factoryId, typeId, collectionId, description
+                name, 
+                price, 
+                min_price,
+                width, 
+                depth, 
+                height, 
+                factoryId, 
+                typeId, 
+                collectionId, 
+                description
             });
 
             if (features) {
@@ -28,9 +39,9 @@ class productController {
             }
 
             // Обработка изображений
-            if (images) {
+            if (req.files && req.files.images) { // Проверяем наличие файлов
                 // Проверяем, является ли `images` массивом (когда несколько файлов) или одним файлом
-                const imageFiles = Array.isArray(images) ? images : [images];
+                const imageFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
 
                 // Сохраняем каждое изображение
                 for (const image of imageFiles) {
@@ -44,6 +55,7 @@ class productController {
 
             return res.json(product);
         } catch (e) {
+            console.error('Error creating product:', e);
             next(ApiError.badRequest(e.message));
         }
     }
@@ -60,7 +72,6 @@ class productController {
             if (factoryId) whereClause.factoryId = factoryId;
             if (typeId) whereClause.typeId = typeId;
             
-            // Добавляем фильтрацию по размерам
             if (size) {
                 const {width, depth, height} = JSON.parse(size);
                 if (width) {
@@ -85,10 +96,37 @@ class productController {
                 limit,
                 offset,
                 include: [
-                    { model: Image, as: 'images' },
-                    { model: Type },
-                    { model: Factory }
-                ]
+                    { 
+                        model: Image, 
+                        as: 'images',
+                        required: false  // Делаем связь необязательной
+                    },
+                    { 
+                        model: Type,
+                        required: false
+                    },
+                    { 
+                        model: Factory,
+                        required: false
+                    },
+                    { 
+                        model: Collection, 
+                        as: 'collection',
+                        required: false  // Делаем связь необязательной
+                    },
+                    {
+                        model: ProductInfo,
+                        as: 'product_infos',
+                        required: false,
+                        include: [
+                            {
+                                model: Feature,
+                                required: false
+                            }
+                        ]
+                    }
+                ],
+                distinct: true  // Добавляем для корректного подсчета при использовании include
             });
 
             return res.json(products);
@@ -102,12 +140,22 @@ class productController {
             const {id} = req.params;
             const product = await Product.findOne({
                 where: {id},
+                attributes: [
+                    'id', 
+                    'name', 
+                    'price', 
+                    'min_price',
+                    'width', 
+                    'depth', 
+                    'height', 
+                    'description'
+                ],
                 include: [
                     { 
                         model: ProductInfo, 
                         as: 'product_infos',
                         include: [
-                            { model: Feature }  // Добавляем связанную модель Feature
+                            { model: Feature }
                         ]
                     },
                     { model: Image, as: 'images' },

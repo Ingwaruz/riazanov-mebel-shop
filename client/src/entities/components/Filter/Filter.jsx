@@ -9,9 +9,9 @@ const Filter = ({ onFilterChange }) => {
     const [types, setTypes] = useState([]);
     const [factories, setFactories] = useState([]);
     const [sizeRange, setSizeRange] = useState({
-        width: [0, 500],
-        depth: [0, 500],
-        height: [0, 500],
+        width: [0, 1000],
+        depth: [0, 1000],
+        height: [0, 1000],
     });
 
     const [selectedType, setSelectedType] = useState(null);
@@ -96,8 +96,8 @@ const Filter = ({ onFilterChange }) => {
                     <Accordion.Body>
                         {Object.entries(sizeRange).map(([type, values]) => (
                             <div key={type} className="mb-4">
-                                <p className="m-text mb-1 text-capitalize">
-                                    {type === "width" ? "Ширина" : type === "depth" ? "Глубина" : "Высота"}
+                                <p className="m-text mb-1">
+                                    {type === "width" ? "Ширина, см" : type === "depth" ? "Глубина, см" : "Высота, см"}
                                 </p>
                                 <Row className="align-items-center">
                                     <Col xs={6} className="mb-2 s-text main_font_color">

@@ -23,7 +23,16 @@ const productReducer = (state, action) => {
                     : i)
             };
         case 'RESET':
-            return { name: '', price: 0, width: 0, depth: 0, height: 0, files: [], info: [] };
+            return { 
+                name: '', 
+                price: '', 
+                min_price: '',
+                width: '', 
+                depth: '', 
+                height: '', 
+                files: [], 
+                info: [] 
+            };
         default:
             return state;
     }
@@ -42,6 +51,7 @@ const CreateProduct = observer(({ show, onHide }) => {
     const [productData, dispatch] = useReducer(productReducer, {
         name: '',
         price: '',
+        min_price: '',
         width: '',
         depth: '',
         height: '',
@@ -116,28 +126,42 @@ const CreateProduct = observer(({ show, onHide }) => {
     }, []);
 
     const addProduct = async () => {
-        const { name, price, width, depth, height, files, info } = productData;
+        const { name, price, min_price, width, depth, height, files } = productData;
 
-        if (!name || !price || !width || !depth || !height || !files.length || !product.selectedFactory.id || !product.selectedType.id || !product.selectedCollection.id ) {
-            setError("Заполните все поля.");
+        // Убираем проверку collectionId из обязательных полей
+        if (!name || !price || !width || !depth || !height || !files.length || !product.selectedFactory.id || !product.selectedType.id) {
+            setError("Заполните обязательные поля.");
             return;
         }
 
         const formData = new FormData();
         formData.append('name', name);
         formData.append('price', `${price}`);
+        // Добавляем min_price в formData только если оно задано
+        if (min_price) {
+            formData.append('min_price', `${min_price}`);
+        }
         formData.append('width', `${width}`);
         formData.append('depth', `${depth}`);
         formData.append('height', `${height}`);
         formData.append('factoryId', product.selectedFactory.id);
         formData.append('typeId', product.selectedType.id);
-        formData.append('collectionId', product.selectedCollection.id);
-        formData.append('info', JSON.stringify(info));
+        
+        // Добавляем collectionId только если он выбран
+        if (product.selectedCollection?.id) {
+            formData.append('collectionId', product.selectedCollection.id);
+        }
+        
         formData.append('description', description);
-        formData.append('features', JSON.stringify(features));
+
+        // Добавляем только заполненные характеристики
+        const filledFeatures = features.filter(feature => feature.value && feature.value.trim() !== '');
+        if (filledFeatures.length > 0) {
+            formData.append('features', JSON.stringify(filledFeatures));
+        }
 
         // Добавление всех изображений в formData
-        files.forEach((file, index) => {
+        files.forEach((file) => {
             formData.append(`images`, file);
         });
 
@@ -229,6 +253,13 @@ const CreateProduct = observer(({ show, onHide }) => {
                         type="number"
                     />
                     <Form.Control
+                        value={productData.min_price}
+                        onChange={e => dispatch({ type: 'SET_FIELD', field: 'min_price', payload: Number(e.target.value) })}
+                        className="mt-3"
+                        placeholder="Введите минимальную стоимость товара (руб.)"
+                        type="number"
+                    />
+                    <Form.Control
                         value={productData.width}
                         onChange={e => dispatch({ type: 'SET_FIELD', field: 'width', payload: Number(e.target.value) })}
                         className="mt-3"
@@ -260,7 +291,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                         className="color-white border-main_color bg-main_color_hover hover-item--main_color "
                         onClick={addInfo}
                     >
-                        Добавить новое свойство
+                        Добавить нов��е свойство
                     </Button>
                     {productData.info.map(i => (
                         <Row className="mt-4" key={i.number}>

@@ -27,8 +27,9 @@ const BasketProduct = sequelize.define('basket_product', {
 // Товар
 const Product = sequelize.define('product', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
+    name: {type: DataTypes.STRING, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
+    min_price: {type: DataTypes.INTEGER, allowNull: true},
     width: {type: DataTypes.INTEGER, allowNull: false},
     depth: {type: DataTypes.INTEGER, allowNull: false},
     height: {type: DataTypes.INTEGER, allowNull: false},
@@ -133,7 +134,7 @@ const CollectionToType = sequelize.define('collection_to_type', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 })
 
-// ����писание связей между таблицами
+// Описание связей между таблицами
 
 // User
 User.hasOne(Basket, {foreignKey: { allowNull: false }});
