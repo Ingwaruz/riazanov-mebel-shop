@@ -76,7 +76,8 @@ const MaterialToType = sequelize.define('material_to_type', {
 
 const Image = sequelize.define('image', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    img: {type: DataTypes.STRING, allowNull: false}
+    img: {type: DataTypes.STRING, allowNull: false},
+    order: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0}
 })
 
 const Collection = sequelize.define('collection', {

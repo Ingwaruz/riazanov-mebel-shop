@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Col, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { PRODUCT_ROUTE } from '../../utils/consts';
 import "./productItem.scss";
 import { observer } from 'mobx-react-lite';
 
-const ProductItem = observer(({ product, min_price}) => {
+const ProductItem = observer(({ product }) => {
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [startIndex, setStartIndex] = useState(0);
+
+    useEffect(() => {
+        setCurrentImageIndex(0);
+        setStartIndex(0);
+    }, [product.id]);
+
+    console.log('Product min_price:', product.min_price);
 
     const images = product.images || [];
 
@@ -107,7 +114,7 @@ const ProductItem = observer(({ product, min_price}) => {
                     {/* Название и цена товара */}
                     <Col className="d-flex m-text mx-3 my-2">{product.name}</Col>
                     <Col className="d-flex l-text mx-3 mt-1 mb-2">
-                        {`Цена от ${min_price?.toLocaleString('ru-RU')} ₽`}
+                        {`Цена от ${product.min_price ? product.min_price.toLocaleString('ru-RU') : 0} ₽`}
                     </Col>
                 </div>
             </Card>

@@ -180,12 +180,17 @@ class productController {
                 const imageFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
 
                 // Сохраняем каждое изображение
+                let order = 0;
                 for (const image of imageFiles) {
                     let fileName = uuid.v4() + path.extname(image.name);
                     await image.mv(path.resolve(__dirname, '..', 'static', fileName)); // Сохраняем файл
 
                     // Сохраняем ссылку на изображение в таблицу `Images`
-                    await Image.create({file: fileName, productId: product.id});
+                    await Image.create({
+                        img: fileName, 
+                        productId: product.id,
+                        order: order++
+                    });
                 }
             }
 
@@ -235,7 +240,8 @@ class productController {
                     { 
                         model: Image, 
                         as: 'images',
-                        required: false  // Делаем связь необязательной
+                        required: false,
+                        attributes: ['id', 'img', 'order']
                     },
                     { 
                         model: Type,
@@ -248,7 +254,7 @@ class productController {
                     { 
                         model: Collection, 
                         as: 'collection',
-                        required: false  // Делаем связь необязательной
+                        required: false
                     },
                     {
                         model: ProductInfo,
@@ -262,7 +268,10 @@ class productController {
                         ]
                     }
                 ],
-                distinct: true  // Добавляем для корректного подсчета при использовании include
+                order: [
+                    [{ model: Image, as: 'images' }, 'order', 'ASC']
+                ],
+                distinct: true
             });
 
             return res.json(products);
@@ -280,7 +289,7 @@ class productController {
                     {
                         model: Image,
                         as: 'images',
-                        attributes: ['id', 'img'],
+                        attributes: ['id', 'img', 'order']
                     },
                     {
                         model: ProductInfo,
@@ -300,6 +309,9 @@ class productController {
                         model: Collection,
                         as: 'collection'
                     }
+                ],
+                order: [
+                    [{ model: Image, as: 'images' }, 'order', 'ASC']
                 ]
             });
 
@@ -368,7 +380,7 @@ class productController {
                     { 
                         model: Image,
                         as: 'images',
-                        attributes: ['img'],
+                        attributes: ['id', 'img', 'order'],
                         required: false
                     },
                     { 
@@ -385,10 +397,11 @@ class productController {
                         required: false
                     }
                 ],
-                distinct: true,
                 order: [
-                    ['createdAt', 'DESC']
-                ]
+                    ['createdAt', 'DESC'],
+                    [{ model: Image, as: 'images' }, 'order', 'ASC']
+                ],
+                distinct: true
             });
 
             console.log('Products query result:', {
@@ -436,16 +449,13 @@ class productController {
                             // Обработка цен
                             const price = parsePrice(row['price']);
                             const minPrice = parsePrice(row['min_price']);
-                            
-                            // Используем минимальную цену, если она есть, иначе обычную
-                            const finalPrice = minPrice || price;
 
                             productGroups.set(productKey, {
                                 productData: {
                                     name: productName,
                                     description: row['description'] || '',
-                                    price: finalPrice,
-                                    min_price: parsePrice(row['min_price']),
+                                    price: price,
+                                    min_price: minPrice,
                                     width: parseNumeric(row['width']),
                                     height: parseNumeric(row['height']),
                                     depth: parseNumeric(row['depth'])
@@ -554,6 +564,7 @@ class productController {
                     console.log(`Processing images for product ${data.productData.name}`);
                     console.log('Images to process:', Array.from(data.images));
 
+                    let imageOrder = 0;
                     for (const imageUrl of data.images) {
                         try {
                             // Генерируем уникальное имя файла с сохранением расширения
@@ -568,13 +579,15 @@ class productController {
                                 // Создаем запись в базе данных
                                 const imageRecord = await Image.create({
                                     productId: product.id,
-                                    img: fileName
+                                    img: fileName,
+                                    order: imageOrder++
                                 });
 
                                 console.log('Created image record:', {
                                     id: imageRecord.id,
                                     productId: imageRecord.productId,
-                                    img: imageRecord.img
+                                    img: imageRecord.img,
+                                    order: imageRecord.order
                                 });
                             } catch (downloadError) {
                                 console.error(`Error downloading image: ${downloadError.message}`);

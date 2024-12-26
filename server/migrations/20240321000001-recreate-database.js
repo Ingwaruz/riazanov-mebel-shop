@@ -3,17 +3,16 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     try {
-      // 1. Удаляем все существующие таблицы в правильном порядке
-      await queryInterface.dropTable('product_infos', { cascade: true });
-      await queryInterface.dropTable('images', { cascade: true });
-      await queryInterface.dropTable('products', { cascade: true });
-      await queryInterface.dropTable('collections', { cascade: true });
-      await queryInterface.dropTable('features', { cascade: true });
-      await queryInterface.dropTable('types', { cascade: true });
-      await queryInterface.dropTable('factories', { cascade: true });
-      await queryInterface.dropTable('users', { cascade: true });
+      // Проверяем существование таблиц
+      const tables = await queryInterface.showAllTables();
+      
+      // Если таблицы уже существуют, пропускаем миграцию
+      if (tables.includes('users')) {
+        console.log('Tables already exist, skipping migration');
+        return;
+      }
 
-      // 2. Создаем таблицы заново
+      // 2. Создаем таблицы
       
       // Users
       await queryInterface.createTable('users', {
@@ -187,9 +186,14 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true
         },
-        file: {
+        img: {
           type: Sequelize.STRING,
           allowNull: false
+        },
+        order: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          defaultValue: 0
         },
         productId: {
           type: Sequelize.INTEGER,
