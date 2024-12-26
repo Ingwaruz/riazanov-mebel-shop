@@ -76,7 +76,7 @@ const MaterialToType = sequelize.define('material_to_type', {
 
 const Image = sequelize.define('image', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    file: {type: DataTypes.STRING, allowNull: false}
+    img: {type: DataTypes.STRING, allowNull: false}
 })
 
 const Collection = sequelize.define('collection', {
@@ -160,11 +160,16 @@ Collection.belongsTo(Factory, {foreignKey: { allowNull: false }});
 
 // Product
 Product.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
-Product.hasMany(Image, {foreignKey: { allowNull: false }});
+Product.hasMany(Image, { 
+    as: 'images',
+    foreignKey: 'productId'
+});
 Product.hasMany(ProductInfo, {as: 'product_infos', foreignKey: 'productId'});
 Product.belongsTo(Collection, {as: 'collection', foreignKey: 'collectionId'});
 BasketProduct.belongsTo(Product, { foreignKey: { allowNull: false }});
-Image.belongsTo(Product, { foreignKey: { allowNull: false }});
+Image.belongsTo(Product, {
+    foreignKey: 'productId'
+});
 ProductInfo.belongsTo(Product, {foreignKey: 'productId'});
 Collection.hasMany(Product, {foreignKey: 'collectionId'});
 

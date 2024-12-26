@@ -12,30 +12,44 @@ import './styles/colors.scss';
 import './styles/shared.scss';
 import Footer from "../widgets/Footer";
 
-
 const App = observer(() => {
     const {user} = useContext(Context)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        check().then(data => {
-            user.setUser(true)
-            user.setIsAuth(true)
-        }).finally(() => setLoading(false))
+        // Проверяем наличие токена
+        const token = localStorage.getItem('token');
+        if (token) {
+            check()
+                .then(data => {
+                    user.setUser(data)
+                    user.setIsAuth(true)
+                })
+                .catch(error => {
+                    // Если токен невалидный, очищаем его
+                    if (error.response?.status === 401) {
+                        localStorage.removeItem('token');
+                        user.setUser({});
+                        user.setIsAuth(false);
+                    }
+                })
+                .finally(() => setLoading(false));
+        } else {
+            setLoading(false);
+        }
     }, []);
 
-    // необходимо для адекватной отрисовки компонентов при ожидании ответа сервера
     if (loading) {
         return <Spinner animation={'grow'}/>
     }
 
     return (
-    <BrowserRouter>
-        <MyNavbar />
-        <AppRouter/>
-        <Footer />
-    </BrowserRouter>
-  );
+        <BrowserRouter>
+            <MyNavbar />
+            <AppRouter/>
+            <Footer />
+        </BrowserRouter>
+    );
 });
 
 export default App;

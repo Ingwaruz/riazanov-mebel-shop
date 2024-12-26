@@ -35,3 +35,6 @@ Thumbs.db
 
 # Temp files
 server/temp/
+
+static/*
+!static/.gitkeep

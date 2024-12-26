@@ -3,13 +3,22 @@ import { Card, Col, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { PRODUCT_ROUTE } from '../../utils/consts';
 import "./productItem.scss";
+import { observer } from 'mobx-react-lite';
 
-const ProductItem = ({ product, price }) => {
+const ProductItem = observer(({ product, min_price}) => {
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [startIndex, setStartIndex] = useState(0);
 
     const images = product.images || [];
+
+    // Добавим отладочный вывод
+    console.log('Product in ProductItem:', {
+        id: product.id,
+        name: product.name,
+        images: images,
+        currentImage: images[currentImageIndex]?.img
+    });
 
     const nextImage = (e) => {
         e.stopPropagation(); // Останавливаем всплытие
@@ -34,6 +43,8 @@ const ProductItem = ({ product, price }) => {
             setStartIndex(index - 4);
         }
     };
+
+    console.log('Product images:', product.images); // Добавим для отладки
 
     return (
         <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
@@ -62,7 +73,11 @@ const ProductItem = ({ product, price }) => {
                         <Image
                             key={currentImageIndex}
                             className="px-3 object-fit-contain w-100 h-100"
-                            src={process.env.REACT_APP_API_URL + images[currentImageIndex].file}
+                            src={process.env.REACT_APP_API_URL + images[currentImageIndex]?.img}
+                            onError={(e) => {
+                                console.error('Image load error:', e);
+                                e.target.src = 'placeholder.jpg'; // Добавьте плейсхолдер
+                            }}
                         />
                     )}
                 </div>
@@ -82,7 +97,7 @@ const ProductItem = ({ product, price }) => {
                                 >
                                     <Image
                                         className="carousel-images"
-                                        src={process.env.REACT_APP_API_URL + image.file}
+                                        src={process.env.REACT_APP_API_URL + image.img}
                                     />
                                 </div>
                             ))}
@@ -92,12 +107,12 @@ const ProductItem = ({ product, price }) => {
                     {/* Название и цена товара */}
                     <Col className="d-flex m-text mx-3 my-2">{product.name}</Col>
                     <Col className="d-flex l-text mx-3 mt-1 mb-2">
-                        {`Цена от ${price.toLocaleString('ru-RU')} ₽`}
+                        {`Цена от ${min_price?.toLocaleString('ru-RU')} ₽`}
                     </Col>
                 </div>
             </Card>
         </Col>
     );
-};
+});
 
 export default ProductItem;

@@ -1,12 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import TypeBar from "../entities/components/TypeBar";
-import FactoryBar from "../entities/components/FactoryBar";
 import ProductList from "../widgets/ProductList";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import {fetchFactories, fetchProducts, fetchTypes} from "../processes/productAPI";
-import Pages from "../entities/components/Pages";
 import Filter from "../entities/components/Filter/Filter";
 
 const Shop = observer(() => {
@@ -47,7 +44,6 @@ const Shop = observer(() => {
                 </Col>
                 <Col lg={10} md={8} sm={8} xs={12}>
                     <ProductList/>
-                    <Pages/>
                 </Col>
             </Row>
         </div>

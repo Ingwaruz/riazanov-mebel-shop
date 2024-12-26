@@ -18,27 +18,37 @@ const CSV_COLUMN_MAPPING = {
     'paginator': null,
     
     // Основные поля
-    'product': 'name',        // название товара
-    'type': 'type',          // тип товара
-    'subtype': null,         // подтип (пока игнорируем)
-    'name': 'name',          // альтернативное название
-    'price': 'price',        // цена
-    'min_price': 'min_price',// минимальная цена
-    'description': 'description', // описание
-    'collection': 'collection',   // коллекция
-    'width': 'width',        // ширина
-    'depth': 'depth',        // глубина
-    'height': 'height',      // высота
-    'factory': 'factory',    // производитель
+    'product': 'name',
+    'type': 'type',
+    'subtype': 'subtype',
+    'name': 'name',
+    'price': 'price',
+    'min_price': 'min_price',
+    'description': 'description',
+    'collection': 'collection',
+    'width': 'width',
+    'depth': 'depth',
+    'height': 'height',
+    'factory': 'factory',
     
-    // Характеристики (будут обработаны отдельно)
-    'material': null,        // материал
-    'комплектация': null,    // комплектация
-    'country': null,         // страна
-    'цвет': null,           // цвет
-    'гарантия': null,       // гарантия
-    'базовая-единица': null, // базовая единица
-    'img-src': null         // ссылки на изображения
+    // Характеристики
+    'material': 'Материал',
+    'комплектация': 'Комплектация',
+    'country': 'Страна производства',
+    'цвет': 'Цвет',
+    'гарантия': 'Гарантия',
+    'базовая-единица': 'Единица измерения',
+    'img-src': 'images'
+};
+
+// Обновляем маппинг характеристик
+const FEATURE_MAPPING = {
+    'материал': 'Материал',
+    'страна': 'Страна производства',
+    'комплектация': 'Комплектация',
+    'цвет': 'Цвет',
+    'гарантия': 'Гарантия',
+    'базовая-единица': 'Единица измерения'
 };
 
 // Выносим функцию за пределы класса
@@ -86,36 +96,50 @@ const createFeatureIfNotExists = async (featureName, typeId, factoryId) => {
 
 const downloadImage = async (imageUrl, fileName) => {
     try {
-        // Формируем полный URL, если это относительный путь
-        const fullUrl = imageUrl.startsWith('http') 
-            ? imageUrl 
-            : `https://geniuspark.ru${imageUrl}`;
+        // Формируем полный URL
+        let fullUrl = imageUrl;
+        if (!imageUrl.startsWith('http')) {
+            fullUrl = `https://geniuspark.ru${imageUrl}`;
+        }
+
+        console.log('Downloading image from:', fullUrl); // Отладочный вывод
 
         const response = await axios({
             method: 'get',
             url: fullUrl,
-            responseType: 'stream'
+            responseType: 'arraybuffer',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
         });
 
         const staticPath = path.resolve(__dirname, '..', 'static');
-        // Создаем папку static, если её нет
         if (!fs.existsSync(staticPath)) {
             await fsPromises.mkdir(staticPath, { recursive: true });
         }
 
         const filePath = path.resolve(staticPath, fileName);
-        const writer = fs.createWriteStream(filePath);
+        await fsPromises.writeFile(filePath, response.data);
 
-        response.data.pipe(writer);
-
-        return new Promise((resolve, reject) => {
-            writer.on('finish', resolve);
-            writer.on('error', reject);
-        });
+        console.log(`Image saved successfully: ${fileName}`); // Отладочный вывод
+        return fileName;
     } catch (error) {
-        console.error(`Error downloading image from ${imageUrl}:`, error);
+        console.error(`Error downloading image from ${imageUrl}:`, error.message);
         throw error;
     }
+};
+
+// Функция для очистки и преобразования цены
+const parsePrice = (priceStr) => {
+    if (!priceStr) return 0;
+    // Удаляем символ ₽, пробелы и 'от'
+    return parseInt(priceStr.replace(/[₽\s]/g, '').replace('от', '')) || 0;
+};
+
+// Функция для очистки числовых значений
+const parseNumeric = (str) => {
+    if (!str) return 0;
+    return parseInt(str.replace(/[^\d]/g, '')) || 0;
 };
 
 class productController {
@@ -252,35 +276,52 @@ class productController {
             const {id} = req.params;
             const product = await Product.findOne({
                 where: {id},
-                attributes: [
-                    'id', 
-                    'name', 
-                    'price', 
-                    'min_price',
-                    'width', 
-                    'depth', 
-                    'height', 
-                    'description'
-                ],
                 include: [
-                    { 
-                        model: ProductInfo, 
-                        as: 'product_infos',
-                        include: [
-                            { model: Feature }
-                        ]
+                    {
+                        model: Image,
+                        as: 'images',
+                        attributes: ['id', 'img'],
                     },
-                    { model: Image, as: 'images' },
-                    { model: Collection, as: 'collection' }
+                    {
+                        model: ProductInfo,
+                        as: 'product_infos',
+                        include: [{
+                            model: Feature,
+                            attributes: ['name']
+                        }]
+                    },
+                    {
+                        model: Type
+                    },
+                    {
+                        model: Factory
+                    },
+                    {
+                        model: Collection,
+                        as: 'collection'
+                    }
                 ]
             });
 
             if (!product) {
-                throw ApiError.badRequest('Product not found');
+                return next(ApiError.badRequest('Продукт не найден'));
             }
+
+            // Добавляем отладочный вывод
+            console.log('Product details:', {
+                id: product.id,
+                name: product.name,
+                images: product.images?.map(img => ({
+                    id: img.id,
+                    img: img.img,
+                    fullUrl: `${process.env.PORT}/${img.img}`
+                })),
+                features: product.product_infos
+            });
 
             return res.json(product);
         } catch (e) {
+            console.error('Error in getOne:', e);
             next(ApiError.badRequest(e.message));
         }
     }
@@ -324,259 +365,257 @@ class productController {
             const products = await Product.findAndCountAll({
                 where: whereClause,
                 include: [
-                    { model: Image, as: 'images' },
-                    { model: Type },
-                    { model: Factory },
-                    { model: Collection, as: 'collection' }
+                    { 
+                        model: Image,
+                        as: 'images',
+                        attributes: ['img'],
+                        required: false
+                    },
+                    { 
+                        model: Type,
+                        required: false
+                    },
+                    { 
+                        model: Factory,
+                        required: false
+                    },
+                    { 
+                        model: Collection,
+                        as: 'collection',
+                        required: false
+                    }
+                ],
+                distinct: true,
+                order: [
+                    ['createdAt', 'DESC']
                 ]
+            });
+
+            console.log('Products query result:', {
+                count: products.count,
+                sampleProduct: products.rows[0] ? {
+                    id: products.rows[0].id,
+                    name: products.rows[0].name,
+                    images: products.rows[0].images
+                } : null
             });
 
             return res.json(products);
         } catch (e) {
+            console.error('Error in getFiltered:', e);
             next(ApiError.badRequest(e.message));
         }
     }
 
     async importFromCsv(req, res, next) {
-        if (!req.files || !req.files.file) {
-            return next(ApiError.badRequest('No file uploaded'));
-        }
-
-        const file = req.files.file;
-        const tempDir = path.resolve(__dirname, '..', 'temp');
-        const tempPath = path.resolve(tempDir, `${Date.now()}_${file.name}`);
-        const errors = [];
-        const processedNames = new Set();
-
+        let tempPath;
         try {
-            await fsPromises.mkdir(tempDir, { recursive: true });
-            await file.mv(tempPath);
-            console.log('CSV file saved to:', tempPath);
+            if (!req.files || !req.files.file) {
+                return next(ApiError.badRequest('Файл не был загружен'));
+            }
 
-            const results = await new Promise((resolve, reject) => {
-                const results = [];
-                fs.createReadStream(tempPath, { encoding: 'utf8' })
-                    .pipe(csv({
-                        separator: ',',
-                        skipLines: 0,
-                        headers: false,
-                        trim: true
-                    }))
-                    .on('data', (data) => {
-                        console.log('Raw CSV row data:', data);
-                        if (Object.keys(data).length > 0) {
-                            results.push(data);
+            const file = req.files.file;
+            tempPath = path.join(__dirname, '..', 'temp', file.name);
+            
+            await fsPromises.mkdir(path.join(__dirname, '..', 'temp'), { recursive: true });
+            await file.mv(tempPath);
+
+            const results = [];
+            const errors = [];
+            const productGroups = new Map();
+
+            await new Promise((resolve, reject) => {
+                fs.createReadStream(tempPath)
+                    .pipe(csv())
+                    .on('data', (row) => {
+                        // Создаем уникальный ключ на основе имени и коллекции
+                        const productName = row['name'] || row['product'];
+                        const productKey = `${productName}_${row['collection']}`;
+
+                        if (!productGroups.has(productKey)) {
+                            // Обработка цен
+                            const price = parsePrice(row['price']);
+                            const minPrice = parsePrice(row['min_price']);
+                            
+                            // Используем минимальную цену, если она есть, иначе обычную
+                            const finalPrice = minPrice || price;
+
+                            productGroups.set(productKey, {
+                                productData: {
+                                    name: productName,
+                                    description: row['description'] || '',
+                                    price: finalPrice,
+                                    min_price: parsePrice(row['min_price']),
+                                    width: parseNumeric(row['width']),
+                                    height: parseNumeric(row['height']),
+                                    depth: parseNumeric(row['depth'])
+                                },
+                                factory: row['factory'],
+                                type: row['type'],
+                                subtype: row['subtype'],
+                                collection: row['collection'],
+                                characteristics: {
+                                    [FEATURE_MAPPING['материал']]: row['материал'],
+                                    [FEATURE_MAPPING['страна']]: row['страна'],
+                                    [FEATURE_MAPPING['комплектация']]: row['комплектация'],
+                                    [FEATURE_MAPPING['цвет']]: row['цвет'],
+                                    [FEATURE_MAPPING['гарантия']]: row['гарантия'],
+                                    [FEATURE_MAPPING['базовая-единица']]: row['базовая-единица']
+                                },
+                                images: new Set()
+                            });
+                        }
+
+                        // Добавляем URL изображения в Set
+                        if (row['img-src']) {
+                            const imageUrl = row['img-src'].trim();
+                            if (imageUrl) {
+                                console.log(`Found image URL for ${productName}:`, imageUrl); // Отладочный вывод
+                                productGroups.get(productKey).images.add(imageUrl);
+                            }
                         }
                     })
-                    .on('end', () => {
-                        console.log('CSV parsing completed. Headers:', Object.keys(results[0] || {}));
-                        console.log('First row data:', results[0]);
-                        resolve(results);
-                    })
-                    .on('error', (error) => {
-                        console.error('CSV parsing error:', error);
-                        reject(error);
-                    });
+                    .on('end', resolve)
+                    .on('error', reject);
             });
 
-            for (const rawRow of results) {
+            // Создаем товары
+            for (const [key, data] of productGroups) {
                 try {
-                    if (!rawRow || Object.keys(rawRow).length === 0) {
-                        console.log('Empty row detected, skipping...');
-                        continue;
-                    }
+                    console.log(`Processing product: ${key}`);
+                    console.log('Product data:', data.productData);
 
-                    console.log('Processing row:', rawRow);
-                    
-                    const row = {
-                        name: rawRow['2'] || rawRow['7'],      // product или name
-                        type: rawRow['5'],                     // type
-                        factory: rawRow['17'],                 // factory
-                        price: rawRow['8'],                    // price
-                        min_price: rawRow['9'],                // min_price
-                        width: rawRow['13'],                   // width
-                        depth: rawRow['14'],                   // depth
-                        height: rawRow['15'],                  // height
-                        description: rawRow['10'],             // description
-                        collection: rawRow['11']               // collection
-                    };
-
-                    // Добавим русские характеристики
-                    const russianFeatures = {
-                        'материал': rawRow['12'],      // Материал
-                        'страна': rawRow['18'],        // Страна
-                        'цвет': rawRow['19'],          // Цвет
-                        'гарантия': rawRow['20'],      // Гарантия
-                        'единица измерения': rawRow['21']  // Базовая единица
-                    };
-
-                    // Очистка значений от лишних символов
-                    if (row.price) {
-                        row.price = row.price.replace(/[^\d]/g, ''); // Оставляем только цифры
-                    }
-                    if (row.min_price) {
-                        row.min_price = row.min_price.replace(/[^\d]/g, '').replace(/^от\s*/, ''); // Убираем "от" и оставляем только цифры
-                    }
-                    if (row.width) {
-                        row.width = row.width.replace(/[^\d]/g, ''); // Убираем "см" и пробелы
-                    }
-                    if (row.depth) {
-                        row.depth = row.depth.replace(/[^\d]/g, '');
-                    }
-                    if (row.height) {
-                        row.height = row.height.replace(/[^\d]/g, '');
-                    }
-
-                    console.log('Mapped row data:', {
-                        name: row.name,
-                        type: row.type,
-                        factory: row.factory,
-                        price: row.price,
-                        min_price: row.min_price,
-                        width: row.width,
-                        depth: row.depth,
-                        height: row.height,
-                        features: russianFeatures
-                    });
-
-                    if (!row.name || !row.type || !row.factory) {
-                        throw new Error(`Missing required fields. Found in CSV: ${JSON.stringify({
-                            name: row.name,
-                            type: row.type,
-                            factory: row.factory,
-                            rawProduct: rawRow.product,
-                            rawName: rawRow.name
-                        })}`);
-                    }
-
-                    // Пропускаем дубликаты по имени
-                    if (processedNames.has(row.name)) {
-                        console.log(`Skipping duplicate product: ${row.name}`);
-                        continue;
-                    }
-
-                    // Находим или создаем тип и подтип
-                    const [type] = await Type.findOrCreate({
-                        where: { name: row.type }
-                    });
-                    console.log('Type created/found:', type.name);
-
-                    let subtype = null;
-                    if (rawRow['6']) { // subtype находится в колонке 6
-                        [subtype] = await Subtype.findOrCreate({
-                            where: { 
-                                name: rawRow['6'],
-                                typeId: type.id 
-                            }
-                        });
-                        console.log('Subtype created/found:', subtype.name);
-                    }
-
-                    // Находим или создаем фабрику
                     const [factory] = await Factory.findOrCreate({
-                        where: { name: row.factory }
+                        where: { name: data.factory }
                     });
-                    console.log('Factory created/found:', factory.name);
 
-                    // Находим или создаем коллекцию
-                    let collection = null;
-                    if (row.collection) {
-                        [collection] = await Collection.findOrCreate({
+                    const [type] = await Type.findOrCreate({
+                        where: { name: data.type }
+                    });
+
+                    // Создаем подтип, если он есть
+                    let subtypeId = null;
+                    if (data.subtype) {
+                        const [subtype] = await Subtype.findOrCreate({
                             where: { 
-                                name: row.collection,
-                                factoryId: factory.id
+                                name: data.subtype,
+                                typeId: type.id
                             }
                         });
-                        console.log('Collection created/found:', collection?.name);
+                        subtypeId = subtype.id;
                     }
 
-                    // Создаем продукт
-                    const productData = {
-                        name: row.name,
-                        price: parseInt(row.price) || 0,
-                        min_price: row.min_price ? parseInt(row.min_price) : null,
-                        width: parseInt(row.width) || 0,
-                        depth: parseInt(row.depth) || 0,
-                        height: parseInt(row.height) || 0,
-                        description: row.description,
-                        factoryId: factory.id,
-                        typeId: type.id,
-                        subtypeId: subtype?.id,
-                        collectionId: collection?.id
-                    };
+                    const [collection] = await Collection.findOrCreate({
+                        where: { 
+                            name: data.collection,
+                            factoryId: factory.id
+                        }
+                    });
 
-                    console.log('Creating product with data:', productData);
-                    const product = await Product.create(productData);
-                    console.log('Product created:', product.id);
+                    // Проверяем, существует ли уже такой продукт
+                    let product = await Product.findOne({
+                        where: {
+                            name: data.productData.name,
+                            collectionId: collection.id
+                        }
+                    });
 
-                    // Обрабатываем характеристики
-                    for (const featureName in russianFeatures) {
-                        if (russianFeatures[featureName]) {
-                            console.log(`Processing feature: ${featureName} = ${russianFeatures[featureName]}`);
-                            const feature = await createFeatureIfNotExists(featureName, type.id, factory.id);
-                            await ProductInfo.create({
-                                productId: product.id,
-                                featureId: feature.id,
-                                value: russianFeatures[featureName]
-                            });
+                    if (!product) {
+                        product = await Product.create({
+                            ...data.productData,
+                            factoryId: factory.id,
+                            typeId: type.id,
+                            subtypeId,
+                            collectionId: collection.id,
+                            price: data.productData.price,
+                            min_price: data.productData.min_price
+                        });
+
+                        // Создаем характеристики
+                        for (const [name, value] of Object.entries(data.characteristics)) {
+                            if (value) {
+                                console.log(`Creating feature: ${name} = ${value}`); // Отладочный вывод
+                                try {
+                                    const feature = await createFeatureIfNotExists(name, type.id, factory.id);
+                                    await ProductInfo.create({
+                                        productId: product.id,
+                                        featureId: feature.id,
+                                        value: value
+                                    });
+                                    console.log(`Successfully created feature: ${name} for product ${product.name}`);
+                                } catch (error) {
+                                    console.error(`Error creating feature ${name}:`, error);
+                                }
+                            }
                         }
                     }
 
-                    // Добавляем изображения
-                    const imagesDir = path.resolve(__dirname, '..', 'static', row.name);
-                    console.log('Checking images directory:', imagesDir);
-                    
-                    if (fs.existsSync(imagesDir)) {
-                        const files = fs.readdirSync(imagesDir);
-                        console.log(`Found ${files.length} images for product`);
-                        
-                        for (const file of files) {
-                            await Image.create({
-                                file: file,
-                                productId: product.id
-                            });
-                            console.log('Image added:', file);
-                        }
-                    }
+                    // Обработка изображений
+                    console.log(`Processing images for product ${data.productData.name}`);
+                    console.log('Images to process:', Array.from(data.images));
 
-                    if (rawRow['22']) { // Ссылка на картинку находится в колонке 22
-                        const imageUrl = rawRow['22'];
-                        const fileName = `${uuid.v4()}${path.extname(imageUrl)}`;
-                        
+                    for (const imageUrl of data.images) {
                         try {
-                            // Скачиваем и сохраняем изображение
-                            await downloadImage(imageUrl, fileName);
+                            // Генерируем уникальное имя файла с сохранением расширения
+                            const originalExt = path.extname(imageUrl) || '.webp';
+                            const fileName = `${uuid.v4()}${originalExt}`;
+
+                            console.log(`Downloading image: ${imageUrl}`);
                             
-                            // Создаем запись в базе данных
-                            await Image.create({
-                                file: fileName,
-                                productId: product.id
+                            try {
+                                await downloadImage(imageUrl, fileName);
+                                
+                                // Создаем запись в базе данных
+                                const imageRecord = await Image.create({
+                                    productId: product.id,
+                                    img: fileName
+                                });
+
+                                console.log('Created image record:', {
+                                    id: imageRecord.id,
+                                    productId: imageRecord.productId,
+                                    img: imageRecord.img
+                                });
+                            } catch (downloadError) {
+                                console.error(`Error downloading image: ${downloadError.message}`);
+                                throw downloadError;
+                            }
+                        } catch (imgError) {
+                            console.error(`Error processing image ${imageUrl}:`, imgError);
+                            errors.push({
+                                productKey: key,
+                                imageUrl: imageUrl,
+                                error: imgError.message
                             });
-                            console.log('Image downloaded and saved:', fileName);
-                        } catch (error) {
-                            console.error('Error processing image:', error);
-                            // Продолжаем импорт даже если с картинкой проблема
                         }
                     }
 
-                    processedNames.add(row.name);
-                    console.log(`Successfully processed product: ${row.name}`);
+                    results.push({
+                        success: true,
+                        productId: product.id,
+                        name: data.productData.name,
+                        imagesCount: data.images.size
+                    });
+
                 } catch (error) {
-                    console.error('Row processing error:', error);
-                    errors.push(`Ошибка в строке ${results.indexOf(rawRow) + 1}: ${error.message}`);
+                    console.error('Error processing product:', error);
+                    errors.push({
+                        productKey: key,
+                        error: error.message
+                    });
                 }
             }
 
-            // Очистка временного файла
             await fsPromises.unlink(tempPath);
 
-            const response = {
+            res.json({
                 success: true,
-                imported: processedNames.size,
+                processed: productGroups.size,
+                successful: results.length,
+                failed: errors.length,
+                results,
                 errors: errors.length ? errors : undefined
-            };
-            console.log('Import completed:', response);
-            res.json(response);
+            });
 
         } catch (e) {
             console.error('Fatal import error:', e);

@@ -119,7 +119,7 @@ const ProductPage = () => {
                                 <Image
                                     key={index}
                                     className="carousel-image"
-                                    src={`${process.env.REACT_APP_API_URL}${image.file}`}
+                                    src={`${process.env.REACT_APP_API_URL}${image.img}`}
                                 />
                             ))}
                         </div>
@@ -133,7 +133,7 @@ const ProductPage = () => {
                                     >
                                         <Image
                                             className="carousel-images"
-                                            src={`${process.env.REACT_APP_API_URL}${image.file}`}
+                                            src={`${process.env.REACT_APP_API_URL}${image.img}`}
                                         />
                                     </div>
                                 ))}
