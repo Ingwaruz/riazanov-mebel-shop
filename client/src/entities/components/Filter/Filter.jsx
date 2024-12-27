@@ -6,6 +6,7 @@ import { fetchTypes, fetchFactories, fetchFilteredProducts } from '../../../proc
 import './filter.scss';
 import ButtonM2 from '../../../shared/ui/buttons/button-m2';
 import ButtonM1 from '../../../shared/ui/buttons/button-m1';
+import ButtonM3 from '../../../shared/ui/buttons/button-m3';
 
 const Filter = ({ onFilterChange }) => {
     const [types, setTypes] = useState([]);
@@ -161,7 +162,7 @@ const Filter = ({ onFilterChange }) => {
                 </Accordion.Item>
             </Accordion>
             <div className="mt-3 d-flex justify-content-center">
-                <ButtonM1 onClick={applyFilters} text="Применить фильтры" />
+                <ButtonM3 width="100%" onClick={applyFilters} text="Применить фильтры" />
             </div>
         </div>
     );
