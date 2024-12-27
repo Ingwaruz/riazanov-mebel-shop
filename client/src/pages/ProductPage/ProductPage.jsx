@@ -85,24 +85,30 @@ const ProductPage = () => {
             key: 'specifications',
             title: 'Характеристики',
             content: (
-                <div>
-                    <div className="characteristic-line">
-                        <span>Ширина</span>
-                        <span>{product.width} см</span>
+                <div className="characteristics">
+                    <div className="characteristic-item">
+                        <span className="characteristic-key">Ширина</span>
+                        <span className="characteristic-separator"></span>
+                        <span className="characteristic-value">{product.width} см</span>
                     </div>
-                    <div className="characteristic-line">
-                        <span>Глубина</span>
-                        <span>{product.depth} см</span>
+                    <div className="characteristic-item">
+                        <span className="characteristic-key">Глубина</span>
+                        <span className="characteristic-separator"></span>
+                        <span className="characteristic-value">{product.depth} см</span>
                     </div>
-                    <div className="characteristic-line">
-                        <span>Высота</span>
-                        <span>{product.height} см</span>
+                    <div className="characteristic-item">
+                        <span className="characteristic-key">Высота</span>
+                        <span className="characteristic-separator"></span>
+                        <span className="characteristic-value">{product.height} см</span>
                     </div>
 
                     {product.product_infos?.map(info => (
-                        <div key={info.id} className="characteristic-line">
-                            <span>{info.feature?.name.charAt(0).toUpperCase() + info.feature?.name.slice(1).toLowerCase()}</span>
-                            <span>{info.value}</span>
+                        <div key={info.id} className="characteristic-item">
+                            <span className="characteristic-key">
+                                {info.feature?.name.charAt(0).toUpperCase() + info.feature?.name.slice(1).toLowerCase()}
+                            </span>
+                            <span className="characteristic-separator"></span>
+                            <span className="characteristic-value">{info.value}</span>
                         </div>
                     ))}
                 </div>

@@ -424,6 +424,46 @@ class productController {
         }
     }
 
+    async getSizeRanges(req, res, next) {
+        try {
+            const ranges = await Product.findOne({
+                attributes: [
+                    [sequelize.fn('MIN', sequelize.col('width')), 'minWidth'],
+                    [sequelize.fn('MAX', sequelize.col('width')), 'maxWidth'],
+                    [sequelize.fn('MIN', sequelize.col('depth')), 'minDepth'],
+                    [sequelize.fn('MAX', sequelize.col('depth')), 'maxDepth'],
+                    [sequelize.fn('MIN', sequelize.col('height')), 'minHeight'],
+                    [sequelize.fn('MAX', sequelize.col('height')), 'maxHeight'],
+                ],
+                raw: true
+            });
+
+            // Проверяем на null значения и заменяем их на дефолтные
+            const defaultRanges = {
+                minWidth: 0,
+                maxWidth: 100,
+                minDepth: 0,
+                maxDepth: 100,
+                minHeight: 0,
+                maxHeight: 100
+            };
+
+            const result = {
+                minWidth: ranges?.minWidth || defaultRanges.minWidth,
+                maxWidth: ranges?.maxWidth || defaultRanges.maxWidth,
+                minDepth: ranges?.minDepth || defaultRanges.minDepth,
+                maxDepth: ranges?.maxDepth || defaultRanges.maxDepth,
+                minHeight: ranges?.minHeight || defaultRanges.minHeight,
+                maxHeight: ranges?.maxHeight || defaultRanges.maxHeight
+            };
+
+            return res.json(result);
+        } catch (e) {
+            console.error('Error in getSizeRanges:', e);
+            next(ApiError.badRequest(e.message));
+        }
+    }
+
     async importFromCsv(req, res, next) {
         let tempPath;
         try {
@@ -742,7 +782,7 @@ class productController {
             if (tempPath) {
                 try {
                     await fsPromises.unlink(tempPath);
-                    // Пытаемся удалить временную директорию, если она существует
+                    // Пытаемся удалить временную директорию, если она существ��ет
                     const tempDir = path.dirname(tempPath);
                     if (tempDir.includes('temp')) {
                         await fsPromises.rmdir(tempDir);

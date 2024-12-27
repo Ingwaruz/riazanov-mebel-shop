@@ -64,12 +64,13 @@ export const fetchOneProduct = async (id) => {
 
 export const fetchFilteredProducts = async (filters) => {
     const {data} = await $host.get('api/product/filter', {
-        params: {
-            ...filters,
-            page: filters.page || 1,
-            limit: filters.limit || 20
-        }
+        params: filters
     });
+    return data;
+};
+
+export const fetchSizeRanges = async () => {
+    const {data} = await $host.get('api/product/sizes');
     return data;
 };
 

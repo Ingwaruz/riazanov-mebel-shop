@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Accordion, Form, Row, Col } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { fetchTypes, fetchFactories, fetchFilteredProducts } from '../../../processes/productAPI';
+import { fetchTypes, fetchFactories, fetchFilteredProducts, fetchSizeRanges } from '../../../processes/productAPI';
 import './filter.scss';
 import ButtonM2 from '../../../shared/ui/buttons/button-m2';
 import ButtonM1 from '../../../shared/ui/buttons/button-m1';
@@ -12,9 +12,14 @@ const Filter = ({ onFilterChange }) => {
     const [types, setTypes] = useState([]);
     const [factories, setFactories] = useState([]);
     const [sizeRange, setSizeRange] = useState({
-        width: [0, 1000],
-        depth: [0, 1000],
-        height: [0, 1000],
+        width: [0, 100],
+        depth: [0, 100],
+        height: [0, 100],
+    });
+    const [maxSizeRanges, setMaxSizeRanges] = useState({
+        width: [0, 100],
+        depth: [0, 100],
+        height: [0, 100],
     });
 
     const [selectedType, setSelectedType] = useState(null);
@@ -24,12 +29,23 @@ const Filter = ({ onFilterChange }) => {
     useEffect(() => {
         const loadInitialData = async () => {
             try {
-                const [typesData, factoriesData] = await Promise.all([
+                const [typesData, factoriesData, sizeRanges] = await Promise.all([
                     fetchTypes(),
-                    fetchFactories()
+                    fetchFactories(),
+                    fetchSizeRanges()
                 ]);
+                
                 setTypes(typesData);
                 setFactories(factoriesData);
+                
+                // Устанавливаем начальные и максимальные значения размеров
+                const initialRanges = {
+                    width: [sizeRanges.minWidth || 0, sizeRanges.maxWidth || 100],
+                    depth: [sizeRanges.minDepth || 0, sizeRanges.maxDepth || 100],
+                    height: [sizeRanges.minHeight || 0, sizeRanges.maxHeight || 100],
+                };
+                setSizeRange(initialRanges);
+                setMaxSizeRanges(initialRanges);
             } catch (error) {
                 console.error('Ошибка при загрузке данных фильтра:', error);
             }
@@ -40,11 +56,7 @@ const Filter = ({ onFilterChange }) => {
     const resetFilters = async () => {
         setSelectedType(null);
         setSelectedFactory(null);
-        setSizeRange({
-            width: [0, 1000],
-            depth: [0, 1000],
-            height: [0, 1000],
-        });
+        setSizeRange(maxSizeRanges); // Сбрасываем к максимальным значениям
         setIsFiltered(false);
         
         // Вызываем API без фильтров
@@ -141,6 +153,8 @@ const Filter = ({ onFilterChange }) => {
                                             placeholder="Минимум"
                                             style={{ appearance: 'none' }}
                                             inputMode="numeric"
+                                            min={maxSizeRanges[type][0]}
+                                            max={maxSizeRanges[type][1]}
                                         />
                                     </Col>
                                     <Col xs={6} className="mb-2 s-text main_font_color">
@@ -151,13 +165,15 @@ const Filter = ({ onFilterChange }) => {
                                             placeholder="Максимум"
                                             style={{ appearance: 'none' }}
                                             inputMode="numeric"
+                                            min={maxSizeRanges[type][0]}
+                                            max={maxSizeRanges[type][1]}
                                         />
                                     </Col>
                                     <Col xs={12} className="mt-3">
                                         <Slider
                                             range
-                                            min={0}
-                                            max={500}
+                                            min={maxSizeRanges[type][0]}
+                                            max={maxSizeRanges[type][1]}
                                             value={values}
                                             onChange={(newValues) => handleRangeChange(type, newValues)}
                                             allowCross={false}
