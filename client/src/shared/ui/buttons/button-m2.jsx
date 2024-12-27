@@ -14,7 +14,7 @@ const ButtonM2 = ({ width, height, text, onClick }) => {
             className='
             d-flex align-items-center justify-content-center
             m-text bg-main_color_hover hover-item--main_color
-            p-2 mt-2 color_white
+            p-2 mt-2 color_white text-center
             '
             onClick={onClick}
         >

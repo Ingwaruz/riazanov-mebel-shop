@@ -41,6 +41,12 @@ const Shop = observer(() => {
 
     const handlePageChange = async (page) => {
         setCurrentPage(page);
+        // Плавная прокрутка наверх
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
         try {
             let products;
             if (product.selectedType?.id || product.selectedFactory?.id) {

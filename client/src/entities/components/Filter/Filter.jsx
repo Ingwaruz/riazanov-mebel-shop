@@ -4,6 +4,8 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { fetchTypes, fetchFactories, fetchFilteredProducts } from '../../../processes/productAPI';
 import './filter.scss';
+import ButtonM2 from '../../../shared/ui/buttons/button-m2';
+import ButtonM1 from '../../../shared/ui/buttons/button-m1';
 
 const Filter = ({ onFilterChange }) => {
     const [types, setTypes] = useState([]);
@@ -33,36 +35,28 @@ const Filter = ({ onFilterChange }) => {
         loadInitialData();
     }, []);
 
-    useEffect(() => {
-        const applyFilters = async () => {
-            const filters = {
-                typeId: selectedType?.id,
-                factoryId: selectedFactory?.id,
-                size: JSON.stringify({
-                    width: sizeRange.width,
-                    depth: sizeRange.depth,
-                    height: sizeRange.height
-                }),
-                page: 1,
-                limit: 20
-            };
-            
-            try {
-                const filteredProducts = await fetchFilteredProducts(filters);
-                if (onFilterChange) {
-                    onFilterChange(filteredProducts);
-                }
-            } catch (error) {
-                console.error('Ошибка при применении фильтров:', error);
-            }
+    const applyFilters = async () => {
+        const filters = {
+            typeId: selectedType?.id,
+            factoryId: selectedFactory?.id,
+            size: JSON.stringify({
+                width: sizeRange.width,
+                depth: sizeRange.depth,
+                height: sizeRange.height
+            }),
+            page: 1,
+            limit: 20
         };
-
-        const timeoutId = setTimeout(() => {
-            applyFilters();
-        }, 300);
-
-        return () => clearTimeout(timeoutId);
-    }, [selectedType, selectedFactory, sizeRange]);
+        
+        try {
+            const filteredProducts = await fetchFilteredProducts(filters);
+            if (onFilterChange) {
+                onFilterChange(filteredProducts);
+            }
+        } catch (error) {
+            console.error('Ошибка при применении фильтров:', error);
+        }
+    };
 
     const handleRangeChange = (type, values) => {
         setSizeRange((prev) => ({ ...prev, [type]: values }));
@@ -166,6 +160,9 @@ const Filter = ({ onFilterChange }) => {
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
+            <div className="mt-3 d-flex justify-content-center">
+                <ButtonM1 onClick={applyFilters} text="Применить фильтры" />
+            </div>
         </div>
     );
 };
