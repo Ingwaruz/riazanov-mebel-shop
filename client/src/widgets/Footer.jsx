@@ -31,23 +31,12 @@ export default function Footer() {
                             >
                                 <MDBIcon fab icon='telegram' />
                             </a>
-                            <span
-                                className='me-4 text-reset fa-2x cursor-pointer'
-                                onClick={() =>
-                                    handleModalShow(
-                                        'Мы в Instagram',
-                                        `
-                                        <a href="https://www.instagram.com/divan_premium_blg/profilecard/?igsh=MWEybW9hdDdtM2Nseg%3D%3D&fbclid=PAZXh0bgNhZW0CMTEAAabsLjVjPEDUFBfcxJrU0_C32iJvKrBSn6mJLWikPEBk9HdTaBwCAGOFVzY_aem_5pe7FhH0-vGs_42FQrSDhA
-                                        " target="_blank" rel="noopener noreferrer" class='xl-text m-1 main_link_color'>Диваны</a>
-                                        </br>
-                                        <a href="https://www.instagram.com/orimex_blg/profilecard/?igsh=MzZxNW5yaWU1OXdh&fbclid=PAZXh0bgNhZW0CMTEAAabrTvBjefFhMb3U7IcK_BLku-hxYDextjR9_I0A-ie7uRCWJI0Jq1fQFTs_aem_EDpoBFKiItYlptZZMuP1_A
-                                        " target="_blank" rel="noopener noreferrer" class='xl-text m-1 main_link_color'>Столы/стулья</a>
-                                        `
-                                    )
-                                }
+                            <a
+                                href='https://www.instagram.com/divan_premium_blg/profilecard/?igsh=MWEybW9hdDdtM2Nseg%3D%3D&fbclid=PAZXh0bgNhZW0CMTEAAabsLjVjPEDUFBfcxJrU0_C32iJvKrBSn6mJLWikPEBk9HdTaBwCAGOFVzY_aem_5pe7FhH0-vGs_42FQrSDhA'
+                                target="_blank" rel="noopener noreferrer" className='me-4 text-reset fa-2x'
                             >
                                 <MDBIcon fab icon='instagram' />
-                            </span>
+                            </a>
                             <a
                                 href='https://api.whatsapp.com/send/?phone=79143983470&text&type=phone_number&app_absent=0
                                 ' target="_blank" rel="noopener noreferrer" className='me-4 text-reset fa-2x'
@@ -66,8 +55,9 @@ export default function Footer() {
                                         МЕБЕЛЬ ОТ РЯЗАНОВА
                                     </h6>
                                     <p className='mb-4 m-text color_white'>
-                                        Here you can use rows and columns to organize your footer
-                                        content. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                    
+                                        Создаем уют в каждом доме. Качественная мебель для комфортной жизни.
+
                                     </p>
                                 </MDBCol>
 
