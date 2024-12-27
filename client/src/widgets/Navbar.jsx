@@ -98,41 +98,7 @@ const MyNavbar = observer(() => {
                                 onClick={() =>
                                     handleModalShow(
                                         'Акции',
-                                        <>
-                                            <p>
-                                                <span style={{fontWeight: '600'}}
-                                                      className="xl-text d-flex justify-content-center">Скидка 30% на всё</span>
-                                                <br/>
-                                                <span className="l-text d-flex justify-content-center">
-                                                    Инвалидам I и II группы,
-                                                </span>
-                                                <span className="l-text d-flex justify-content-center">
-                                                    участникам СВО
-                                                </span>
-                                                <span className="l-text d-flex justify-content-center">
-                                                и их близким родственникам
-                                                </span>
-                                                <br/>
-                                                <span style={{fontWeight: '600'}}
-                                                      className="xl-text d-flex justify-content-center">Скидка 20% на всё</span>
-                                                <br/>
-                                                <span className="l-text d-flex justify-content-center">
-                                                    Пенсионерам,
-                                                </span>
-                                                <span className="l-text d-flex justify-content-center">
-                                                    ветеранам,
-                                                </span>
-                                                <span className="l-text d-flex justify-content-center">
-                                                    инвалидам III группы
-                                                </span> <br/>
-                                                <span style={{fontWeight: '600'}}
-                                                      className="xl-text d-flex justify-content-center">Бесплатная доставка</span>
-                                                <br/>
-                                                <span className="l-text d-flex justify-content-center">
-                                                    Всем перечисленных группам лиц
-                                                </span>
-                                            </p>
-                                        </>
+                                        'Информация о текущих акциях появится здесь.'
                                     )
                                 }
                             >

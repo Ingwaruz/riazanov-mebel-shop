@@ -19,6 +19,7 @@ const Filter = ({ onFilterChange }) => {
 
     const [selectedType, setSelectedType] = useState(null);
     const [selectedFactory, setSelectedFactory] = useState(null);
+    const [isFiltered, setIsFiltered] = useState(false);
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -35,6 +36,32 @@ const Filter = ({ onFilterChange }) => {
         };
         loadInitialData();
     }, []);
+
+    const resetFilters = async () => {
+        setSelectedType(null);
+        setSelectedFactory(null);
+        setSizeRange({
+            width: [0, 1000],
+            depth: [0, 1000],
+            height: [0, 1000],
+        });
+        setIsFiltered(false);
+        
+        // Вызываем API без фильтров
+        const filters = {
+            page: 1,
+            limit: 20
+        };
+        
+        try {
+            const filteredProducts = await fetchFilteredProducts(filters);
+            if (onFilterChange) {
+                onFilterChange(filteredProducts);
+            }
+        } catch (error) {
+            console.error('Ошибка при сбросе фильтров:', error);
+        }
+    };
 
     const applyFilters = async () => {
         const filters = {
@@ -54,6 +81,8 @@ const Filter = ({ onFilterChange }) => {
             if (onFilterChange) {
                 onFilterChange(filteredProducts);
             }
+            // Устанавливаем флаг, что применены фильтры
+            setIsFiltered(true);
         } catch (error) {
             console.error('Ошибка при применении фильтров:', error);
         }
@@ -65,6 +94,11 @@ const Filter = ({ onFilterChange }) => {
 
     return (
         <div className="filter-container">
+            {isFiltered && (
+                <div className="mb-3">
+                    <ButtonM3 width="100%" onClick={resetFilters} text="Показать все товары" />
+                </div>
+            )}
             <Accordion defaultActiveKey="0" className='main_font_color'>
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>

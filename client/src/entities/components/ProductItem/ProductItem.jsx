@@ -39,7 +39,7 @@ const ProductItem = observer(({ product }) => {
     };
 
     return (
-        <Col xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center mb-4">
+        <Col xs={12} sm={6} md={6} lg={3} className="d-flex justify-content-center mb-4">
             <Card
                 style={{
                     justifyContent: 'space-between',

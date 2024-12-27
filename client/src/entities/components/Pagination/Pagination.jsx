@@ -1,5 +1,8 @@
 import React from 'react';
 import './pagination.scss';
+import ButtonM2 from '../../../shared/ui/buttons/button-m2';
+import ButtonM1 from '../../../shared/ui/buttons/button-m1';
+import ButtonM4 from '../../../shared/ui/buttons/button-m4';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const pages = [];
@@ -37,38 +40,38 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <div className="pagination">
-            <button 
-                className="pagination__button"
+            <ButtonM4
+                height="3rem" 
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-            >
-                Назад
-            </button>
+                text="Назад"
+            />
             
             <div className="pagination__pages">
                 {generatePageNumbers().map((page, index) => (
                     <React.Fragment key={index}>
                         {page === '...' ? (
-                            <span className="pagination__dots">...</span>
+                            <span className="l-text mt-4">...</span>
                         ) : (
-                            <button
-                                className={`pagination__page ${currentPage === page ? 'pagination__page--active' : ''}`}
+                            <ButtonM4
+                                width="3rem"
+                                height="3rem"   
                                 onClick={() => onPageChange(page)}
-                            >
-                                {page}
-                            </button>
+                                variant={currentPage === page ? 'primary' : 'outline'}
+                                text={page}
+                            />
                         )}
                     </React.Fragment>
                 ))}
             </div>
             
-            <button 
-                className="pagination__button"
+            <ButtonM4
+                height="3rem" 
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-            >
-                Вперед
-            </button>
+                text="Вперед"
+            />
+            
         </div>
     );
 };
