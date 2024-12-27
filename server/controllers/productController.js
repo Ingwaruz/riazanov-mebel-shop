@@ -16,6 +16,9 @@ const CSV_COLUMN_MAPPING = {
     'web-scraper-start-url': null,
     'product-href': null,
     'paginator': null,
+    'unit': null,
+    'guarantee': null,    // игнорируем, так как используем 'гарантия'
+    'assembly': null,     // сборка будет игнорироваться
     
     // Основные поля
     'product': 'name',
@@ -30,25 +33,19 @@ const CSV_COLUMN_MAPPING = {
     'depth': 'depth',
     'height': 'height',
     'factory': 'factory',
+    'img-src': 'images',
     
     // Характеристики
-    'material': 'Материал',
-    'комплектация': 'Комплектация',
-    'country': 'Страна производства',
+    'материал': 'Материал',
     'цвет': 'Цвет',
-    'гарантия': 'Гарантия',
-    'базовая-единица': 'Единица измерения',
-    'img-src': 'images'
+    'гарантия': 'Гарантия'
 };
 
 // Обновляем маппинг характеристик
 const FEATURE_MAPPING = {
     'материал': 'Материал',
-    'страна': 'Страна производства',
-    'комплектация': 'Комплектация',
     'цвет': 'Цвет',
-    'гарантия': 'Гарантия',
-    'базовая-единица': 'Единица измерения'
+    'гарантия': 'Гарантия'
 };
 
 // Выносим функцию за пределы класса
@@ -428,65 +425,165 @@ class productController {
             }
 
             const file = req.files.file;
-            tempPath = path.join(__dirname, '..', 'temp', file.name);
+            console.log('Received file:', {
+                name: file.name,
+                size: file.size,
+                mimetype: file.mimetype
+            });
             
-            await fsPromises.mkdir(path.join(__dirname, '..', 'temp'), { recursive: true });
-            await file.mv(tempPath);
+            // Создаем временную директорию с уникальным именем
+            const tempDir = path.join(__dirname, '..', 'temp', uuid.v4());
+            tempPath = path.join(tempDir, file.name);
+            
+            try {
+                // Создаем временную директорию рекурсивно
+                await fsPromises.mkdir(tempDir, { recursive: true });
+                
+                // Перемещаем файл
+                await file.mv(tempPath);
+                
+                // Проверяем, что файл существует и читаем его первые байты
+                const stats = await fsPromises.stat(tempPath);
+                console.log('File stats:', {
+                    size: stats.size,
+                    path: tempPath
+                });
+                
+                // Читаем первые 1000 байт файла для проверки
+                const buffer = Buffer.alloc(1000);
+                const fd = await fsPromises.open(tempPath, 'r');
+                const { bytesRead } = await fd.read(buffer, 0, 1000, 0);
+                await fd.close();
+                
+                console.log('File preview:', buffer.toString('utf8', 0, bytesRead));
+                
+            } catch (err) {
+                console.error('Error handling file:', err);
+                // Если произошла ошибка при создании директории или перемещении файла,
+                // попробуем использовать системную временную директорию
+                tempPath = path.join(require('os').tmpdir(), `${uuid.v4()}_${file.name}`);
+                await file.mv(tempPath);
+            }
 
             const results = [];
             const errors = [];
             const productGroups = new Map();
 
             await new Promise((resolve, reject) => {
-                fs.createReadStream(tempPath)
-                    .pipe(csv())
+                console.log('Starting CSV parsing from:', tempPath);
+                
+                fs.createReadStream(tempPath, { encoding: 'utf8' })
+                    .on('error', (error) => {
+                        console.error('Error creating read stream:', error);
+                        reject(error);
+                    })
+                    .pipe(csv({
+                        escape: '"',
+                        quote: '"',
+                        raw: false,
+                        skipLines: 0,
+                        separator: ',',
+                        newline: '\n',
+                        strict: false,
+                        relax_column_count: true,
+                        trim: true,
+                        skip_empty_lines: true,
+                        mapHeaders: ({ header }) => {
+                            console.log('Mapping header:', header);
+                            return header.trim();
+                        },
+                        mapValues: ({ header, value }) => {
+                            console.log(`Mapping value for ${header}:`, value);
+                            return value.trim();
+                        }
+                    }))
+                    .on('headers', (headers) => {
+                        console.log('CSV Headers:', headers);
+                    })
+                    .on('error', (error) => {
+                        console.error('Error reading CSV:', error);
+                        reject(error);
+                    })
                     .on('data', (row) => {
-                        // Создаем уникальный ключ на основе имени и коллекции
-                        const productName = row['name'] || row['product'];
-                        const productKey = `${productName}_${row['collection']}`;
-
-                        if (!productGroups.has(productKey)) {
-                            // Обработка цен
-                            const price = parsePrice(row['price']);
-                            const minPrice = parsePrice(row['min_price']);
-
-                            productGroups.set(productKey, {
-                                productData: {
-                                    name: productName,
-                                    description: row['description'] || '',
-                                    price: price,
-                                    min_price: minPrice,
-                                    width: parseNumeric(row['width']),
-                                    height: parseNumeric(row['height']),
-                                    depth: parseNumeric(row['depth'])
-                                },
-                                factory: row['factory'],
-                                type: row['type'],
-                                subtype: row['subtype'],
+                        try {
+                            console.log('Processing row:', row);
+                            
+                            // Создаем уникальный ключ на основе имени и коллекции
+                            const productName = row['name'] || row['product'];
+                            if (!productName) {
+                                console.warn('Skipping row without product name:', row);
+                                return;
+                            }
+                            
+                            // Логируем значения для отладки
+                            console.log('Product values:', {
+                                name: productName,
                                 collection: row['collection'],
-                                characteristics: {
-                                    [FEATURE_MAPPING['материал']]: row['материал'],
-                                    [FEATURE_MAPPING['страна']]: row['страна'],
-                                    [FEATURE_MAPPING['комплектация']]: row['комплектация'],
-                                    [FEATURE_MAPPING['цвет']]: row['цвет'],
-                                    [FEATURE_MAPPING['гарантия']]: row['гарантия'],
-                                    [FEATURE_MAPPING['базовая-единица']]: row['базовая-единица']
-                                },
-                                images: new Set()
+                                price: row['price'],
+                                min_price: row['min_price'],
+                                description: row['description']?.substring(0, 50) + '...',
+                                width: row['width'],
+                                height: row['height'],
+                                depth: row['depth']
+                            });
+
+                            const productKey = `${productName}_${row['collection'] || ''}`;
+
+                            if (!productGroups.has(productKey)) {
+                                // Обработка цен с логированием
+                                const price = parsePrice(row['price']);
+                                const minPrice = parsePrice(row['min_price']);
+                                console.log('Parsed prices:', { price, minPrice });
+
+                                // Обрабатываем описание, сохраняя переносы строк
+                                const description = row['description'] ? row['description'].replace(/\\n/g, '\n') : '';
+
+                                productGroups.set(productKey, {
+                                    productData: {
+                                        name: productName,
+                                        description: description,
+                                        price: price,
+                                        min_price: minPrice,
+                                        width: parseNumeric(row['width']),
+                                        height: parseNumeric(row['height']),
+                                        depth: parseNumeric(row['depth'])
+                                    },
+                                    factory: row['factory'] || '',
+                                    type: row['type'] || '',
+                                    subtype: row['subtype'] || '',
+                                    collection: row['collection'] || '',
+                                    characteristics: {
+                                        [FEATURE_MAPPING['материал']]: row['материал'] || '',
+                                        [FEATURE_MAPPING['цвет']]: row['цвет'] || '',
+                                        [FEATURE_MAPPING['гарантия']]: row['гарантия'] || ''
+                                    },
+                                    images: new Set()
+                                });
+
+                                console.log('Created product group:', productKey);
+                            }
+
+                            // Добавляем URL изображения в Set
+                            if (row['img-src']) {
+                                const imageUrl = row['img-src'].trim();
+                                if (imageUrl) {
+                                    console.log(`Found image URL for ${productName}:`, imageUrl);
+                                    productGroups.get(productKey).images.add(imageUrl);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error processing row:', error);
+                            console.error('Problematic row data:', row);
+                            errors.push({
+                                error: error.message,
+                                row: row
                             });
                         }
-
-                        // Добавляем URL изображения в Set
-                        if (row['img-src']) {
-                            const imageUrl = row['img-src'].trim();
-                            if (imageUrl) {
-                                console.log(`Found image URL for ${productName}:`, imageUrl); // Отладочный вывод
-                                productGroups.get(productKey).images.add(imageUrl);
-                            }
-                        }
                     })
-                    .on('end', resolve)
-                    .on('error', reject);
+                    .on('end', () => {
+                        console.log('Finished parsing CSV. Products found:', productGroups.size);
+                        resolve();
+                    });
             });
 
             // Создаем товары
@@ -632,14 +729,21 @@ class productController {
 
         } catch (e) {
             console.error('Fatal import error:', e);
+            next(ApiError.badRequest(e.message));
+        } finally {
+            // Очищаем временные файлы
             if (tempPath) {
                 try {
                     await fsPromises.unlink(tempPath);
+                    // Пытаемся удалить временную директорию, если она существует
+                    const tempDir = path.dirname(tempPath);
+                    if (tempDir.includes('temp')) {
+                        await fsPromises.rmdir(tempDir);
+                    }
                 } catch (cleanupError) {
                     console.error('Cleanup error:', cleanupError);
                 }
             }
-            next(ApiError.badRequest(e.message));
         }
     }
 }

@@ -42,7 +42,9 @@ const Filter = ({ onFilterChange }) => {
                     width: sizeRange.width,
                     depth: sizeRange.depth,
                     height: sizeRange.height
-                })
+                }),
+                page: 1,
+                limit: 20
             };
             
             try {

@@ -1,2 +1,6 @@
 # Temp files
 temp/ 
+
+# Static files
+static/*
+!static/.gitkeep 

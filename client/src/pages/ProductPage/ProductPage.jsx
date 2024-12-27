@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
+import { Card, Col, Image, Row } from "react-bootstrap";
 import { useParams } from 'react-router-dom';
 import { fetchOneProduct } from "../../processes/productAPI";
 import '../../app/styles/shared.scss';
@@ -66,7 +66,16 @@ const ProductPage = () => {
                 <>
                     {product.description && (
                         <Col className="mt-3" xs={12}>
-                            {product.description}
+                            <pre style={{ 
+                                whiteSpace: 'pre-wrap',
+                                wordWrap: 'break-word',
+                                fontFamily: 'inherit',
+                                margin: 0,
+                                backgroundColor: 'transparent',
+                                lineHeight: '1.4'
+                            }}>
+                                {product.description?.split('\n\n').join('\n')}
+                            </pre>
                         </Col>
                     )}
                 </>
@@ -77,7 +86,6 @@ const ProductPage = () => {
             title: 'Характеристики',
             content: (
                 <div>
-                    {/* Основные размеры */}
                     <div className="characteristic-line">
                         <span>Ширина</span>
                         <span>{product.width} см</span>
@@ -91,7 +99,6 @@ const ProductPage = () => {
                         <span>{product.height} см</span>
                     </div>
 
-                    {/* Характеристики из product_infos */}
                     {product.product_infos?.map(info => (
                         <div key={info.id} className="characteristic-line">
                             <span>{info.feature?.name.charAt(0).toUpperCase() + info.feature?.name.slice(1).toLowerCase()}</span>
@@ -146,7 +153,6 @@ const ProductPage = () => {
                             ></i>
                         )}
 
-                        {/* Правая стрелка */}
                         {images.length > 1 && (
                             <i
                                 onClick={nextImage}

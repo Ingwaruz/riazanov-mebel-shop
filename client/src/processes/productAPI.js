@@ -50,7 +50,7 @@ export const createProduct = async (product) => {
     return data;
 }
 
-export const fetchProducts = async (typeId, factoryId, page, limit = 5) => {
+export const fetchProducts = async (typeId, factoryId, page = 1, limit = 20) => {
     const {data} = await $host.get('api/product', {params: {
         typeId, factoryId, page, limit
     }});
@@ -64,7 +64,11 @@ export const fetchOneProduct = async (id) => {
 
 export const fetchFilteredProducts = async (filters) => {
     const {data} = await $host.get('api/product/filter', {
-        params: filters
+        params: {
+            ...filters,
+            page: filters.page || 1,
+            limit: filters.limit || 20
+        }
     });
     return data;
 };
