@@ -13,21 +13,45 @@ const Shop = observer(() => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(20);
     const location = useLocation();
+    const [currentFilters, setCurrentFilters] = useState({});
 
     // Функция для применения фильтров
-    const applyFilters = async (filters) => {
+    const applyFilters = async (filters, page = 1) => {
         try {
             const filteredProducts = await fetchFilteredProducts({
                 ...filters,
-                page: currentPage,
+                page,
                 limit: itemsPerPage
             });
             product.setProducts(filteredProducts.rows);
             product.setTotalCount(filteredProducts.count);
+            setCurrentFilters(filters);
+            setCurrentPage(page);
         } catch (error) {
             console.error('Error applying filters:', error);
         }
     };
+
+    const loadInitialData = useCallback(async () => {
+        try {
+            const types = await fetchTypes();
+            product.setTypes(types);
+
+            const factories = await fetchFactories();
+            product.setFactories(factories);
+
+            const params = new URLSearchParams(location.search);
+            const shouldApplyFilter = params.get('applyFilter') === 'true';
+
+            if (!shouldApplyFilter) {
+                const products = await fetchProducts(null, null, 1, itemsPerPage);
+                product.setProducts(products.rows);
+                product.setTotalCount(products.count);
+            }
+        } catch (error) {
+            console.error('Error fetching initial data:', error);
+        }
+    }, [itemsPerPage, product, location.search]);
 
     // Обработка URL-параметров
     useEffect(() => {
@@ -41,71 +65,34 @@ const Shop = observer(() => {
                 typeId: selectedTypeId,
                 selectedSubtype: selectedSubtypeId
             };
-            applyFilters(filters);
+            applyFilters(filters, 1);
+        } else {
+            loadInitialData();
         }
-    }, [location.search]);
+    }, [location.search, loadInitialData]);
 
-    // Функция для загрузки данных при первой загрузке компонента
-    const loadInitialData = useCallback(async () => {
-        try {
-            const types = await fetchTypes();
-            product.setTypes(types);
-
-            const factories = await fetchFactories();
-            product.setFactories(factories);
-
-            const params = new URLSearchParams(location.search);
-            const shouldApplyFilter = params.get('applyFilter') === 'true';
-
-            if (!shouldApplyFilter) {
-                const products = await fetchProducts(null, null, currentPage, itemsPerPage);
-                product.setProducts(products.rows);
-                product.setTotalCount(products.count);
-            }
-        } catch (error) {
-            console.error('Error fetching initial data:', error);
-        }
-    }, [currentPage, itemsPerPage, product, location.search]);
-
-    useEffect(() => {
-        loadInitialData();
-    }, [loadInitialData]);
-
-    const handleFilterChange = async (filteredProducts) => {
-        // Обновляем состояние товаров в store
+    const handleFilterChange = async (filteredProducts, filters) => {
         product.setProducts(filteredProducts.rows);
         product.setTotalCount(filteredProducts.count);
+        setCurrentFilters(filters);
+        setCurrentPage(1);
     };
 
     const handlePageChange = async (page) => {
-        setCurrentPage(page);
-        // Плавная прокрутка наверх
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
         
         try {
-            let products;
-            if (product.selectedType?.id || product.selectedFactory?.id) {
-                // Если есть активные фильтры, используем метод фильтрации
-                products = await fetchFilteredProducts({
-                    typeId: product.selectedType?.id,
-                    factoryId: product.selectedFactory?.id,
-                    page,
-                    limit: itemsPerPage
-                });
+            if (Object.keys(currentFilters).length > 0) {
+                await applyFilters(currentFilters, page);
             } else {
-                // Если фильтров нет, используем обычную загрузку
-                products = await fetchProducts(
-                    null,
-                    null,
-                    page,
-                    itemsPerPage
-                );
+                const products = await fetchProducts(null, null, page, itemsPerPage);
+                product.setProducts(products.rows);
+                product.setTotalCount(products.count);
+                setCurrentPage(page);
             }
-            product.setProducts(products.rows);
-            product.setTotalCount(products.count);
         } catch (error) {
             console.error('Error fetching products:', error);
         }

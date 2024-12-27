@@ -119,7 +119,7 @@ const Filter = ({ onFilterChange }) => {
         try {
             const filteredProducts = await fetchFilteredProducts(filters);
             if (onFilterChange) {
-                onFilterChange(filteredProducts);
+                onFilterChange(filteredProducts, filters); // Передаем пустые фильтры
             }
         } catch (error) {
             console.error('Ошибка при сбросе фильтров:', error);
@@ -143,7 +143,7 @@ const Filter = ({ onFilterChange }) => {
         try {
             const filteredProducts = await fetchFilteredProducts(filters);
             if (onFilterChange) {
-                onFilterChange(filteredProducts);
+                onFilterChange(filteredProducts, filters); // Передаем фильтры вместе с результатами
             }
             // Устанавливаем флаг, что применены фильтры
             setIsFiltered(true);
