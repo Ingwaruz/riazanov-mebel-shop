@@ -137,12 +137,14 @@ const MyNavbar = observer(() => {
 
                     {user.isAuth ? (
                         <Nav className="ml-auto color_white me-3">
-                            <Button
-                                className="ms-lg-4 color_white border-radius-0 hover-item--white border-color_white bg-main_color m-text"
-                                onClick={() => navigate(ADMIN_ROUTE)}
-                            >
-                                АДМИН ПАНЕЛЬ
-                            </Button>
+                            {user.user.role === 'ADMIN' && (
+                                <Button
+                                    className="ms-lg-4 color_white border-radius-0 hover-item--white border-color_white bg-main_color m-text"
+                                    onClick={() => navigate(ADMIN_ROUTE)}
+                                >
+                                    АДМИН ПАНЕЛЬ
+                                </Button>
+                            )}
                             <Button
                                 className="ms-lg-4 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
                                 onClick={logOut}

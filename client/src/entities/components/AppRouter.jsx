@@ -3,15 +3,25 @@ import {Routes, Route} from 'react-router-dom'
 import {authRoutes, publicRoutes} from "../../app/routes";
 import Shop from "../../pages/Shop";
 import {Context} from "../../index";
+import RequireAuth from "../../shared/components/RequireAuth";
+
 const AppRouter = () => {
     const {user} = useContext(Context)
 
-    console.log(user)
     return (
         <div>
             <Routes>
                 {user.isAuth && authRoutes.map(({path, Component}) =>
-                    <Route key={path} path={path} element={<Component/>} exact/>
+                    <Route 
+                        key={path} 
+                        path={path} 
+                        element={
+                            <RequireAuth roles={['ADMIN']}>
+                                <Component/>
+                            </RequireAuth>
+                        } 
+                        exact
+                    />
                 )}
                 {publicRoutes.map(({path, Component}) =>
                     <Route key={path} path={path} element={<Component/>} exact/>

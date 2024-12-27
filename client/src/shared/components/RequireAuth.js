@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Navigate, useLocation} from 'react-router-dom';
 import {Context} from "../../index";
-import {LOGIN_ROUTE} from "../utils/consts";
+import {LOGIN_ROUTE} from "../../entities/utils/consts";
 
 const RequireAuth = ({children, roles}) => {
     const {user} = useContext(Context);

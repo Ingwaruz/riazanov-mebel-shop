@@ -7,7 +7,7 @@ import '../../app/styles/shared.scss';
 import '../../app/styles/colors.scss';
 import ButtonM1 from "../../shared/ui/buttons/button-m1";
 import TabList from '../../widgets/TabList/TabList';
-import "./productPage.scss";
+import "./ProductPage.scss";
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
