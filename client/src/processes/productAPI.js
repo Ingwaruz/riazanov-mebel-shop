@@ -74,6 +74,11 @@ export const fetchSizeRanges = async () => {
     return data;
 };
 
+export const fetchPriceRange = async () => {
+    const {data} = await $host.get('api/product/prices');
+    return data;
+};
+
 export const importProducts = async (formData) => {
     try {
         console.log('Sending request to:', process.env.REACT_APP_API_URL + 'api/product/import');

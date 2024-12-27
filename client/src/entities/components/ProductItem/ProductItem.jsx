@@ -87,7 +87,9 @@ const ProductItem = observer(({ product }) => {
 
                     <Col className="d-flex m-text mx-3 my-2">{product.name}</Col>
                     <Col className="d-flex l-text mx-3 mt-1 mb-2">
-                        {`Цена от ${product.min_price ? product.min_price.toLocaleString('ru-RU') : 0} ₽`}
+                    {product.min_price ? 
+                        `Цена от ${product.min_price.toLocaleString('ru-RU')} ₽` : 
+                        `Цена ~ ${product.price.toLocaleString('ru-RU')} ₽`}
                     </Col>
                 </div>
             </Card>

@@ -7,6 +7,7 @@ router.post('/', checkRole('ADMIN'), productController.create)
 router.get('/', productController.getAll)
 router.get('/filter', productController.getFiltered)
 router.get('/sizes', productController.getSizeRanges)
+router.get('/prices', productController.getPriceRange)
 router.get('/:id', productController.getOne)
 router.post('/import', checkRole('ADMIN'), productController.importFromCsv)
 

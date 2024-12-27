@@ -6,11 +6,44 @@ import {Context} from "../index";
 import {fetchFactories, fetchProducts, fetchTypes, fetchFilteredProducts} from "../processes/productAPI";
 import Filter from "../entities/components/Filter/Filter";
 import Pagination from "../entities/components/Pagination/Pagination";
+import { useLocation } from 'react-router-dom';
 
 const Shop = observer(() => {
     const {product} = useContext(Context);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(20);
+    const location = useLocation();
+
+    // Функция для применения фильтров
+    const applyFilters = async (filters) => {
+        try {
+            const filteredProducts = await fetchFilteredProducts({
+                ...filters,
+                page: currentPage,
+                limit: itemsPerPage
+            });
+            product.setProducts(filteredProducts.rows);
+            product.setTotalCount(filteredProducts.count);
+        } catch (error) {
+            console.error('Error applying filters:', error);
+        }
+    };
+
+    // Обработка URL-параметров
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const selectedTypeId = params.get('selectedType');
+        const selectedSubtypeId = params.get('selectedSubtype');
+        const shouldApplyFilter = params.get('applyFilter') === 'true';
+
+        if (shouldApplyFilter && (selectedTypeId || selectedSubtypeId)) {
+            const filters = {
+                typeId: selectedTypeId,
+                subtypeId: selectedSubtypeId
+            };
+            applyFilters(filters);
+        }
+    }, [location.search]);
 
     // Функция для загрузки данных при первой загрузке компонента
     const loadInitialData = useCallback(async () => {
@@ -21,13 +54,18 @@ const Shop = observer(() => {
             const factories = await fetchFactories();
             product.setFactories(factories);
 
-            const products = await fetchProducts(null, null, currentPage, itemsPerPage);
-            product.setProducts(products.rows);
-            product.setTotalCount(products.count);
+            const params = new URLSearchParams(location.search);
+            const shouldApplyFilter = params.get('applyFilter') === 'true';
+
+            if (!shouldApplyFilter) {
+                const products = await fetchProducts(null, null, currentPage, itemsPerPage);
+                product.setProducts(products.rows);
+                product.setTotalCount(products.count);
+            }
         } catch (error) {
             console.error('Error fetching initial data:', error);
         }
-    }, [currentPage, itemsPerPage, product]);
+    }, [currentPage, itemsPerPage, product, location.search]);
 
     useEffect(() => {
         loadInitialData();

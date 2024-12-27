@@ -339,7 +339,7 @@ class productController {
 
     async getFiltered(req, res, next) {
         try {
-            let {typeId, factoryId, size, limit, page} = req.query;
+            let {typeId, factoryId, size, price, limit, page} = req.query;
             page = page || 1;
             limit = limit || 20;
             let offset = (page - 1) * limit;
@@ -359,21 +359,61 @@ class productController {
                 
                 if (width) {
                     whereClause.width = {
-                        [Op.between]: width
+                        [Op.or]: [
+                            {
+                                [Op.and]: [
+                                    { [Op.between]: width },
+                                    { [Op.ne]: 0 }
+                                ]
+                            },
+                            { [Op.eq]: 0 }
+                        ]
                     };
                 }
                 
                 if (depth) {
                     whereClause.depth = {
-                        [Op.between]: depth
+                        [Op.or]: [
+                            {
+                                [Op.and]: [
+                                    { [Op.between]: depth },
+                                    { [Op.ne]: 0 }
+                                ]
+                            },
+                            { [Op.eq]: 0 }
+                        ]
                     };
                 }
                 
                 if (height) {
                     whereClause.height = {
-                        [Op.between]: height
+                        [Op.or]: [
+                            {
+                                [Op.and]: [
+                                    { [Op.between]: height },
+                                    { [Op.ne]: 0 }
+                                ]
+                            },
+                            { [Op.eq]: 0 }
+                        ]
                     };
                 }
+            }
+
+            if (price) {
+                const [minPrice, maxPrice] = JSON.parse(price);
+                whereClause[Op.or] = [
+                    {
+                        price: {
+                            [Op.between]: [minPrice, maxPrice]
+                        }
+                    },
+                    {
+                        min_price: {
+                            [Op.between]: [minPrice, maxPrice]
+                        }
+                    }
+                ];
             }
 
             const products = await Product.findAndCountAll({
@@ -426,40 +466,30 @@ class productController {
 
     async getSizeRanges(req, res, next) {
         try {
-            const ranges = await Product.findOne({
-                attributes: [
-                    [sequelize.fn('MIN', sequelize.col('width')), 'minWidth'],
-                    [sequelize.fn('MAX', sequelize.col('width')), 'maxWidth'],
-                    [sequelize.fn('MIN', sequelize.col('depth')), 'minDepth'],
-                    [sequelize.fn('MAX', sequelize.col('depth')), 'maxDepth'],
-                    [sequelize.fn('MIN', sequelize.col('height')), 'minHeight'],
-                    [sequelize.fn('MAX', sequelize.col('height')), 'maxHeight'],
-                ],
-                raw: true
+            const products = await Product.findAll({
+                attributes: ['width', 'depth', 'height']
             });
 
-            // Проверяем на null значения и заменяем их на дефолтные
-            const defaultRanges = {
-                minWidth: 0,
-                maxWidth: 100,
-                minDepth: 0,
-                maxDepth: 100,
-                minHeight: 0,
-                maxHeight: 100
-            };
+            // Получаем все значения размеров
+            const widths = products.map(p => p.width).filter(w => w !== null);
+            const depths = products.map(p => p.depth).filter(d => d !== null);
+            const heights = products.map(p => p.height).filter(h => h !== null);
 
+            // Находим минимальные и максимальные значения, исключая нули
             const result = {
-                minWidth: ranges?.minWidth || defaultRanges.minWidth,
-                maxWidth: ranges?.maxWidth || defaultRanges.maxWidth,
-                minDepth: ranges?.minDepth || defaultRanges.minDepth,
-                maxDepth: ranges?.maxDepth || defaultRanges.maxDepth,
-                minHeight: ranges?.minHeight || defaultRanges.minHeight,
-                maxHeight: ranges?.maxHeight || defaultRanges.maxHeight
+                widths,
+                depths,
+                heights,
+                minWidth: Math.min(...widths.filter(w => w > 0) || [0]),
+                maxWidth: Math.max(...widths || [100]),
+                minDepth: Math.min(...depths.filter(d => d > 0) || [0]),
+                maxDepth: Math.max(...depths || [100]),
+                minHeight: Math.min(...heights.filter(h => h > 0) || [0]),
+                maxHeight: Math.max(...heights || [100])
             };
 
             return res.json(result);
         } catch (e) {
-            console.error('Error in getSizeRanges:', e);
             next(ApiError.badRequest(e.message));
         }
     }
@@ -782,7 +812,7 @@ class productController {
             if (tempPath) {
                 try {
                     await fsPromises.unlink(tempPath);
-                    // Пытаемся удалить временную директорию, если она существ��ет
+                    // Пытаемся удалить временную директорию, если она существует
                     const tempDir = path.dirname(tempPath);
                     if (tempDir.includes('temp')) {
                         await fsPromises.rmdir(tempDir);
@@ -791,6 +821,37 @@ class productController {
                     console.error('Cleanup error:', cleanupError);
                 }
             }
+        }
+    }
+
+    async getPriceRange(req, res, next) {
+        try {
+            const products = await Product.findAll({
+                attributes: ['price', 'min_price'],
+                raw: true
+            });
+
+            // Собираем все ненулевые цены
+            const allPrices = products.reduce((prices, product) => {
+                if (product.price > 0) prices.push(product.price);
+                if (product.min_price > 0) prices.push(product.min_price);
+                return prices;
+            }, []);
+
+            // Если нет ненулевых цен, возвращаем значения по умолчанию
+            if (allPrices.length === 0) {
+                return res.json({
+                    minPrice: 0,
+                    maxPrice: 100000
+                });
+            }
+
+            return res.json({
+                minPrice: Math.min(...allPrices),
+                maxPrice: Math.max(...allPrices)
+            });
+        } catch (e) {
+            next(ApiError.badRequest(e.message));
         }
     }
 }

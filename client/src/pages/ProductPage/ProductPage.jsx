@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Image, Row } from "react-bootstrap";
-import { useParams } from 'react-router-dom';
+import { Card, Col, Image, Row, Breadcrumb } from "react-bootstrap";
+import { useParams, Link } from 'react-router-dom';
 import { fetchOneProduct } from "../../processes/productAPI";
+import { SHOP_ROUTE } from "../../entities/utils/consts";
 import '../../app/styles/shared.scss';
 import '../../app/styles/colors.scss';
 import ButtonM1 from "../../shared/ui/buttons/button-m1";
@@ -86,30 +87,37 @@ const ProductPage = () => {
             title: 'Характеристики',
             content: (
                 <div className="characteristics">
-                    <div className="characteristic-item">
-                        <span className="characteristic-key">Ширина</span>
-                        <span className="characteristic-separator"></span>
-                        <span className="characteristic-value">{product.width} см</span>
-                    </div>
-                    <div className="characteristic-item">
-                        <span className="characteristic-key">Глубина</span>
-                        <span className="characteristic-separator"></span>
-                        <span className="characteristic-value">{product.depth} см</span>
-                    </div>
-                    <div className="characteristic-item">
-                        <span className="characteristic-key">Высота</span>
-                        <span className="characteristic-separator"></span>
-                        <span className="characteristic-value">{product.height} см</span>
-                    </div>
-
-                    {product.product_infos?.map(info => (
-                        <div key={info.id} className="characteristic-item">
-                            <span className="characteristic-key">
-                                {info.feature?.name.charAt(0).toUpperCase() + info.feature?.name.slice(1).toLowerCase()}
-                            </span>
+                    {product.width > 0 && (
+                        <div className="characteristic-item">
+                            <span className="characteristic-key">Ширина</span>
                             <span className="characteristic-separator"></span>
-                            <span className="characteristic-value">{info.value}</span>
+                            <span className="characteristic-value">{product.width} см</span>
                         </div>
+                    )}
+                    {product.depth > 0 && (
+                        <div className="characteristic-item">
+                            <span className="characteristic-key">Глубина</span>
+                            <span className="characteristic-separator"></span>
+                            <span className="characteristic-value">{product.depth} см</span>
+                        </div>
+                    )}
+                    {product.height > 0 && (
+                        <div className="characteristic-item">
+                            <span className="characteristic-key">Высота</span>
+                            <span className="characteristic-separator"></span>
+                            <span className="characteristic-value">{product.height} см</span>
+                        </div>
+                    )}
+                    {product.product_infos?.map(info => (
+                        info.value && info.value !== '0' && (
+                            <div key={info.id} className="characteristic-item">
+                                <span className="characteristic-key">
+                                    {info.feature?.name.charAt(0).toUpperCase() + info.feature?.name.slice(1).toLowerCase()}
+                                </span>
+                                <span className="characteristic-separator"></span>
+                                <span className="characteristic-value">{info.value}</span>
+                            </div>
+                        )
                     ))}
                 </div>
             )
@@ -119,6 +127,36 @@ const ProductPage = () => {
     return (
         <div className="container-fluid">
             <Row className="d-flex mx-5">
+                <Breadcrumb className="mt-3">
+                    <Breadcrumb.Item className="m-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
+                        Главная
+                    </Breadcrumb.Item>
+                    {product.type && (
+                        <Breadcrumb.Item 
+                            className="m-text"
+                            linkAs={Link} 
+                            linkProps={{ 
+                                to: `${SHOP_ROUTE}?selectedType=${product.type.id}&applyFilter=true` 
+                            }}
+                        >
+                            {product.type.name}
+                        </Breadcrumb.Item>
+                    )}
+                    {product.subtype && (
+                        <Breadcrumb.Item 
+                            className="m-text"
+                            linkAs={Link} 
+                            linkProps={{ 
+                                to: `${SHOP_ROUTE}?selectedType=${product.type.id}&selectedSubtype=${product.subtype.id}&applyFilter=true` 
+                            }}
+                        >
+                            {product.subtype.name}
+                        </Breadcrumb.Item>
+                    )}
+                    <Breadcrumb.Item className="m-text" active>
+                        {product.name}
+                    </Breadcrumb.Item>
+                </Breadcrumb>
                 <Row className="d-flex flex-column xxl-text m-0 my-4">
                     {product.name || 'Название отсутствует'}
                 </Row>
@@ -175,14 +213,59 @@ const ProductPage = () => {
                         style={{ boxShadow: '0px 0px 32px rgba(0, 0, 0, 0.08)' }}
                         className="border-white d-flex border-radius-0 p-2 sticky-card"
                     >
-                        <div className="xxl-text">{`~ ${product.price} ₽`}</div>
-                        {product.min_price && (
-                            <div className="l-text text-muted mt-2">
-                                {`От ${product.min_price} ₽`}
+                        <div className="xxl-text">{`~ ${product.price.toLocaleString('ru-RU')} ₽`}</div>
+                        {product.min_price > 0 && (
+                            <div className="l-text mt-2 mb-1">
+                                {`От ${product.min_price.toLocaleString('ru-RU')} ₽`}
                             </div>
                         )}
-                        <div className="s-text">
+                        <div className="m-text mt-1">
                             Цена товара зависит от выбранной ткани и может отличаться от указанной
+                        </div>
+                        <div className="characteristics mt-3">
+                            {product.factory && (
+                                <div className="characteristic-item m-text">
+                                    <span className="characteristic-key">Производитель</span>
+                                    <span className="characteristic-separator"></span>
+                                    <span className="characteristic-value">{product.factory.name}</span>
+                                </div>
+                            )}
+                            {product.product_infos?.find(info => 
+                                info.feature?.name.toLowerCase() === 'материал' && 
+                                info.value && 
+                                info.value !== '0'
+                            ) && (
+                                <div className="characteristic-item m-text">
+                                    <span className="characteristic-key">Материал</span>
+                                    <span className="characteristic-separator"></span>
+                                    <span className="characteristic-value">
+                                        {product.product_infos.find(info => 
+                                            info.feature?.name.toLowerCase() === 'материал'
+                                        ).value}
+                                    </span>
+                                </div>
+                            )}
+                            {product.width > 0 && (
+                                <div className="characteristic-item m-text">
+                                    <span className="characteristic-key">Ширина</span>
+                                    <span className="characteristic-separator"></span>
+                                    <span className="characteristic-value">{product.width} см</span>
+                                </div>
+                            )}
+                            {product.depth > 0 && (
+                                <div className="characteristic-item m-text">
+                                    <span className="characteristic-key">Глубина</span>
+                                    <span className="characteristic-separator"></span>
+                                    <span className="characteristic-value">{product.depth} см</span>
+                                </div>
+                            )}
+                            {product.height > 0 && (
+                                <div className="characteristic-item m-text">
+                                    <span className="characteristic-key">Высота</span>
+                                    <span className="characteristic-separator"></span>
+                                    <span className="characteristic-value">{product.height} см</span>
+                                </div>
+                            )}
                         </div>
                         <ButtonM1 text="Добавить в корзину" />
                     </Card>
