@@ -302,6 +302,9 @@ class productController {
                         model: Type
                     },
                     {
+                        model: Subtype
+                    },
+                    {
                         model: Factory
                     },
                     {
@@ -322,6 +325,8 @@ class productController {
             console.log('Product details:', {
                 id: product.id,
                 name: product.name,
+                type: product.type?.name,
+                subtype: product.subtype?.name,
                 images: product.images?.map(img => ({
                     id: img.id,
                     img: img.img,
@@ -339,7 +344,7 @@ class productController {
 
     async getFiltered(req, res, next) {
         try {
-            let {typeId, factoryId, size, price, limit, page} = req.query;
+            let {typeId, factoryId, size, price, limit, page, selectedSubtype} = req.query;
             page = page || 1;
             limit = limit || 20;
             let offset = (page - 1) * limit;
@@ -348,6 +353,10 @@ class productController {
             
             if (typeId) {
                 whereClause.typeId = typeId;
+            }
+
+            if (selectedSubtype) {
+                whereClause.subtypeId = selectedSubtype;
             }
             
             if (factoryId) {

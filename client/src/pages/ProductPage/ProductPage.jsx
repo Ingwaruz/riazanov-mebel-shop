@@ -56,8 +56,8 @@ const ProductPage = () => {
         loadProduct();
     }, [id]);
 
-    if (loading) return <div className="container-fluid xl-text">Загрузка...</div>;
-    if (error) return <div className="container-fluid xl-text">{error}</div>;
+    if (loading) return <div className="mt-5 container-fluid xl-text justify-content-center">Загрузка...</div>;
+    if (error) return <div className="mt-5 container-fluid xl-text justify-content-center">{error}</div>;
 
     const tabs = [
         {
@@ -153,11 +153,8 @@ const ProductPage = () => {
                             {product.subtype.name}
                         </Breadcrumb.Item>
                     )}
-                    <Breadcrumb.Item className="m-text" active>
-                        {product.name}
-                    </Breadcrumb.Item>
                 </Breadcrumb>
-                <Row className="d-flex flex-column xxl-text">
+                <Row className="d-flex flex-column xxl-text mb-4">
                     {product.name || 'Название отсутствует'}
                 </Row>
                 <Col xs={12} sm={9} md={9} lg={9}>

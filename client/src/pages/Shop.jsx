@@ -39,7 +39,7 @@ const Shop = observer(() => {
         if (shouldApplyFilter && (selectedTypeId || selectedSubtypeId)) {
             const filters = {
                 typeId: selectedTypeId,
-                subtypeId: selectedSubtypeId
+                selectedSubtype: selectedSubtypeId
             };
             applyFilters(filters);
         }
