@@ -25,25 +25,13 @@ const Filter = ({ onFilterChange }) => {
     });
     const [priceRange, setPriceRange] = useState([0, 100000]);
     const [maxPriceRange, setMaxPriceRange] = useState([0, 100000]);
-    const [activeKeys, setActiveKeys] = useState(['0']); // Состояние для отслеживания открытых вкладок
+    const [activeKeys, setActiveKeys] = useState(['0']);
 
-    const [selectedType, setSelectedType] = useState(null);
-    const [selectedFactory, setSelectedFactory] = useState(null);
+    const [selectedTypes, setSelectedTypes] = useState(new Set());
+    const [selectedFactories, setSelectedFactories] = useState(new Set());
     const [isFiltered, setIsFiltered] = useState(false);
 
-    // Обработчик для управления открытыми вкладками
-    const handleAccordionToggle = (eventKey) => {
-        if (eventKey === null) return; // Игнорируем null
-        
-        setActiveKeys(prevKeys => {
-            const isKeyIncluded = prevKeys.includes(eventKey);
-            if (isKeyIncluded) {
-                return prevKeys.filter(key => key !== eventKey);
-            }
-            return [...prevKeys, eventKey];
-        });
-    };
-
+    // Загрузка начальных данных
     useEffect(() => {
         const loadInitialData = async () => {
             try {
@@ -57,7 +45,7 @@ const Filter = ({ onFilterChange }) => {
                 setTypes(typesData);
                 setFactories(factoriesData);
                 
-                // Устанавливаем начальные и максимальные значения размеров, игнорируя нулевые значения
+                // Устанавливаем начальные и максимальные значения размеров
                 const initialRanges = {
                     width: [
                         sizeRanges.minWidth || Math.min(...sizeRanges.widths.filter(w => w > 0) || [0]), 
@@ -79,38 +67,79 @@ const Filter = ({ onFilterChange }) => {
                 const initialPriceRange = [priceRanges.minPrice, priceRanges.maxPrice];
                 setPriceRange(initialPriceRange);
                 setMaxPriceRange(initialPriceRange);
+
+                // Проверяем, было ли обновление страницы
+                const isPageRefresh = !window.performance.navigation || 
+                    window.performance.navigation.type === 1 ||
+                    !document.referrer;
+
+                // Применяем фильтры из URL только если это не обновление страницы
+                if (!isPageRefresh && location.search) {
+                    const params = new URLSearchParams(location.search);
+                    const typeId = params.get('selectedType');
+                    const shouldApplyFilter = params.get('applyFilter') === 'true';
+
+                    if (shouldApplyFilter && typeId) {
+                        const selectedType = typesData.find(t => t.id === parseInt(typeId));
+                        if (selectedType) {
+                            setSelectedTypes(new Set([selectedType.id]));
+                            setIsFiltered(true);
+                        }
+                    }
+                }
             } catch (error) {
                 console.error('Ошибка при загрузке данных фильтра:', error);
             }
         };
         loadInitialData();
-    }, []);
+    }, [location.search]);
 
-    // Обработка начальных значений из URL
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const typeId = params.get('selectedType');
-        const subtypeId = params.get('selectedSubtype');
-        const shouldApplyFilter = params.get('applyFilter') === 'true';
-
-        if (shouldApplyFilter && typeId) {
-            const selectedType = types.find(t => t.id === parseInt(typeId));
-            if (selectedType) {
-                setSelectedType(selectedType);
-                setIsFiltered(true);
+    // Обработчик для управления открытыми вкладками
+    const handleAccordionToggle = (eventKey) => {
+        if (eventKey === null) return;
+        
+        setActiveKeys(prevKeys => {
+            const isKeyIncluded = prevKeys.includes(eventKey);
+            if (isKeyIncluded) {
+                return prevKeys.filter(key => key !== eventKey);
             }
-        }
-    }, [location.search, types]);
+            return [...prevKeys, eventKey];
+        });
+    };
+
+    // Обработчики для множественного выбора
+    const handleTypeChange = (type) => {
+        setSelectedTypes(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(type.id)) {
+                newSet.delete(type.id);
+            } else {
+                newSet.add(type.id);
+            }
+            return newSet;
+        });
+    };
+
+    const handleFactoryChange = (factory) => {
+        setSelectedFactories(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(factory.id)) {
+                newSet.delete(factory.id);
+            } else {
+                newSet.add(factory.id);
+            }
+            return newSet;
+        });
+    };
 
     const resetFilters = async () => {
-        setSelectedType(null);
-        setSelectedFactory(null);
-        setSizeRange(maxSizeRanges); // Сбрасываем к максимальным значениям
-        setPriceRange(maxPriceRange); // Сбрасываем диапазон цен
+        setSelectedTypes(new Set());
+        setSelectedFactories(new Set());
+        setSizeRange(maxSizeRanges);
+        setPriceRange(maxPriceRange);
         setIsFiltered(false);
-        setActiveKeys(['0']); // Сбрасываем открытые вкладки к начальному состоянию
+        setActiveKeys(['0']);
         
-        // Вызываем API без фильтров
         const filters = {
             page: 1,
             limit: 20
@@ -119,7 +148,7 @@ const Filter = ({ onFilterChange }) => {
         try {
             const filteredProducts = await fetchFilteredProducts(filters);
             if (onFilterChange) {
-                onFilterChange(filteredProducts, filters); // Передаем пустые фильтры
+                onFilterChange(filteredProducts, filters);
             }
         } catch (error) {
             console.error('Ошибка при сбросе фильтров:', error);
@@ -127,9 +156,23 @@ const Filter = ({ onFilterChange }) => {
     };
 
     const applyFilters = async () => {
+        // Проверяем, есть ли выбранные фильтры
+        const hasSelectedTypes = selectedTypes.size > 0;
+        const hasSelectedFactories = selectedFactories.size > 0;
+        const hasSizeFilter = !Object.values(sizeRange).every((range, index) => 
+            range[0] === maxSizeRanges[Object.keys(sizeRange)[index]][0] && 
+            range[1] === maxSizeRanges[Object.keys(sizeRange)[index]][1]
+        );
+        const hasPriceFilter = priceRange[0] !== maxPriceRange[0] || priceRange[1] !== maxPriceRange[1];
+
+        // Если нет выбранных фильтров, сбрасываем всё
+        if (!hasSelectedTypes && !hasSelectedFactories && !hasSizeFilter && !hasPriceFilter) {
+            return resetFilters();
+        }
+
         const filters = {
-            typeId: selectedType?.id,
-            factoryId: selectedFactory?.id,
+            typeIds: JSON.stringify(Array.from(selectedTypes)),
+            factoryIds: JSON.stringify(Array.from(selectedFactories)),
             size: JSON.stringify({
                 width: sizeRange.width,
                 depth: sizeRange.depth,
@@ -143,9 +186,8 @@ const Filter = ({ onFilterChange }) => {
         try {
             const filteredProducts = await fetchFilteredProducts(filters);
             if (onFilterChange) {
-                onFilterChange(filteredProducts, filters); // Передаем фильтры вместе с результатами
+                onFilterChange(filteredProducts, filters);
             }
-            // Устанавливаем флаг, что применены фильтры
             setIsFiltered(true);
         } catch (error) {
             console.error('Ошибка при применении фильтров:', error);
@@ -180,8 +222,8 @@ const Filter = ({ onFilterChange }) => {
                                     type="checkbox"
                                     id={`type-${type.id}`}
                                     label={type.name}
-                                    checked={selectedType?.id === type.id}
-                                    onChange={() => setSelectedType(selectedType?.id === type.id ? null : type)}
+                                    checked={selectedTypes.has(type.id)}
+                                    onChange={() => handleTypeChange(type)}
                                     className="mb-2 m-text"
                                 />
                             ))}
@@ -309,8 +351,8 @@ const Filter = ({ onFilterChange }) => {
                                     type="checkbox"
                                     id={`factory-${factory.id}`}
                                     label={factory.name}
-                                    checked={selectedFactory?.id === factory.id}
-                                    onChange={() => setSelectedFactory(selectedFactory?.id === factory.id ? null : factory)}
+                                    checked={selectedFactories.has(factory.id)}
+                                    onChange={() => handleFactoryChange(factory)}
                                     className="mb-2 m-text"
                                 />
                             ))}

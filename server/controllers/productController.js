@@ -344,23 +344,43 @@ class productController {
 
     async getFiltered(req, res, next) {
         try {
-            let {typeId, factoryId, size, price, limit, page, selectedSubtype} = req.query;
+            let {typeIds, factoryIds, size, price, limit, page, selectedSubtype} = req.query;
             page = page || 1;
             limit = limit || 20;
             let offset = (page - 1) * limit;
             
             const whereClause = {};
             
-            if (typeId) {
-                whereClause.typeId = typeId;
+            // Обработка фильтрации по типам
+            if (typeIds) {
+                try {
+                    const typeIdsArray = JSON.parse(typeIds);
+                    if (Array.isArray(typeIdsArray) && typeIdsArray.length > 0) {
+                        whereClause.typeId = {
+                            [Op.in]: typeIdsArray
+                        };
+                    }
+                } catch (error) {
+                    console.error('Error parsing typeIds:', error);
+                }
+            }
+
+            // Обработка фильтрации по фабрикам
+            if (factoryIds) {
+                try {
+                    const factoryIdsArray = JSON.parse(factoryIds);
+                    if (Array.isArray(factoryIdsArray) && factoryIdsArray.length > 0) {
+                        whereClause.factoryId = {
+                            [Op.in]: factoryIdsArray
+                        };
+                    }
+                } catch (error) {
+                    console.error('Error parsing factoryIds:', error);
+                }
             }
 
             if (selectedSubtype) {
                 whereClause.subtypeId = selectedSubtype;
-            }
-            
-            if (factoryId) {
-                whereClause.factoryId = factoryId;
             }
             
             if (size) {
@@ -424,6 +444,8 @@ class productController {
                     }
                 ];
             }
+
+            console.log('Applied filters:', whereClause); // Добавляем логирование
 
             const products = await Product.findAndCountAll({
                 where: whereClause,

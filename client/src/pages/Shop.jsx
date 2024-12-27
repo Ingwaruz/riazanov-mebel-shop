@@ -32,6 +32,7 @@ const Shop = observer(() => {
         }
     };
 
+    // Функция для загрузки данных при первой загрузке компонента
     const loadInitialData = useCallback(async () => {
         try {
             const types = await fetchTypes();
@@ -40,21 +41,29 @@ const Shop = observer(() => {
             const factories = await fetchFactories();
             product.setFactories(factories);
 
-            const params = new URLSearchParams(location.search);
-            const shouldApplyFilter = params.get('applyFilter') === 'true';
-
-            if (!shouldApplyFilter) {
-                const products = await fetchProducts(null, null, 1, itemsPerPage);
-                product.setProducts(products.rows);
-                product.setTotalCount(products.count);
-            }
+            const products = await fetchProducts(null, null, 1, itemsPerPage);
+            product.setProducts(products.rows);
+            product.setTotalCount(products.count);
         } catch (error) {
             console.error('Error fetching initial data:', error);
         }
-    }, [itemsPerPage, product, location.search]);
+    }, [itemsPerPage, product]);
 
-    // Обработка URL-параметров
+    // Обработка URL-параметров и обновления страницы
     useEffect(() => {
+        // Проверяем, было ли обновление страницы
+        const isPageRefresh = !window.performance.navigation || 
+            window.performance.navigation.type === 1 ||
+            !document.referrer;
+
+        if (isPageRefresh) {
+            // При обновлении страницы очищаем URL и загружаем все товары
+            const cleanUrl = window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
+            loadInitialData();
+            return;
+        }
+
         const params = new URLSearchParams(location.search);
         const selectedTypeId = params.get('selectedType');
         const selectedSubtypeId = params.get('selectedSubtype');
