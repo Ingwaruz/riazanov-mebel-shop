@@ -49,7 +49,9 @@ const Filter = ({ onFilterChange }) => {
             
             try {
                 const filteredProducts = await fetchFilteredProducts(filters);
-                onFilterChange && onFilterChange(filteredProducts);
+                if (onFilterChange) {
+                    onFilterChange(filteredProducts);
+                }
             } catch (error) {
                 console.error('Ошибка при применении фильтров:', error);
             }
@@ -60,7 +62,7 @@ const Filter = ({ onFilterChange }) => {
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [selectedType, selectedFactory, sizeRange, onFilterChange]);
+    }, [selectedType, selectedFactory, sizeRange]);
 
     const handleRangeChange = (type, values) => {
         setSizeRange((prev) => ({ ...prev, [type]: values }));

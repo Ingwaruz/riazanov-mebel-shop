@@ -3,7 +3,7 @@ import {Col, Row} from "react-bootstrap";
 import ProductList from "../widgets/ProductList";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {fetchFactories, fetchProducts, fetchTypes} from "../processes/productAPI";
+import {fetchFactories, fetchProducts, fetchTypes, fetchFilteredProducts} from "../processes/productAPI";
 import Filter from "../entities/components/Filter/Filter";
 import Pagination from "../entities/components/Pagination/Pagination";
 
@@ -34,8 +34,6 @@ const Shop = observer(() => {
     }, [loadInitialData]);
 
     const handleFilterChange = async (filteredProducts) => {
-        // Сбрасываем страницу при изменении фильтров
-        setCurrentPage(1);
         // Обновляем состояние товаров в store
         product.setProducts(filteredProducts.rows);
         product.setTotalCount(filteredProducts.count);
@@ -44,12 +42,24 @@ const Shop = observer(() => {
     const handlePageChange = async (page) => {
         setCurrentPage(page);
         try {
-            const products = await fetchProducts(
-                product.selectedType?.id,
-                product.selectedFactory?.id,
-                page,
-                itemsPerPage
-            );
+            let products;
+            if (product.selectedType?.id || product.selectedFactory?.id) {
+                // Если есть активные фильтры, используем метод фильтрации
+                products = await fetchFilteredProducts({
+                    typeId: product.selectedType?.id,
+                    factoryId: product.selectedFactory?.id,
+                    page,
+                    limit: itemsPerPage
+                });
+            } else {
+                // Если фильтров нет, используем обычную загрузку
+                products = await fetchProducts(
+                    null,
+                    null,
+                    page,
+                    itemsPerPage
+                );
+            }
             product.setProducts(products.rows);
             product.setTotalCount(products.count);
         } catch (error) {

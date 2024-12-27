@@ -38,14 +38,16 @@ const CSV_COLUMN_MAPPING = {
     // Характеристики
     'материал': 'Материал',
     'цвет': 'Цвет',
-    'гарантия': 'Гарантия'
+    'гарантия': 'Гарантия',
+    'опоры': 'Опоры'
 };
 
 // Обновляем маппинг характеристик
 const FEATURE_MAPPING = {
     'материал': 'Материал',
     'цвет': 'Цвет',
-    'гарантия': 'Гарантия'
+    'гарантия': 'Гарантия',
+    'опоры': 'Опоры'
 };
 
 // Выносим функцию за пределы класса
@@ -202,7 +204,7 @@ class productController {
         try {
             let {factoryId, typeId, price, limit, page, size} = req.query;
             page = page || 1;
-            limit = limit || 12;
+            limit = limit || 20;
             let offset = (page - 1) * limit;
             
             const whereClause = {};
@@ -337,7 +339,10 @@ class productController {
 
     async getFiltered(req, res, next) {
         try {
-            let {typeId, factoryId, size} = req.query;
+            let {typeId, factoryId, size, limit, page} = req.query;
+            page = page || 1;
+            limit = limit || 20;
+            let offset = (page - 1) * limit;
             
             const whereClause = {};
             
@@ -373,6 +378,8 @@ class productController {
 
             const products = await Product.findAndCountAll({
                 where: whereClause,
+                limit,
+                offset,
                 include: [
                     { 
                         model: Image,
