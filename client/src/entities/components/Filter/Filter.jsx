@@ -203,7 +203,7 @@ const Filter = ({ onFilterChange }) => {
     };
 
     return (
-        <div className="filter-container">
+        <div className="filter-container mb-4">
             {isFiltered && (
                 <div className="mb-3">
                     <ButtonM3 width="100%" onClick={resetFilters} text="Показать все товары" />

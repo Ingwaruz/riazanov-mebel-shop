@@ -39,7 +39,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     };
 
     return (
-        <div className="pagination">
+        <div className="pagination mb-4 mt-2">
             <ButtonM4
                 height="3rem" 
                 onClick={() => onPageChange(currentPage - 1)}
