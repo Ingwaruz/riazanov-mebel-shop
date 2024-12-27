@@ -127,7 +127,7 @@ const ProductPage = () => {
     return (
         <div className="container-fluid">
             <Row className="d-flex mx-5">
-                <Breadcrumb className="mt-3">
+                <Breadcrumb className="mt-3 p-0">
                     <Breadcrumb.Item className="m-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
                         Главная
                     </Breadcrumb.Item>
@@ -157,7 +157,7 @@ const ProductPage = () => {
                         {product.name}
                     </Breadcrumb.Item>
                 </Breadcrumb>
-                <Row className="d-flex flex-column xxl-text m-0 my-4">
+                <Row className="d-flex flex-column xxl-text">
                     {product.name || 'Название отсутствует'}
                 </Row>
                 <Col xs={12} sm={9} md={9} lg={9}>
