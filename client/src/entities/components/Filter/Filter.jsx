@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Accordion, Form, Row, Col } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { fetchTypes, fetchFactories, fetchFilteredProducts, fetchSizeRanges, fetchPriceRange } from '../../../processes/productAPI';
 import './filter.scss';
-import ButtonM2 from '../../../shared/ui/buttons/button-m2';
-import ButtonM1 from '../../../shared/ui/buttons/button-m1';
 import ButtonM3 from '../../../shared/ui/buttons/button-m3';
 
 const Filter = ({ onFilterChange }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [types, setTypes] = useState([]);
     const [factories, setFactories] = useState([]);
     const [sizeRange, setSizeRange] = useState({
@@ -30,6 +29,7 @@ const Filter = ({ onFilterChange }) => {
     const [selectedTypes, setSelectedTypes] = useState(new Set());
     const [selectedFactories, setSelectedFactories] = useState(new Set());
     const [isFiltered, setIsFiltered] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     // Загрузка начальных данных
     useEffect(() => {
@@ -63,45 +63,45 @@ const Filter = ({ onFilterChange }) => {
                 setSizeRange(initialRanges);
                 setMaxSizeRanges(initialRanges);
 
-                // Устанавливаем диапазон цен
                 const initialPriceRange = [priceRanges.minPrice, priceRanges.maxPrice];
                 setPriceRange(initialPriceRange);
                 setMaxPriceRange(initialPriceRange);
 
-                // Применяем фильтры из URL
-                const params = new URLSearchParams(location.search);
-                const typeId = params.get('selectedType');
-                const shouldApplyFilter = params.get('applyFilter') === 'true';
+                // Применяем фильтры из URL только при первой загрузке
+                if (isInitialLoad) {
+                    const params = new URLSearchParams(location.search);
+                    const typeId = params.get('selectedType');
+                    const shouldApplyFilter = params.get('applyFilter') === 'true';
 
-                if (shouldApplyFilter && typeId) {
-                    const selectedType = typesData.find(t => t.id === parseInt(typeId));
-                    if (selectedType) {
-                        setSelectedTypes(new Set([selectedType.id]));
-                        setIsFiltered(true);
-                        
-                        // Автоматически применяем фильтры
-                        const filters = {
-                            typeIds: JSON.stringify([parseInt(typeId)])
-                        };
-                        
-                        // Добавляем подтип, если он есть в URL
-                        const subtypeId = params.get('selectedSubtype');
-                        if (subtypeId) {
-                            filters.selectedSubtype = subtypeId;
-                        }
+                    if (shouldApplyFilter && typeId) {
+                        const selectedType = typesData.find(t => t.id === parseInt(typeId));
+                        if (selectedType) {
+                            setSelectedTypes(new Set([selectedType.id]));
+                            setIsFiltered(true);
+                            
+                            const filters = {
+                                typeIds: JSON.stringify([parseInt(typeId)])
+                            };
+                            
+                            const subtypeId = params.get('selectedSubtype');
+                            if (subtypeId) {
+                                filters.selectedSubtype = subtypeId;
+                            }
 
-                        const filteredProducts = await fetchFilteredProducts(filters);
-                        if (onFilterChange) {
-                            onFilterChange(filteredProducts, filters);
+                            const filteredProducts = await fetchFilteredProducts(filters);
+                            if (onFilterChange) {
+                                onFilterChange(filteredProducts, filters);
+                            }
                         }
                     }
+                    setIsInitialLoad(false);
                 }
             } catch (error) {
                 console.error('Ошибка при загрузке данных фильтра:', error);
             }
         };
         loadInitialData();
-    }, [location.search, onFilterChange]);
+    }, [location.search, isInitialLoad]);
 
     // Обработчик для управления открытыми вкладками
     const handleAccordionToggle = (eventKey) => {
