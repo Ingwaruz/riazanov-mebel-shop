@@ -68,22 +68,31 @@ const Filter = ({ onFilterChange }) => {
                 setPriceRange(initialPriceRange);
                 setMaxPriceRange(initialPriceRange);
 
-                // Проверяем, было ли обновление страницы
-                const isPageRefresh = !window.performance.navigation || 
-                    window.performance.navigation.type === 1 ||
-                    !document.referrer;
+                // Применяем фильтры из URL
+                const params = new URLSearchParams(location.search);
+                const typeId = params.get('selectedType');
+                const shouldApplyFilter = params.get('applyFilter') === 'true';
 
-                // Применяем фильтры из URL только если это не обновление страницы
-                if (!isPageRefresh && location.search) {
-                    const params = new URLSearchParams(location.search);
-                    const typeId = params.get('selectedType');
-                    const shouldApplyFilter = params.get('applyFilter') === 'true';
+                if (shouldApplyFilter && typeId) {
+                    const selectedType = typesData.find(t => t.id === parseInt(typeId));
+                    if (selectedType) {
+                        setSelectedTypes(new Set([selectedType.id]));
+                        setIsFiltered(true);
+                        
+                        // Автоматически применяем фильтры
+                        const filters = {
+                            typeIds: JSON.stringify([parseInt(typeId)])
+                        };
+                        
+                        // Добавляем подтип, если он есть в URL
+                        const subtypeId = params.get('selectedSubtype');
+                        if (subtypeId) {
+                            filters.selectedSubtype = subtypeId;
+                        }
 
-                    if (shouldApplyFilter && typeId) {
-                        const selectedType = typesData.find(t => t.id === parseInt(typeId));
-                        if (selectedType) {
-                            setSelectedTypes(new Set([selectedType.id]));
-                            setIsFiltered(true);
+                        const filteredProducts = await fetchFilteredProducts(filters);
+                        if (onFilterChange) {
+                            onFilterChange(filteredProducts, filters);
                         }
                     }
                 }
@@ -92,7 +101,7 @@ const Filter = ({ onFilterChange }) => {
             }
         };
         loadInitialData();
-    }, [location.search]);
+    }, [location.search, onFilterChange]);
 
     // Обработчик для управления открытыми вкладками
     const handleAccordionToggle = (eventKey) => {

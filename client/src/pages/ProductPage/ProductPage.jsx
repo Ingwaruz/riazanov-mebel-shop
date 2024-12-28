@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Image, Row, Breadcrumb } from "react-bootstrap";
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchOneProduct } from "../../processes/productAPI";
 import { SHOP_ROUTE } from "../../entities/utils/consts";
 import '../../app/styles/shared.scss';
@@ -14,9 +14,20 @@ const ProductPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { id } = useParams();
+    const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = product.images || [];
     const [startIndex, setStartIndex] = useState(0);
+
+    const handleTypeClick = (e, typeId) => {
+        e.preventDefault();
+        navigate(`${SHOP_ROUTE}?selectedType=${typeId}&applyFilter=true`);
+    };
+
+    const handleSubtypeClick = (e, typeId, subtypeId) => {
+        e.preventDefault();
+        navigate(`${SHOP_ROUTE}?selectedType=${typeId}&selectedSubtype=${subtypeId}&applyFilter=true`);
+    };
 
     const handleThumbnailClick = (index) => {
         setCurrentImageIndex(index);
@@ -134,10 +145,8 @@ const ProductPage = () => {
                     {product.type && (
                         <Breadcrumb.Item 
                             className="m-text"
-                            linkAs={Link} 
-                            linkProps={{ 
-                                to: `${SHOP_ROUTE}?selectedType=${product.type.id}&applyFilter=true` 
-                            }}
+                            onClick={(e) => handleTypeClick(e, product.type.id)}
+                            href="#"
                         >
                             {product.type.name}
                         </Breadcrumb.Item>
@@ -145,10 +154,8 @@ const ProductPage = () => {
                     {product.subtype && (
                         <Breadcrumb.Item 
                             className="m-text"
-                            linkAs={Link} 
-                            linkProps={{ 
-                                to: `${SHOP_ROUTE}?selectedType=${product.type.id}&selectedSubtype=${product.subtype.id}&applyFilter=true` 
-                            }}
+                            onClick={(e) => handleSubtypeClick(e, product.type.id, product.subtype.id)}
+                            href="#"
                         >
                             {product.subtype.name}
                         </Breadcrumb.Item>

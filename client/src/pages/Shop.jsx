@@ -6,13 +6,14 @@ import {Context} from "../index";
 import {fetchFactories, fetchProducts, fetchTypes, fetchFilteredProducts} from "../processes/productAPI";
 import Filter from "../entities/components/Filter/Filter";
 import Pagination from "../entities/components/Pagination/Pagination";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Shop = observer(() => {
     const {product} = useContext(Context);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(20);
     const location = useLocation();
+    const navigate = useNavigate();
     const [currentFilters, setCurrentFilters] = useState({});
 
     // Функция для применения фильтров
@@ -27,6 +28,18 @@ const Shop = observer(() => {
             product.setTotalCount(filteredProducts.count);
             setCurrentFilters(filters);
             setCurrentPage(page);
+
+            // Обновляем URL с учетом примененных фильтров
+            const params = new URLSearchParams();
+            if (filters.typeIds) {
+                const typeIdsArray = JSON.parse(filters.typeIds);
+                if (typeIdsArray.length > 0) {
+                    params.set('selectedType', typeIdsArray[0]);
+                }
+            }
+            if (filters.selectedSubtype) params.set('selectedSubtype', filters.selectedSubtype);
+            if (Object.keys(filters).length > 0) params.set('applyFilter', 'true');
+            navigate(`${location.pathname}?${params.toString()}`);
         } catch (error) {
             console.error('Error applying filters:', error);
         }
@@ -51,29 +64,19 @@ const Shop = observer(() => {
 
     // Обработка URL-параметров и обновления страницы
     useEffect(() => {
-        // Проверяем, было ли обновление страницы
-        const isPageRefresh = !window.performance.navigation || 
-            window.performance.navigation.type === 1 ||
-            !document.referrer;
-
-        if (isPageRefresh) {
-            // При обновлении страницы очищаем URL и загружаем все товары
-            const cleanUrl = window.location.pathname;
-            window.history.replaceState({}, '', cleanUrl);
-            loadInitialData();
-            return;
-        }
-
         const params = new URLSearchParams(location.search);
         const selectedTypeId = params.get('selectedType');
         const selectedSubtypeId = params.get('selectedSubtype');
         const shouldApplyFilter = params.get('applyFilter') === 'true';
 
         if (shouldApplyFilter && (selectedTypeId || selectedSubtypeId)) {
-            const filters = {
-                typeId: selectedTypeId,
-                selectedSubtype: selectedSubtypeId
-            };
+            const filters = {};
+            if (selectedTypeId) {
+                filters.typeIds = JSON.stringify([parseInt(selectedTypeId)]);
+            }
+            if (selectedSubtypeId) {
+                filters.selectedSubtype = selectedSubtypeId;
+            }
             applyFilters(filters, 1);
         } else {
             loadInitialData();
