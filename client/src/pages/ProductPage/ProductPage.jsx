@@ -68,6 +68,23 @@ const ProductPage = () => {
         loadProduct();
     }, [id]);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (isFullscreen) {
+                if (e.key === 'ArrowRight') {
+                    nextImage();
+                } else if (e.key === 'ArrowLeft') {
+                    prevImage();
+                } else if (e.key === 'Escape') {
+                    setIsFullscreen(false);
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isFullscreen]);
+
     if (loading) return <div className="mt-5 container-fluid xl-text justify-content-center">Загрузка...</div>;
     if (error) return <div className="mt-5 container-fluid xl-text justify-content-center">{error}</div>;
 
@@ -203,6 +220,8 @@ const ProductPage = () => {
                                     alt={product.name}
                                     fluid
                                     className="main-product-image"
+                                    onClick={() => setIsFullscreen(true)}
+                                    style={{ cursor: 'pointer' }}
                                     onError={(e) => {
                                         console.error('Image load error:', e);
                                         console.log('Failed image URL:', process.env.REACT_APP_API_URL + images[currentImageIndex].img);
