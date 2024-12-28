@@ -142,6 +142,7 @@ const Filter = ({ onFilterChange }) => {
     };
 
     const resetFilters = async () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setSelectedTypes(new Set());
         setSelectedFactories(new Set());
         setSizeRange(maxSizeRanges);
@@ -165,6 +166,7 @@ const Filter = ({ onFilterChange }) => {
     };
 
     const applyFilters = async () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         // Проверяем, есть ли выбранные фильтры
         const hasSelectedTypes = selectedTypes.size > 0;
         const hasSelectedFactories = selectedFactories.size > 0;

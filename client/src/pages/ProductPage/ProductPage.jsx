@@ -18,6 +18,7 @@ const ProductPage = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = product.images || [];
     const [startIndex, setStartIndex] = useState(0);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const handleTypeClick = (e, typeId) => {
         e.preventDefault();
@@ -137,6 +138,35 @@ const ProductPage = () => {
 
     return (
         <div className="container-fluid">
+            {isFullscreen && (
+                <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
+                    <img
+                        className="fullscreen-image"
+                        src={`${process.env.REACT_APP_API_URL}${images[currentImageIndex].img}`}
+                        alt="Полноэкранное изображение"
+                        onClick={e => e.stopPropagation()}
+                    />
+                    <i className="fas fa-times close-button" onClick={() => setIsFullscreen(false)}></i>
+                    {images.length > 1 && (
+                        <>
+                            <i
+                                className="fas fa-angle-left fullscreen-nav left"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    prevImage();
+                                }}
+                            ></i>
+                            <i
+                                className="fas fa-angle-right fullscreen-nav right"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    nextImage();
+                                }}
+                            ></i>
+                        </>
+                    )}
+                </div>
+            )}
             <Row className="d-flex mx-5">
                 <Breadcrumb className="mt-3 p-0">
                     <Breadcrumb.Item className="m-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
@@ -165,19 +195,31 @@ const ProductPage = () => {
                     {product.name || 'Название отсутствует'}
                 </Row>
                 <Col xs={12} sm={9} md={9} lg={9}>
-                    <div className="carousel-container w-35">
-                        <div
-                            className="carousel-images"
-                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
-                        >
-                            {images.map((image, index) => (
+                <div className="main-image-container mb-3 border-color_white position-relative">
+                        {images.length > 0 ? (
+                            <>
                                 <Image
-                                    key={index}
-                                    className="carousel-image"
-                                    src={`${process.env.REACT_APP_API_URL}${image.img}`}
+                                    src={process.env.REACT_APP_API_URL + images[currentImageIndex].img}
+                                    alt={product.name}
+                                    fluid
+                                    className="main-product-image"
+                                    onError={(e) => {
+                                        console.error('Image load error:', e);
+                                        console.log('Failed image URL:', process.env.REACT_APP_API_URL + images[currentImageIndex].img);
+                                        console.log('Image object:', images[currentImageIndex]);
+                                        console.log('API URL:', process.env.REACT_APP_API_URL);
+                                    }}
                                 />
-                            ))}
-                        </div>
+                                <i
+                                    className="fa-solid fa-magnifying-glass magnifier-icon"
+                                    onClick={() => setIsFullscreen(true)}
+                                ></i>
+                            </>
+                        ) : (
+                            <div>Нет изображений</div>
+                        )}
+                    </div>
+                    <div className="carousel-container w-35">
                         <div className="carousel-container w-15">
                             <div className="carousel-images mt-3 thumbnail-container">
                                 {images.slice(startIndex, startIndex + 5).map((image, index) => (
