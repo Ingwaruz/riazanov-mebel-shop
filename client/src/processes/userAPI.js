@@ -14,10 +14,13 @@ export const registration = async (email, password) => {
             localStorage.setItem('token', response.data.token);
             return jwtDecode(response.data.token);
         }
-        throw new Error('Invalid response from server');
+        throw new Error('Некорректный ответ от сервера: отсутствует токен');
     } catch (error) {
         console.error('Registration error:', error);
-        throw error;
+        if (error.response?.data?.message) {
+            throw error;
+        }
+        throw new Error('Ошибка при регистрации: ' + (error.message || 'неизвестная ошибка'));
     }
 };
 
@@ -33,20 +36,22 @@ export const login = async (email, password) => {
             localStorage.setItem('token', response.data.token);
             return jwtDecode(response.data.token);
         }
-        throw new Error('Invalid response from server');
+        throw new Error('Некорректный ответ от сервера: отсутствует токен');
     } catch (error) {
         console.error('Login error:', error);
-        throw error;
+        if (error.response?.data?.message) {
+            throw error;
+        }
+        throw new Error('Ошибка при входе: ' + (error.message || 'неизвестная ошибка'));
     }
 };
 
 // Проверка авторизации
 export const check = async () => {
     try {
-        // Проверяем наличие токена
         const token = localStorage.getItem('token');
         if (!token) {
-            throw new Error('No token found');
+            throw new Error('Токен не найден');
         }
 
         const response = await $authHost.get('api/user/auth');
@@ -55,12 +60,12 @@ export const check = async () => {
             localStorage.setItem('token', response.data.token);
             return jwtDecode(response.data.token);
         }
-        throw new Error('Invalid response from server');
+        throw new Error('Некорректный ответ от сервера: отсутствует токен');
     } catch (error) {
-        // Не логируем ошибку 401, так как это ожидаемое поведение для неавторизованных пользователей
         if (error.response?.status !== 401) {
             console.error('Auth check error:', error);
         }
+        localStorage.removeItem('token'); // Удаляем невалидный токен
         throw error;
     }
 };

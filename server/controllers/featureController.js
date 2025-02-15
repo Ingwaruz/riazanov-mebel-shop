@@ -1,5 +1,5 @@
 const {Feature, FeatureToTypeFactory, Type, Factory, Sequelize} = require('../models/models');
-const ApiError = require('../error/ApiError');
+const ApiError = require('../error/apiError');
 const { Op } = require('sequelize');
 const sequelize = require('../db');
 

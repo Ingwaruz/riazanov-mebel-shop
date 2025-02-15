@@ -1,5 +1,5 @@
 const {Subtype} = require('../models/models')
-const ApiError = require('../error/ApiError');
+const ApiError = require('../error/apiError');
 
 class SubtypeController {
     async create(req, res, next) {

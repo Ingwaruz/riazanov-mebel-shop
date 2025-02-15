@@ -25,14 +25,14 @@ const CSV_COLUMN_MAPPING = {
     'type': 'type',
     'subtype': 'subtype',
     'name': 'name',
-    'price': 'price',
-    'min_price': 'min_price',
-    'description': 'description',
-    'collection': 'collection',
+    // 'price': 'price',
+    // 'min_price': 'min_price',
+    // 'description': 'description',
+    // 'collection': 'collection',
     'width': 'width',
     'depth': 'depth',
     'height': 'height',
-    'factory': 'factory',
+    // 'factory': 'factory',
     'img-src': 'images',
     
     // Характеристики
@@ -44,10 +44,12 @@ const CSV_COLUMN_MAPPING = {
 
 // Обновляем маппинг характеристик
 const FEATURE_MAPPING = {
-    'материал': 'Материал',
-    'цвет': 'Цвет',
-    'гарантия': 'Гарантия',
-    'опоры': 'Опоры'
+    'упаковка': 'Упаковка',
+    'объем упаковки': 'Объем упаковки',
+    'масса нетто': 'Масса нетто',
+    'раздвижение': 'Раздвижение',
+    'установка вставок': 'Установка вставок',
+    'тонировка': 'Тонировка'
 };
 
 // Выносим функцию за пределы класса

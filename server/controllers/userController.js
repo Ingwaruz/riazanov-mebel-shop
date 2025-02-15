@@ -11,12 +11,43 @@ const generateJwt = (id, email, role) => {
     )
 }
 
+const validateEmail = (email) => {
+    const validEmailDomains = ['@mail.ru', '@gmail.com', '@yandex.ru', '@outlook.com', '@yahoo.com'];
+    const hasValidDomain = validEmailDomains.some(domain => email.endsWith(domain));
+    if (!email) {
+        return 'Email обязателен';
+    }
+    if (!hasValidDomain) {
+        return 'Некорректный email домен';
+    }
+    return '';
+};
+
+const validatePassword = (password) => {
+    if (!password) {
+        return 'Пароль обязателен';
+    }
+    if (password.length < 8) {
+        return 'Пароль должен содержать минимум 8 символов';
+    }
+    return '';
+};
+
 class userController {
     async registration(req, res, next) {
         try {
             const { email, password, role } = req.body;
-            if (!email || !password) {
-                return next(ApiError.badRequest('Неверная почта или пароль'));
+            
+            // Валидация email
+            const emailError = validateEmail(email);
+            if (emailError) {
+                return next(ApiError.badRequest(emailError));
+            }
+
+            // Валидация пароля
+            const passwordError = validatePassword(password);
+            if (passwordError) {
+                return next(ApiError.badRequest(passwordError));
             }
 
             const candidate = await User.findOne({ where: { email } });
@@ -36,19 +67,30 @@ class userController {
     }
 
     async login(req, res, next) {
-        const {email, password} = req.body
-        const user = await User.findOne({ where: {email} })
-        if (!user) {
-            return next(ApiError.internal('Пользователь не найден :('))
-        }
+        try {
+            const {email, password} = req.body;
+            
+            // Валидация email
+            const emailError = validateEmail(email);
+            if (emailError) {
+                return next(ApiError.badRequest(emailError));
+            }
 
-        let comparePassword = await bcrypt.compare(password, user.password)
-        if (!comparePassword) {
-            return next(ApiError.internal('Неверный пароль :('))
-        }
+            const user = await User.findOne({ where: {email} });
+            if (!user) {
+                return next(ApiError.badRequest('Пользователь не найден'));
+            }
 
-        const token = generateJwt(user.id, user.email, user.role)
-        return res.json({token})
+            let comparePassword = await bcrypt.compare(password, user.password);
+            if (!comparePassword) {
+                return next(ApiError.badRequest('Неверный пароль'));
+            }
+
+            const token = generateJwt(user.id, user.email, user.role);
+            return res.json({token});
+        } catch (error) {
+            return next(ApiError.internal('Ошибка сервера'));
+        }
     }
 
     async checkAuth(req, res, next) {
