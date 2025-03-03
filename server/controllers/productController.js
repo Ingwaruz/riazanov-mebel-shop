@@ -1,139 +1,52 @@
 const uuid = require('uuid');
 const path = require('path');
-const {Product, ProductInfo, Image, Collection, Type, Factory, Feature, FeatureToTypeFactory, Subtype} = require('../models/models');
+const { Product, ProductInfo, Image, Collection, Type, Factory, Feature, FeatureToTypeFactory, Subtype } = require('../models/models');
 const ApiError = require('../error/apiError');
-const {Op} = require('sequelize');
+const { Op } = require('sequelize');
 const csv = require('csv-parser');
 const fsPromises = require('fs').promises;
 const fs = require('fs');
 const sequelize = require('sequelize');
 const axios = require('axios');
 
-// В начале файла добавим маппинг колонок
+// Фиксированные значения
+const FIXED_FACTORY = "ОРИМЭКС";
+const FIXED_SUBTYPE = "Столы из массива";
+
+// Функция для получения или создания factory и subtype
+const getOrCreateFixedValues = async () => {
+    let factory = await Factory.findOne({ where: { name: FIXED_FACTORY } });
+    if (!factory) {
+        factory = await Factory.create({ name: FIXED_FACTORY });
+    }
+
+    let subtype = await Subtype.findOne({ where: { name: FIXED_SUBTYPE } });
+    if (!subtype) {
+        subtype = await Subtype.create({ name: FIXED_SUBTYPE });
+    }
+
+    return { factoryId: factory.id, subtypeId: subtype.id };
+};
+
+// Обновленный маппинг колонок
 const CSV_COLUMN_MAPPING = {
-    // Игнорируемые колонки
-    'web-scraper-order': null,
-    'web-scraper-start-url': null,
-    'product-href': null,
-    'paginator': null,
-    'unit': null,
-    'guarantee': null,    // игнорируем, так как используем 'гарантия'
-    'assembly': null,     // сборка будет игнорироваться
-    
-    // Основные поля
-    'product': 'name',
-    'type': 'type',
-    'subtype': 'subtype',
-    'name': 'name',
-    // 'price': 'price',
-    // 'min_price': 'min_price',
-    // 'description': 'description',
-    // 'collection': 'collection',
-    'width': 'width',
-    'depth': 'depth',
-    'height': 'height',
-    // 'factory': 'factory',
-    'img-src': 'images',
-    
-    // Характеристики
-    'материал': 'Материал',
-    'цвет': 'Цвет',
-    'гарантия': 'Гарантия',
-    'опоры': 'Опоры'
-};
-
-// Обновляем маппинг характеристик
-const FEATURE_MAPPING = {
-    'упаковка': 'Упаковка',
-    'объем упаковки': 'Объем упаковки',
-    'масса нетто': 'Масса нетто',
-    'раздвижение': 'Раздвижение',
-    'установка вставок': 'Установка вставок',
-    'тонировка': 'Тонировка'
-};
-
-// Выносим функцию за пределы класса
-const createFeatureIfNotExists = async (featureName, typeId, factoryId) => {
-    try {
-        // Ищем существующую характеристику
-        let feature = await Feature.findOne({
-            where: sequelize.where(
-                sequelize.fn('LOWER', sequelize.col('name')), 
-                featureName.toLowerCase()
-            )
-        });
-
-        // Если характеристики нет, создаем новую
-        if (!feature) {
-            feature = await Feature.create({
-                name: featureName.toLowerCase()
-            });
-        }
-
-        // Проверяем существование связи
-        const existingLink = await FeatureToTypeFactory.findOne({
-            where: {
-                featureId: feature.id,
-                typeId: typeId,
-                factoryId: factoryId
-            }
-        });
-
-        // Если связи нет, создаем её
-        if (!existingLink) {
-            await FeatureToTypeFactory.create({
-                featureId: feature.id,
-                typeId: typeId,
-                factoryId: factoryId
-            });
-        }
-
-        return feature;
-    } catch (error) {
-        console.error('Error creating feature:', error);
-        throw error;
-    }
-};
-
-const downloadImage = async (imageUrl, fileName) => {
-    try {
-        // Формируем полный URL
-        let fullUrl = imageUrl;
-        if (!imageUrl.startsWith('http')) {
-            fullUrl = `https://geniuspark.ru${imageUrl}`;
-        }
-
-        console.log('Downloading image from:', fullUrl); // Отладочный вывод
-
-        const response = await axios({
-            method: 'get',
-            url: fullUrl,
-            responseType: 'arraybuffer',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-        });
-
-        const staticPath = path.resolve(__dirname, '..', 'static');
-        if (!fs.existsSync(staticPath)) {
-            await fsPromises.mkdir(staticPath, { recursive: true });
-        }
-
-        const filePath = path.resolve(staticPath, fileName);
-        await fsPromises.writeFile(filePath, response.data);
-
-        console.log(`Image saved successfully: ${fileName}`); // Отладочный вывод
-        return fileName;
-    } catch (error) {
-        console.error(`Error downloading image from ${imageUrl}:`, error.message);
-        throw error;
-    }
+    'name': 'name' || null,
+    'price': 'price' || null,
+    'min_price': 'min_price' || 'price' || null,
+    'type': 'type' || null,
+    'description': 'description' || null,
+    'collection': 'collection' || null,
+    'width': 'width' || null,
+    'depth': 'depth' || null,
+    'height': 'height' || null,
+    'images': 'images' || null,
+    'factory': FIXED_FACTORY, // Фиксированное значение
+    'subtype': FIXED_SUBTYPE, // Фиксированное значение
 };
 
 // Функция для очистки и преобразования цены
 const parsePrice = (priceStr) => {
     if (!priceStr) return 0;
-    // Удаляем символ ₽, пробелы и 'от'
     return parseInt(priceStr.replace(/[₽\s]/g, '').replace('от', '')) || 0;
 };
 
@@ -146,21 +59,26 @@ const parseNumeric = (str) => {
 class productController {
     async create(req, res, next) {
         try {
-            const {name, price, min_price, width, depth, height, factoryId, typeId, collectionId, description, features} = req.body;
+            const { name, price, min_price, width, depth, height, typeId, collectionId, description, features } = req.body;
+
+            // Получаем или создаем factory и subtype
+            const { factoryId, subtypeId } = await getOrCreateFixedValues();
+
             console.log('Creating product with data:', {
-                name, price, min_price, width, depth, height, factoryId, typeId, collectionId, description
+                name, price, min_price, width, depth, height, factoryId, typeId, subtypeId, collectionId, description
             });
 
             const product = await Product.create({
-                name, 
-                price, 
+                name,
+                price,
                 min_price,
-                width, 
-                depth, 
-                height, 
-                factoryId, 
-                typeId, 
-                collectionId, 
+                width,
+                depth,
+                height,
+                factoryId, // Используем фиксированное значение
+                typeId,
+                subtypeId, // Используем фиксированное значение
+                collectionId,
                 description
             });
 
@@ -176,19 +94,16 @@ class productController {
             }
 
             // Обработка изображений
-            if (req.files && req.files.images) { // Проверяем наличие файлов
-                // Проверяем, является ли `images` массивом (когда несколько файлов) или одним файлом
+            if (req.files && req.files.images) {
                 const imageFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
 
-                // Сохраняем каждое изображение
                 let order = 0;
                 for (const image of imageFiles) {
                     let fileName = uuid.v4() + path.extname(image.name);
-                    await image.mv(path.resolve(__dirname, '..', 'static', fileName)); // Сохраняем файл
+                    await image.mv(path.resolve(__dirname, '..', 'static', fileName));
 
-                    // Сохраняем ссылку на изображение в таблицу `Images`
                     await Image.create({
-                        img: fileName, 
+                        img: fileName,
                         productId: product.id,
                         order: order++
                     });
