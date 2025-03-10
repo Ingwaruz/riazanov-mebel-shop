@@ -11,45 +11,30 @@ const axios = require('axios');
 
 // В начале файла добавим маппинг колонок
 const CSV_COLUMN_MAPPING = {
-    // Игнорируемые колонки
-    'web-scraper-order': null,
-    'web-scraper-start-url': null,
-    'product-href': null,
-    'paginator': null,
-    'unit': null,
-    'guarantee': null,    // игнорируем, так как используем 'гарантия'
-    'assembly': null,     // сборка будет игнорироваться
-    
-    // Основные поля
-    'product': 'name',
-    'type': 'type',
-    'subtype': 'subtype',
     'name': 'name',
-    // 'price': 'price',
-    // 'min_price': 'min_price',
-    // 'description': 'description',
-    // 'collection': 'collection',
-    'width': 'width',
-    'depth': 'depth',
-    'height': 'height',
-    // 'factory': 'factory',
+    'price': 'price',
+    'min_price': 'min_price',
+    'type': 'type',
+    'description': 'description',
+    //'collection': 'collection',
+    //'width': 'width',
+    //'depth': 'depth',
+    //'height': 'height',
     'img-src': 'images',
-    
-    // Характеристики
-    'материал': 'Материал',
-    'цвет': 'Цвет',
-    'гарантия': 'Гарантия',
-    'опоры': 'Опоры'
+    //'factory': 'factory', // Фиксированное значение
+    //'subtype': 'subtype', // Фиксированное значение
 };
 
 // Обновляем маппинг характеристик
 const FEATURE_MAPPING = {
-    'упаковка': 'Упаковка',
-    'объем упаковки': 'Объем упаковки',
-    'масса нетто': 'Масса нетто',
-    'раздвижение': 'Раздвижение',
-    'установка вставок': 'Установка вставок',
-    'тонировка': 'Тонировка'
+    'материал': 'материал',
+    'size-expand': 'размер в разложенном виде',
+    'размер-упаковки': 'размер упаковки',
+    'вес-упаковки': 'вес упаковки',
+    'раздвижение': 'раздвижение',
+    'ton': 'тонировка',
+    'цвет': 'цвет',
+    'гарантия': 'гарантия'
 };
 
 // Выносим функцию за пределы класса
@@ -100,7 +85,7 @@ const downloadImage = async (imageUrl, fileName) => {
         // Формируем полный URL
         let fullUrl = imageUrl;
         if (!imageUrl.startsWith('http')) {
-            fullUrl = `https://geniuspark.ru${imageUrl}`;
+            fullUrl = `https://www.orimex.ru/${imageUrl}`;
         }
 
         console.log('Downloading image from:', fullUrl); // Отладочный вывод
@@ -648,6 +633,17 @@ class productController {
                                 // Обрабатываем описание, сохраняя переносы строк
                                 const description = row['description'] ? row['description'].replace(/\\n/g, '\n') : '';
 
+                                // Создаем объект для характеристик
+                                const characteristics = {};
+                                
+                                // Проходим по всем возможным характеристикам из маппинга
+                                for (const [csvKey, featureName] of Object.entries(FEATURE_MAPPING)) {
+                                    if (row[csvKey] && row[csvKey].trim()) {
+                                        characteristics[featureName] = row[csvKey].trim();
+                                        console.log(`Found feature ${featureName}: ${row[csvKey].trim()}`);
+                                    }
+                                }
+
                                 productGroups.set(productKey, {
                                     productData: {
                                         name: productName,
@@ -662,11 +658,7 @@ class productController {
                                     type: row['type'] || '',
                                     subtype: row['subtype'] || '',
                                     collection: row['collection'] || '',
-                                    characteristics: {
-                                        [FEATURE_MAPPING['материал']]: row['материал'] || '',
-                                        [FEATURE_MAPPING['цвет']]: row['цвет'] || '',
-                                        [FEATURE_MAPPING['гарантия']]: row['гарантия'] || ''
-                                    },
+                                    characteristics: characteristics,
                                     images: new Set()
                                 });
 
@@ -751,17 +743,26 @@ class productController {
                         // Создаем характеристики
                         for (const [name, value] of Object.entries(data.characteristics)) {
                             if (value) {
-                                console.log(`Creating feature: ${name} = ${value}`); // Отладочный вывод
+                                console.log(`Processing feature: ${name} = ${value}`);
                                 try {
+                                    // Создаем характеристику с дополнительным логированием
                                     const feature = await createFeatureIfNotExists(name, type.id, factory.id);
-                                    await ProductInfo.create({
+                                    console.log(`Feature created/found:`, feature);
+
+                                    // Создаем связь с продуктом
+                                    const productInfo = await ProductInfo.create({
                                         productId: product.id,
                                         featureId: feature.id,
                                         value: value
                                     });
-                                    console.log(`Successfully created feature: ${name} for product ${product.name}`);
+                                    console.log(`Created product info:`, productInfo);
                                 } catch (error) {
-                                    console.error(`Error creating feature ${name}:`, error);
+                                    console.error(`Error processing feature ${name}:`, error);
+                                    errors.push({
+                                        productKey: key,
+                                        feature: name,
+                                        error: error.message
+                                    });
                                 }
                             }
                         }
