@@ -58,11 +58,11 @@ $colors: (
     transition: all 0.2s;
 
     &.active {
-        border-color: #007bff;
+        border-color: $main_link_color;
     }
 
     &:hover {
-        border-color: #0056b3;
+        border-color: $main_color;
     }
 }
 

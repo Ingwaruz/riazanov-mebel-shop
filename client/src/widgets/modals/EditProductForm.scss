@@ -1,0 +1,44 @@
+@import '../../app/styles/colors.scss';
+
+.edit-product-form-modal {
+  max-width: 90vw;
+  
+  .modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    
+    .image-item {
+      position: relative;
+      border: 1px solid $main_link_color;
+      border-radius: 4px;
+      overflow: hidden;
+      
+      img {
+        object-fit: cover;
+        width: 100px;
+        height: 100px;
+      }
+    }
+  }
+  
+  .current-images {
+    margin-bottom: 20px;
+    border: 1px dashed $main_link_color;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .preview-images {
+    margin-top: 10px;
+    border: 1px dashed $main_link_color;
+    padding: 10px;
+    border-radius: 4px;
+  }
+} 

@@ -10,5 +10,7 @@ router.get('/sizes', productController.getSizeRanges)
 router.get('/prices', productController.getPriceRange)
 router.get('/:id', productController.getOne)
 router.post('/import', checkRole('ADMIN'), productController.importFromCsv)
+router.get('/search', productController.searchProducts)
+router.put('/:id', checkRole('ADMIN'), productController.updateProduct)
 
 module.exports = router

@@ -148,4 +148,16 @@ export const searchFeatures = async (query) => {
     }
 };
 
+export const searchProducts = async (query, searchType = 'name') => {
+    const { data } = await $host.get('api/product/search', { 
+        params: { query, searchType } 
+    });
+    return data;
+};
+
+export const updateProduct = async (id, formData) => {
+    const { data } = await $authHost.put(`api/product/${id}`, formData);
+    return data;
+};
+
 

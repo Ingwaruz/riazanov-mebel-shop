@@ -1,0 +1,23 @@
+@import '../../app/styles/colors.scss';
+
+.edit-products-modal {
+  max-width: 90vw;
+  
+  .modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .admin-product-list {
+    .card {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-color: $main_link_color;
+      }
+    }
+  }
+} 

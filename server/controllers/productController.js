@@ -28,7 +28,7 @@ const CSV_COLUMN_MAPPING = {
 // Обновляем маппинг характеристик
 const FEATURE_MAPPING = {
     'материал': 'материал',
-    'size-expand': 'размер в разложенном виде',
+    //'size-expand': 'размер упаковки',
     'размер-упаковки': 'размер упаковки',
     'вес-упаковки': 'вес упаковки',
     'раздвижение': 'раздвижение',
@@ -883,6 +883,174 @@ class productController {
                 maxPrice: Math.max(...allPrices)
             });
         } catch (e) {
+            next(ApiError.badRequest(e.message));
+        }
+    }
+
+    // Добавляем метод для поиска товаров
+    async searchProducts(req, res, next) {
+        try {
+            const { query, searchType } = req.query;
+            
+            if (!query) {
+                return res.json({
+                    count: 0,
+                    rows: []
+                });
+            }
+            
+            let whereClause = {};
+            
+            if (searchType === 'id') {
+                whereClause.id = query;
+            } else {
+                // Поиск по имени (частичное совпадение)
+                whereClause.name = {
+                    [Op.iLike]: `%${query}%`
+                };
+            }
+            
+            const products = await Product.findAndCountAll({
+                where: whereClause,
+                include: [
+                    { 
+                        model: Image,
+                        as: 'images',
+                        attributes: ['id', 'img', 'order'],
+                        required: false
+                    },
+                    { 
+                        model: Type,
+                        required: false
+                    },
+                    { 
+                        model: Factory,
+                        required: false
+                    },
+                    { 
+                        model: Collection,
+                        as: 'collection',
+                        required: false
+                    }
+                ],
+                order: [
+                    [{ model: Image, as: 'images' }, 'order', 'ASC']
+                ],
+                distinct: true,
+                limit: 20
+            });
+            
+            return res.json(products);
+        } catch (e) {
+            console.error('Ошибка при поиске товаров:', e);
+            next(ApiError.badRequest(e.message));
+        }
+    }
+
+    // Метод для обновления товара
+    async updateProduct(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { 
+                name, 
+                price, 
+                min_price, 
+                width, 
+                depth, 
+                height, 
+                factoryId, 
+                typeId, 
+                subtypeId,
+                collectionId, 
+                description, 
+                features 
+            } = req.body;
+            
+            // Находим продукт по ID
+            const product = await Product.findByPk(id);
+            
+            if (!product) {
+                return next(ApiError.badRequest('Продукт не найден'));
+            }
+            
+            // Обновляем базовые данные продукта
+            await product.update({
+                name, 
+                price, 
+                min_price,
+                width, 
+                depth, 
+                height, 
+                factoryId, 
+                typeId,
+                subtypeId, 
+                collectionId, 
+                description
+            });
+            
+            // Обновляем характеристики продукта
+            if (features) {
+                const featuresData = JSON.parse(features);
+                
+                // Удаляем старые характеристики
+                await ProductInfo.destroy({
+                    where: { productId: id }
+                });
+                
+                // Добавляем новые характеристики
+                for (let feature of featuresData) {
+                    await ProductInfo.create({
+                        featureId: feature.featureId,
+                        value: feature.value,
+                        productId: id
+                    });
+                }
+            }
+            
+            // Обработка изображений
+            if (req.files && req.files.images) {
+                // Получаем текущие изображения продукта
+                const currentImages = await Image.findAll({
+                    where: { productId: id }
+                });
+                
+                // Удаляем старые файлы из папки static
+                for (const image of currentImages) {
+                    const filePath = path.resolve(__dirname, '..', 'static', image.img);
+                    try {
+                        await fsPromises.unlink(filePath);
+                    } catch (error) {
+                        console.error(`Ошибка при удалении файла ${filePath}:`, error);
+                    }
+                }
+                
+                // Удаляем записи из базы данных
+                await Image.destroy({
+                    where: { productId: id }
+                });
+                
+                // Загружаем новые изображения
+                const imageFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+                
+                let order = 0;
+                for (const image of imageFiles) {
+                    let fileName = uuid.v4() + path.extname(image.name);
+                    await image.mv(path.resolve(__dirname, '..', 'static', fileName));
+                    
+                    await Image.create({
+                        img: fileName, 
+                        productId: id,
+                        order: order++
+                    });
+                }
+            }
+            
+            return res.json({ 
+                message: 'Продукт успешно обновлен', 
+                id: product.id 
+            });
+        } catch (e) {
+            console.error('Ошибка при обновлении товара:', e);
             next(ApiError.badRequest(e.message));
         }
     }

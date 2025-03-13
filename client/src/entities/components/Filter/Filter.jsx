@@ -217,7 +217,7 @@ const Filter = ({ onFilterChange }) => {
         <div className="filter-container mb-4">
             {isFiltered && (
                 <div className="mb-3">
-                    <ButtonM3 width="100%" onClick={resetFilters} text="Показать все товары" />
+                    <ButtonM3 width="100%" onClick={resetFilters} text="Сбросить все фильтры" />
                 </div>
             )}
             <Accordion activeKey={activeKeys} onSelect={handleAccordionToggle} alwaysOpen className='main_font_color'>
