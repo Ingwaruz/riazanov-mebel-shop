@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Button, Form, Container, Row, Col, Spinner } from 'react-bootstrap';
 import { fetchFilteredProducts, searchProducts } from '../../processes/productAPI';
-import ProductList from "../../widgets/ProductList";
 import { Context } from "../../index";
 import Filter from '../../entities/components/Filter/Filter';
 import Pagination from "../../entities/components/Pagination/Pagination";
 import EditProductForm from './EditProductForm';
+import AdminProductList from './AdminProductList';
 import './EditProducts.scss';
 
 const EditProducts = ({ show, onHide }) => {
@@ -104,15 +104,6 @@ const EditProducts = ({ show, onHide }) => {
         loadProducts();
     };
 
-    // Создаем временный компонент-обертку для ProductItem
-    const CustomProductItem = React.memo(({ product }) => {
-        return (
-            <div className="product-item-wrapper" onClick={() => handleEditProduct(product)}>
-                {/* Компонент с оригинальной страницы будет отображаться здесь */}
-            </div>
-        );
-    });
-
     // Если выбран товар для редактирования, показываем форму редактирования
     if (editing && selectedProduct) {
         return (
@@ -176,9 +167,7 @@ const EditProducts = ({ show, onHide }) => {
                                 </div>
                             ) : (
                                 <>
-                                    <div className="admin-product-list" onClick={handleEditProduct}>
-                                        <ProductList />
-                                    </div>
+                                    <AdminProductList onProductClick={handleEditProduct} />
                                     {product.totalCount > 0 && product.totalCount > itemsPerPage && (
                                         <div className="d-flex justify-content-center mt-4">
                                             <Pagination
@@ -186,11 +175,6 @@ const EditProducts = ({ show, onHide }) => {
                                                 totalPages={Math.ceil(product.totalCount / itemsPerPage)}
                                                 onPageChange={handlePageChange}
                                             />
-                                        </div>
-                                    )}
-                                    {product.totalCount === 0 && (
-                                        <div className="text-center my-5">
-                                            <p>Товары не найдены</p>
                                         </div>
                                     )}
                                 </>

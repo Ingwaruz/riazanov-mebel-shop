@@ -267,8 +267,23 @@ class productController {
     async getOne(req, res, next) {
         try {
             const {id} = req.params;
+            console.log(`Получен запрос на товар с ID: ${id}, тип: ${typeof id}`);
+            
+            // Попробуем обработать id как number и как string
+            let whereCondition = {};
+            if (!isNaN(id)) {
+                whereCondition = {
+                    [Op.or]: [
+                        { id: parseInt(id) },
+                        { id: id.toString() }
+                    ]
+                };
+            } else {
+                whereCondition = { id };
+            }
+            
             const product = await Product.findOne({
-                where: {id},
+                where: whereCondition,
                 include: [
                     {
                         model: Image,
@@ -303,23 +318,11 @@ class productController {
             });
 
             if (!product) {
+                console.log(`Товар с ID ${id} не найден`);
                 return next(ApiError.badRequest('Продукт не найден'));
             }
 
-            // Добавляем отладочный вывод
-            console.log('Product details:', {
-                id: product.id,
-                name: product.name,
-                type: product.type?.name,
-                subtype: product.subtype?.name,
-                images: product.images?.map(img => ({
-                    id: img.id,
-                    img: img.img,
-                    fullUrl: `${process.env.PORT}/${img.img}`
-                })),
-                features: product.product_infos
-            });
-
+            console.log(`Товар с ID ${id} успешно найден`);
             return res.json(product);
         } catch (e) {
             console.error('Error in getOne:', e);

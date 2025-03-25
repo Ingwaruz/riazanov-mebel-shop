@@ -28,20 +28,33 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
     const [images, setImages] = useState([]);
     const [newImages, setNewImages] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
+    const [error, setError] = useState(null);
 
     // Загрузка данных при открытии формы
     useEffect(() => {
         if (show && product && product.id) {
-            loadData();
+            console.log('Loading product data for id:', product.id, 'type:', typeof product.id);
+            // Сразу используем числовой формат ID
+            const numericId = parseInt(product.id);
+            if (!isNaN(numericId)) {
+                loadData(numericId);
+            } else {
+                setError('Некорректный формат ID товара');
+            }
         }
     }, [show, product]);
 
     // Загрузка деталей товара и справочных данных
-    const loadData = async () => {
+    const loadData = async (productId) => {
         setLoading(true);
+        setError(null);
+        
         try {
-            const [productDetails, typesData, factoriesData] = await Promise.all([
-                fetchOneProduct(product.id),
+            console.log('Fetching product details for ID:', productId);
+            const productDetails = await fetchOneProduct(productId);
+            console.log('Received product details:', productDetails);
+            
+            const [typesData, factoriesData] = await Promise.all([
                 fetchTypes(),
                 fetchFactories()
             ]);
@@ -50,20 +63,23 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
             setFactories(factoriesData);
             
             // Загрузка подтипов для выбранного типа
+            let subtypesData = [];
             if (productDetails.typeId) {
-                const subtypesData = await fetchSubtypes(productDetails.typeId);
+                subtypesData = await fetchSubtypes(productDetails.typeId);
                 setSubtypes(subtypesData);
             }
             
             // Загрузка коллекций для выбранной фабрики
+            let collectionsData = [];
             if (productDetails.factoryId) {
-                const collectionsData = await fetchCollections(productDetails.factoryId);
+                collectionsData = await fetchCollections(productDetails.factoryId);
                 setCollections(collectionsData);
             }
             
             // Загрузка характеристик для выбранного типа и фабрики
+            let featuresData = [];
             if (productDetails.typeId && productDetails.factoryId) {
-                const featuresData = await fetchFeaturesByTypeAndFactory(productDetails.typeId, productDetails.factoryId);
+                featuresData = await fetchFeaturesByTypeAndFactory(productDetails.typeId, productDetails.factoryId);
                 setFeatures(featuresData);
             }
             
@@ -89,18 +105,85 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
                     : []
             });
             
+            console.log('Form data set:', {
+                name: productDetails.name,
+                price: productDetails.price,
+                typeId: productDetails.typeId,
+                factoryId: productDetails.factoryId,
+                subtypeId: productDetails.subtypeId,
+                collectionId: productDetails.collectionId,
+                featuresCount: productDetails.product_infos?.length
+            });
+            
             // Установка изображений товара
             if (productDetails.images && productDetails.images.length > 0) {
+                console.log('Setting images:', productDetails.images.length, 'images');
                 setImages(productDetails.images.map(img => ({
                     ...img,
                     url: process.env.REACT_APP_API_URL + '/' + img.img
                 })));
+            } else {
+                console.log('No images found for product');
+                setImages([]);
             }
-            
-            console.log('Loaded product details:', productDetails);
             
         } catch (error) {
             console.error('Ошибка при загрузке данных товара:', error);
+            setError('Ошибка при загрузке данных товара: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Добавьте эту функцию для повторной попытки с другим форматом ID
+    const tryAlternativeFormat = async () => {
+        setLoading(true);
+        setError(null);
+        
+        try {
+            // Попробуем запросить с числовым ID без кавычек
+            console.log('Попытка получения товара с альтернативным форматом ID:', parseInt(product.id));
+            const productDetails = await fetchOneProduct(parseInt(product.id));
+            
+            if (productDetails) {
+                console.log('Успешно получены данные товара с альтернативным форматом ID');
+                
+                // Остальной код загрузки - скопируйте из функции loadData()
+                // ...
+                
+                // Установка данных формы
+                setFormData({
+                    name: productDetails.name || '',
+                    price: productDetails.price || 0,
+                    min_price: productDetails.min_price || 0,
+                    description: productDetails.description || '',
+                    width: productDetails.width || 0,
+                    height: productDetails.height || 0,
+                    depth: productDetails.depth || 0,
+                    typeId: productDetails.typeId || '',
+                    subtypeId: productDetails.subtypeId || '',
+                    factoryId: productDetails.factoryId || '',
+                    collectionId: productDetails.collectionId || '',
+                    productFeatures: productDetails.product_infos 
+                        ? productDetails.product_infos.map(info => ({
+                            featureId: info.featureId,
+                            value: info.value,
+                            name: info.feature?.name || ''
+                        })) 
+                        : []
+                });
+                
+                // Установка изображений
+                if (productDetails.images && productDetails.images.length > 0) {
+                    setImages(productDetails.images.map(img => ({
+                        ...img,
+                        url: process.env.REACT_APP_API_URL + '/' + img.img
+                    })));
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка при повторной попытке загрузки товара:', error);
+            setError(`Не удалось загрузить данные товара. Пожалуйста, проверьте, существует ли товар с ID: ${product.id}`);
         } finally {
             setLoading(false);
         }
@@ -228,7 +311,8 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
             }
             
             // Отправляем запрос на обновление
-            await updateProduct(product.id, formDataToSend);
+            const result = await updateProduct(product.id, formDataToSend);
+            console.log('Update result:', result);
             
             // Уведомляем родительский компонент об успешном обновлении
             if (onComplete) {
@@ -237,7 +321,7 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
             
         } catch (error) {
             console.error('Ошибка при обновлении товара:', error);
-            alert('Произошла ошибка при обновлении товара');
+            alert('Произошла ошибка при обновлении товара: ' + error.message);
         } finally {
             setSaving(false);
         }
@@ -260,13 +344,32 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {product ? `Редактирование товара: ${product.name}` : 'Редактирование товара'}
+                    {product ? `Редактирование товара: ${product.name} (ID: ${product.id})` : 'Редактирование товара'}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {loading ? (
                     <div className="text-center my-5">
                         <Spinner animation="border" />
+                        <p className="mt-3">Загрузка данных товара...</p>
+                    </div>
+                ) : error ? (
+                    <div className="alert alert-danger">
+                        {error}
+                        <div className="mt-3 d-flex gap-2">
+                            <Button 
+                                variant="primary" 
+                                onClick={loadData}
+                            >
+                                Попробовать снова
+                            </Button>
+                            <Button 
+                                variant="outline-secondary" 
+                                onClick={tryAlternativeFormat}
+                            >
+                                Альтернативный формат ID
+                            </Button>
+                        </div>
                     </div>
                 ) : (
                     <Form onSubmit={handleSubmit}>
@@ -454,7 +557,7 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
                                 </Form.Group>
                                 
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Заменить изображения</Form.Label>
+                                    <Form.Label>Заменить изображения (необязательно)</Form.Label>
                                     <Form.Control 
                                         type="file" 
                                         multiple 
@@ -468,7 +571,7 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
                                 
                                 {previewImages.length > 0 && (
                                     <div className="preview-images mb-3">
-                                        <p>Предпросмотр:</p>
+                                        <p>Предпросмотр новых изображений:</p>
                                         <div className="image-gallery">
                                             {previewImages.map((url, idx) => (
                                                 <div key={idx} className="image-item">

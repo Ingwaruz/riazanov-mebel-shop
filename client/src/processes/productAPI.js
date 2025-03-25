@@ -58,9 +58,22 @@ export const fetchProducts = async (typeId, factoryId, page = 1, limit = 20) => 
 }
 
 export const fetchOneProduct = async (id) => {
-    const {data} = await $host.get('api/product/' + id);
-    return data;
-}
+    try {
+        console.log(`Отправка запроса на получение товара с ID: ${id}`);
+        const {data} = await $host.get(`api/product/${id}`);
+        console.log('Данные товара получены успешно:', data);
+        return data;
+    } catch (error) {
+        console.error(`Ошибка при получении товара с ID ${id}:`, error);
+        console.error('Детали запроса:', {
+            url: `api/product/${id}`,
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data
+        });
+        throw error;
+    }
+};
 
 export const fetchFilteredProducts = async (filters) => {
     const {data} = await $host.get('api/product/filter', {
