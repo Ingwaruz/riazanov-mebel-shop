@@ -8,6 +8,7 @@ const fsPromises = require('fs').promises;
 const fs = require('fs');
 const sequelize = require('sequelize');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 // В начале файла добавим маппинг колонок
 const CSV_COLUMN_MAPPING = {
@@ -15,12 +16,12 @@ const CSV_COLUMN_MAPPING = {
     'price': 'price',
     'min_price': 'min_price',
     'type': 'type',
-    'description': 'description',
+    //'description': 'description',
     //'collection': 'collection',
     //'width': 'width',
     //'depth': 'depth',
     //'height': 'height',
-    'img-src': 'images'
+    'images-src': 'images'
     //'factory': 'factory', // Фиксированное значение
     //'subtype': 'subtype', // Фиксированное значение
 };
@@ -83,7 +84,7 @@ const downloadImage = async (imageUrl, fileName) => {
         // Формируем полный URL
         let fullUrl = imageUrl;
         if (!imageUrl.startsWith('http')) {
-            fullUrl = `https://www.orimex.ru/${imageUrl}`;
+            fullUrl = `https://sonum.ru/${imageUrl}`;
         }
 
         console.log('Downloading image from:', fullUrl); // Отладочный вывод
@@ -123,7 +124,41 @@ const parsePrice = (priceStr) => {
 // Функция для очистки числовых значений
 const parseNumeric = (str) => {
     if (!str) return 0;
+    // Удаляем все нечисловые символы, включая единицы измерения
     return parseInt(str.replace(/[^\d]/g, '')) || 0;
+};
+
+// Функция для парсинга HTML и извлечения характеристик
+const parseProductInfo = (html) => {
+    const $ = cheerio.load(html);
+    const features = {};
+    let productWidth = null, productDepth = null, productHeight = null;
+
+    // Проходим по всем блокам с характеристиками
+    $('.table-characteristic__row').each((_, element) => {
+        const key = $(element).find('.table-characteristic__col:first span').text().trim();
+        const value = $(element).find('.table-characteristic__col:last span').text().trim();
+
+        if (key && value) {
+            processFeature(key, value);
+        }
+    });
+
+    function processFeature(key, value) {
+        // Проверяем стандартные размеры
+        if (key.includes('Ширина')) {
+            productWidth = parseNumeric(value);
+        } else if (key.includes('Длина')) {
+            productDepth = parseNumeric(value);
+        } else if (key.includes('Высота') || key.includes('Высота матраса')) {
+            productHeight = parseNumeric(value);
+        } else {
+            // Все остальные характеристики добавляем в features
+            features[key] = value;
+        }
+    }
+
+    return { features, width: productWidth, depth: productDepth, height: productHeight };
 };
 
 class productController {
@@ -520,6 +555,11 @@ class productController {
                 return next(ApiError.badRequest('Файл не был загружен'));
             }
 
+            // Создаем или находим временный тип для импорта
+            const [tempType] = await Type.findOrCreate({
+                where: { name: 'Без типа' }
+            });
+
             const file = req.files.file;
             console.log('Received file:', {
                 name: file.name,
@@ -584,14 +624,8 @@ class productController {
                         relax_column_count: true,
                         trim: true,
                         skip_empty_lines: true,
-                        mapHeaders: ({ header }) => {
-                            console.log('Mapping header:', header);
-                            return header.trim();
-                        },
-                        mapValues: ({ header, value }) => {
-                            console.log(`Mapping value for ${header}:`, value);
-                            return value.trim();
-                        }
+                        mapHeaders: ({ header }) => header.trim(),
+                        mapValues: ({ header, value }) => value.trim()
                     }))
                     .on('headers', (headers) => {
                         console.log('CSV Headers:', headers);
@@ -604,79 +638,53 @@ class productController {
                         try {
                             console.log('Processing row:', row);
                             
-                            // Создаем уникальный ключ на основе имени и коллекции
-                            const productName = row['name'] || row['product'];
+                            const productName = row['name'];
                             if (!productName) {
                                 console.warn('Skipping row without product name:', row);
                                 return;
                             }
-                            
-                            // Логируем значения для отладки
-                            console.log('Product values:', {
+
+                            // Парсим HTML из поля all-info
+                            let productData = {
                                 name: productName,
-                                collection: row['collection'],
-                                price: row['price'],
-                                min_price: row['min_price'],
-                                description: row['description']?.substring(0, 50) + '...',
-                                width: row['width'],
-                                height: row['height'],
-                                depth: row['depth']
-                            });
+                                price: parsePrice(row['price']),
+                                min_price: 0,
+                                width: 0,
+                                depth: 0,
+                                height: 0,
+                                features: {}
+                            };
 
-                            const productKey = `${productName}_${row['collection'] || ''}`;
-
-                            if (!productGroups.has(productKey)) {
-                                // Обработка цен с логированием
-                                const price = parsePrice(row['price']);
-                                const minPrice = parsePrice(row['min_price']);
-                                console.log('Parsed prices:', { price, minPrice });
-
-                                // Обрабатываем описание, сохраняя переносы строк
-                                const description = row['description'] ? row['description'].replace(/\\n/g, '\n') : '';
-
-                                // Создаем объект для характеристик
-                                const characteristics = {};
-                                
-                                // Проходим по всем возможным характеристикам из маппинга
-                                for (const [csvKey, featureName] of Object.entries(FEATURE_MAPPING)) {
-                                    if (row[csvKey] && row[csvKey].trim()) {
-                                        characteristics[featureName] = row[csvKey].trim();
-                                        console.log(`Found feature ${featureName}: ${row[csvKey].trim()}`);
-                                    }
-                                }
-
-                                productGroups.set(productKey, {
-                                    productData: {
-                                        name: productName,
-                                        description: description,
-                                        price: price,
-                                        min_price: minPrice,
-                                        width: parseNumeric(row['width']),
-                                        height: parseNumeric(row['height']),
-                                        depth: parseNumeric(row['depth'])
-                                    },
-                                    factory: row['factory'] || '',
-                                    type: row['type'] || '',
-                                    subtype: row['subtype'] || '',
-                                    collection: row['collection'] || '',
-                                    characteristics: characteristics,
-                                    images: new Set()
-                                });
-
-                                console.log('Created product group:', productKey);
+                            if (row['all-info']) {
+                                const parsedInfo = parseProductInfo(row['all-info']);
+                                productData = {
+                                    ...productData,
+                                    width: parsedInfo.width || 0,
+                                    depth: parsedInfo.depth || 0,
+                                    height: parsedInfo.height || 0,
+                                    features: parsedInfo.features
+                                };
                             }
 
-                            // Добавляем URL изображения в Set
-                            if (row['img-src']) {
-                                const imageUrl = row['img-src'].trim();
+                            const productKey = productName;
+
+                            if (!productGroups.has(productKey)) {
+                                productGroups.set(productKey, {
+                                    productData,
+                                    images: new Set()
+                                });
+                            }
+
+                            // Добавляем URL изображения
+                            if (row['images-src']) {
+                                const imageUrl = row['images-src'].trim();
                                 if (imageUrl) {
-                                    console.log(`Found image URL for ${productName}:`, imageUrl);
                                     productGroups.get(productKey).images.add(imageUrl);
                                 }
                             }
+
                         } catch (error) {
                             console.error('Error processing row:', error);
-                            console.error('Problematic row data:', row);
                             errors.push({
                                 error: error.message,
                                 row: row
@@ -693,70 +701,60 @@ class productController {
             for (const [key, data] of productGroups) {
                 try {
                     console.log(`Processing product: ${key}`);
-                    console.log('Product data:', data.productData);
 
-                    const [factory] = await Factory.findOrCreate({
-                        where: { name: data.factory }
-                    });
+                    let factory = null;
 
-                    const [type] = await Type.findOrCreate({
-                        where: { name: data.type }
-                    });
-
-                    // Создаем подтип, если он есть
-                    let subtypeId = null;
-                    if (data.subtype) {
-                        const [subtype] = await Subtype.findOrCreate({
-                            where: { 
-                                name: data.subtype,
-                                typeId: type.id
-                            }
-                        });
-                        subtypeId = subtype.id;
+                    if (data.productData.allInfo) {
+                        const parsedInfo = parseProductInfo(data.productData.allInfo);
+                        
+                        // Определяем фабрику из характеристик
+                        const factoryName = parsedInfo.features['Производитель'];
+                        if (factoryName) {
+                            [factory] = await Factory.findOrCreate({
+                                where: { name: factoryName }
+                            });
+                        }
                     }
 
-                    const [collection] = await Collection.findOrCreate({
-                        where: { 
-                            name: data.collection,
-                            factoryId: factory.id
-                        }
-                    });
+                    // Если фабрика не определена, используем значение по умолчанию
+                    if (!factory) {
+                        [factory] = await Factory.findOrCreate({
+                            where: { name: 'Без производителя' }
+                        });
+                    }
 
                     // Проверяем, существует ли уже такой продукт
                     let product = await Product.findOne({
                         where: {
-                            name: data.productData.name,
-                            collectionId: collection.id
+                            name: data.productData.name
                         }
                     });
 
                     if (!product) {
                         product = await Product.create({
-                            ...data.productData,
-                            factoryId: factory.id,
-                            typeId: type.id,
-                            subtypeId,
-                            collectionId: collection.id,
+                            name: data.productData.name,
                             price: data.productData.price,
-                            min_price: data.productData.min_price
+                            min_price: data.productData.min_price,
+                            width: data.productData.width,
+                            depth: data.productData.depth,
+                            height: data.productData.height,
+                            factoryId: factory.id,
+                            typeId: tempType.id // Добавляем временный тип
                         });
 
                         // Создаем характеристики
-                        for (const [name, value] of Object.entries(data.characteristics)) {
+                        for (const [name, value] of Object.entries(data.productData.features)) {
                             if (value) {
-                                console.log(`Processing feature: ${name} = ${value}`);
                                 try {
-                                    // Создаем характеристику с дополнительным логированием
-                                    const feature = await createFeatureIfNotExists(name, type.id, factory.id);
-                                    console.log(`Feature created/found:`, feature);
-
+                                    // Создаем характеристику
+                                    const feature = await createFeatureIfNotExists(name, tempType.id, factory.id);
+                                    
                                     // Создаем связь с продуктом
-                                    const productInfo = await ProductInfo.create({
+                                    await ProductInfo.create({
                                         productId: product.id,
                                         featureId: feature.id,
                                         value: value
                                     });
-                                    console.log(`Created product info:`, productInfo);
                                 } catch (error) {
                                     console.error(`Error processing feature ${name}:`, error);
                                     errors.push({
@@ -770,38 +768,19 @@ class productController {
                     }
 
                     // Обработка изображений
-                    console.log(`Processing images for product ${data.productData.name}`);
-                    console.log('Images to process:', Array.from(data.images));
-
                     let imageOrder = 0;
                     for (const imageUrl of data.images) {
                         try {
-                            // Генерируем уникальное имя файла с сохранением расширения
                             const originalExt = path.extname(imageUrl) || '.webp';
                             const fileName = `${uuid.v4()}${originalExt}`;
-
-                            console.log(`Downloading image: ${imageUrl}`);
                             
-                            try {
-                                await downloadImage(imageUrl, fileName);
-                                
-                                // Создаем запись в базе данных
-                                const imageRecord = await Image.create({
-                                    productId: product.id,
-                                    img: fileName,
-                                    order: imageOrder++
-                                });
-
-                                console.log('Created image record:', {
-                                    id: imageRecord.id,
-                                    productId: imageRecord.productId,
-                                    img: imageRecord.img,
-                                    order: imageRecord.order
-                                });
-                            } catch (downloadError) {
-                                console.error(`Error downloading image: ${downloadError.message}`);
-                                throw downloadError;
-                            }
+                            await downloadImage(imageUrl, fileName);
+                            
+                            await Image.create({
+                                productId: product.id,
+                                img: fileName,
+                                order: imageOrder++
+                            });
                         } catch (imgError) {
                             console.error(`Error processing image ${imageUrl}:`, imgError);
                             errors.push({
