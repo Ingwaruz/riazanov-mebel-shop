@@ -90,28 +90,6 @@ const ProductPage = () => {
 
     const tabs = [
         {
-            key: 'description',
-            title: 'Описание',
-            content: (
-                <>
-                    {product.description && (
-                        <Col className="mt-3" xs={12}>
-                            <pre style={{ 
-                                whiteSpace: 'pre-wrap',
-                                wordWrap: 'break-word',
-                                fontFamily: 'inherit',
-                                margin: 0,
-                                backgroundColor: 'transparent',
-                                lineHeight: '1.4'
-                            }}>
-                                {product.description?.split('\n\n').join('\n')}
-                            </pre>
-                        </Col>
-                    )}
-                </>
-            )
-        },
-        {
             key: 'specifications',
             title: 'Характеристики',
             content: (
@@ -150,6 +128,28 @@ const ProductPage = () => {
                     ))}
                 </div>
             )
+        },
+        {
+            key: 'description',
+            title: 'Описание',
+            content: (
+                <>
+                    {product.description && (
+                        <Col className="mt-3" xs={12}>
+                            <pre style={{ 
+                                whiteSpace: 'pre-wrap',
+                                wordWrap: 'break-word',
+                                fontFamily: 'inherit',
+                                margin: 0,
+                                backgroundColor: 'transparent',
+                                lineHeight: '1.4'
+                            }}>
+                                {product.description?.split('\n\n').join('\n')}
+                            </pre>
+                        </Col>
+                    )}
+                </>
+            )
         }
     ];
 
@@ -186,12 +186,12 @@ const ProductPage = () => {
             )}
             <Row className="d-flex mx-5">
                 <Breadcrumb className="mt-3 p-0">
-                    <Breadcrumb.Item className="m-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
+                    <Breadcrumb.Item className="l-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
                         Главная
                     </Breadcrumb.Item>
                     {product.type && (
                         <Breadcrumb.Item 
-                            className="m-text"
+                            className="l-text"
                             onClick={(e) => handleTypeClick(e, product.type.id)}
                             href="#"
                         >
@@ -200,7 +200,7 @@ const ProductPage = () => {
                     )}
                     {product.subtype && (
                         <Breadcrumb.Item 
-                            className="m-text"
+                            className="l-text"
                             onClick={(e) => handleSubtypeClick(e, product.type.id, product.subtype.id)}
                             href="#"
                         >

@@ -18,8 +18,8 @@ const CSV_COLUMN_MAPPING = {
     'type': 'type',
     //'description': 'description',
     //'collection': 'collection',
-    //'width': 'width',
-    //'depth': 'depth',
+    'width': 'width',
+    'depth': 'depth',
     //'height': 'height',
     'images-src': 'images'
     //'factory': 'factory', // Фиксированное значение
