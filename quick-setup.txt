@@ -1,0 +1,81 @@
+===============================================
+КОМАНДЫ ДЛЯ БЫСТРОЙ НАСТРОЙКИ
+===============================================
+
+1. Скачайте и распакуйте Nginx:
+   Браузер: https://nginx.org/download/nginx-1.24.0.zip
+   
+2. Создайте директории:
+   mkdir C:\nginx\conf\sites-enabled
+
+3. Скопируйте конфигурацию:
+   - Создайте файл C:\nginx\conf\nginx.conf со следующим содержимым:
+   
+worker_processes 1;
+events { worker_connections 1024; }
+http {
+    include mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+    keepalive_timeout 65;
+    include sites-enabled/*.conf;
+}
+
+   - Создайте файл C:\nginx\conf\sites-enabled\domu-mebel.ru.conf:
+
+server {
+    listen 80;
+    server_name domu-mebel.ru www.domu-mebel.ru;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    location /api/ {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    location /static/ {
+        proxy_pass http://localhost:5000/static/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+4. Запустите Nginx:
+   C:\nginx\nginx.exe
+
+5. Запустите серверную часть:
+   cd путь_к_проекту
+   start-server.bat
+
+6. Запустите клиентскую часть в режиме разработки:
+   cd путь_к_проекту
+   start-client.bat
+
+7. ИЛИ соберите клиентскую часть:
+   cd путь_к_проекту
+   build-client.bat
+
+8. Для настройки HTTPS:
+   - Скачайте Certbot: https://dl.eff.org/certbot-beta-installer-win32.exe
+   - Установите его
+   - Выполните:
+   certbot certonly --standalone --agree-tos --email tawer0228@gmail.com -d domu-mebel.ru -d www.domu-mebel.ru
+   
+   - Затем обновите файл C:\nginx\conf\sites-enabled\domu-mebel.ru.conf с SSL-конфигурацией, как указано в manual-setup.txt
+   - Перезапустите Nginx:
+   C:\nginx\nginx.exe -s reload
+
+=============================================== 
