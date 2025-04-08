@@ -81,12 +81,15 @@ const createFeatureIfNotExists = async (featureName, typeId, factoryId) => {
 
 const downloadImage = async (imageUrl, fileName) => {
     try {
-        // Формируем полный URL
+        // Обеспечиваем HTTPS для всех URL
         let fullUrl = imageUrl;
         if (!imageUrl.startsWith('http')) {
             fullUrl = `https://sonum.ru/${imageUrl}`;
+        } else if (imageUrl.startsWith('http://')) {
+            // Заменяем HTTP на HTTPS для всех URL
+            fullUrl = imageUrl.replace('http://', 'https://');
         }
-
+        
         console.log('Downloading image from:', fullUrl); // Отладочный вывод
 
         const response = await axios({
