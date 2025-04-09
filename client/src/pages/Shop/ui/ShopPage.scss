@@ -1,0 +1,15 @@
+@import '../../../app/styles/colors.scss';
+
+.shop-page {
+  padding-bottom: 30px;
+
+  .filter-column {
+    @media (max-width: 768px) {
+      margin-bottom: 20px;
+    }
+  }
+
+  .product-column {
+    min-height: 500px;
+  }
+} 

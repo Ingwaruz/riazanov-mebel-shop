@@ -1,0 +1,18 @@
+@import '../../../app/styles/colors.scss';
+
+.auth-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.auth-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 8px;
+  
+  h2 {
+    color: $main_font_color;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+} 

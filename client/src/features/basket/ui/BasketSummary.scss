@@ -1,0 +1,48 @@
+@import '../../../app/styles/colors.scss';
+
+.basket-summary {
+  border-color: #eaeaea;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.summary-title {
+  font-weight: 600;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  
+  .label {
+    color: $main_font_color;
+  }
+  
+  .value {
+    font-weight: 500;
+  }
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  
+  .total-label {
+    font-size: 18px;
+    font-weight: 600;
+    color: $main_font_color;
+  }
+  
+  .total-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: $main_color;
+  }
+}
+
+.policy-note {
+  font-size: 12px;
+  line-height: 1.4;
+} 

@@ -1,0 +1,39 @@
+@import '../../../shared/styles/colors.scss';
+
+.checkout-form {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  
+  h4 {
+    color: $main_font_color;
+    font-weight: 600;
+  }
+  
+  .form-check-input:checked {
+    background-color: $main_color;
+    border-color: $main_color;
+  }
+  
+  .form-check-input:focus {
+    border-color: $main_color;
+    box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25);
+  }
+  
+  .submit-button {
+    background-color: $main_color;
+    border-color: $main_color;
+    
+    &:hover {
+      background-color: $main_color_hover;
+      border-color: $main_color_hover;
+    }
+    
+    &:active, &:focus {
+      background-color: $main_color_active !important;
+      border-color: $main_color_active !important;
+      box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25) !important;
+    }
+  }
+} 

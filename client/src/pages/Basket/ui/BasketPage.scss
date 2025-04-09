@@ -1,0 +1,11 @@
+@import '../../../shared/styles/colors.scss';
+
+.basket-page {
+  min-height: 60vh;
+  
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: $main_font_color;
+  }
+} 

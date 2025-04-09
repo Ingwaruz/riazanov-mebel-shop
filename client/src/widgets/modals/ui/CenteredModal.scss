@@ -1,0 +1,20 @@
+@import '../../../app/styles/colors.scss';
+
+.centered-modal {
+  .modal-title {
+    font-weight: 600;
+    color: $main_font_color;
+  }
+  
+  .modal-body {
+    color: $main_font_color;
+  }
+  
+  .modal-header .btn-close:focus {
+    box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25);
+  }
+  
+  .modal-content {
+    border-radius: 0.5rem;
+  }
+} 

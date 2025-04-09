@@ -1,0 +1,21 @@
+@import '../../../app/styles/colors.scss';
+
+.form-field {
+  .form-field-label {
+    font-weight: 500;
+    color: $main_font_color;
+    margin-bottom: 0.5rem;
+    
+    .required-mark {
+      color: #dc3545;
+      margin-left: 4px;
+    }
+  }
+  
+  .form-field-input {
+    &:focus {
+      border-color: $main_color;
+      box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25);
+    }
+  }
+} 

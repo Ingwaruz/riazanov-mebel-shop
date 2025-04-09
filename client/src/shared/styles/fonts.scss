@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import './colors';
+
+// Основной шрифт проекта
+$font-family: "Montserrat", sans-serif;
+
+// Размеры шрифтов
+$font-size-xs: 0.75rem; // 12px
+$font-size-s: 0.875rem; // 14px
+$font-size-m: 1rem;     // 16px
+$font-size-l: 1.25rem;  // 20px
+$font-size-xl: 1.5rem;  // 24px
+$font-size-xxl: 2rem;   // 32px
+
+// Миксин для создания стилей текста
+@mixin font($size) {
+  font-family: $font-family;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: $size;
+  line-height: 1.5;
+  color: $main_font_color;
+  text-overflow: ellipsis;
+  text-align: start;
+}
+
+// Классы текста для разных размеров
+.xs-text {
+  @include font($font-size-xs);
+}
+
+.s-text {
+  @include font($font-size-s);
+}
+
+.m-text {
+  @include font($font-size-m);
+}
+
+.l-text {
+  @include font($font-size-l);
+}
+
+.xl-text {
+  @include font($font-size-xl);
+}
+
+.xxl-text {
+  @include font($font-size-xxl);
+} 

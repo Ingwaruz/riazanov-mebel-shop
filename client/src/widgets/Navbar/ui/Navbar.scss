@@ -1,0 +1,29 @@
+@import '../../../app/styles/colors.scss';
+
+.navbar-link {
+  color: $color_white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: rgba($color_white, 0.8);
+  }
+}
+
+.navbar-button {
+  color: $color_white;
+  border-radius: 0;
+  background-color: $main_color;
+  border-color: $color_white;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: $main_color_hover;
+    color: $color_white;
+  }
+  
+  &:active {
+    background-color: $main_color_active !important;
+  }
+} 
+ 

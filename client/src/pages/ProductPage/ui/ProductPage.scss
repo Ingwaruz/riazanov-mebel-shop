@@ -1,0 +1,44 @@
+@import '../../../app/styles/colors.scss';
+
+.product-page {
+  padding-bottom: 30px;
+  
+  .product-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: $main_font_color;
+  }
+  
+  .characteristic-item {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+    
+    .characteristic-key {
+      color: #666;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .characteristic-separator {
+      flex: 1;
+      border-bottom: 1px dotted #ccc;
+      margin: 0 0.5rem;
+    }
+    
+    .characteristic-value {
+      color: $main_font_color;
+      font-weight: 600;
+    }
+  }
+  
+  .product-description {
+    white-space: pre-line;
+    font-family: inherit;
+    margin: 0;
+    background-color: transparent;
+    line-height: 1.6;
+    font-size: 14px;
+    color: $main_font_color;
+  }
+} 

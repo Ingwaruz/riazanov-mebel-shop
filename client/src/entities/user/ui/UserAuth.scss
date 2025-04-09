@@ -1,0 +1,28 @@
+@import '../../../shared/styles/variables.scss';
+
+.user-auth {
+    display: flex;
+    align-items: center;
+    
+    &__logout-btn {
+        background-color: transparent;
+        border-color: $danger_color;
+        color: $danger_color;
+        
+        &:hover {
+            background-color: $danger_color;
+            color: #fff;
+        }
+    }
+    
+    &__login-btn {
+        background-color: transparent;
+        border-color: $light_color;
+        color: $light_color;
+        
+        &:hover {
+            background-color: $light_color;
+            color: $dark_color;
+        }
+    }
+} 

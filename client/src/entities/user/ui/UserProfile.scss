@@ -1,0 +1,26 @@
+@import '../../../shared/styles/variables.scss';
+
+.user-profile {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    
+    .card-title {
+        color: $main_title_color;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+    
+    .card-text {
+        margin-bottom: 10px;
+        
+        strong {
+            color: $main_text_color;
+            font-weight: 500;
+        }
+    }
+    
+    .card-body {
+        padding: 24px;
+    }
+} 
