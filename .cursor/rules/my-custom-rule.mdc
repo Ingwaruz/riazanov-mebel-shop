@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+[colors.scss](mdc:client/src/app/styles/colors.scss) - файл с палитрой проекта, используй только эти цвета

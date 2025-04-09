@@ -6,10 +6,7 @@ import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import {check} from "../processes/userAPI";
 import {Spinner} from "react-bootstrap";
-import './styles/fonts.scss';
-import './styles/commonStyles.scss';
-import './styles/colors.scss';
-import './styles/shared.scss';
+import './styles/index.scss';
 import Footer from "../widgets/Footer";
 
 const App = observer(() => {
