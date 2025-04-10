@@ -1,0 +1,94 @@
+/* Медиа-запросы для адаптивной верстки */
+
+/* Мобильные устройства (до 768px) */
+@media (max-width: 767.98px) {
+  /* Навигация */
+  .navbar-menu-row {
+    flex-direction: column;
+    width: 100% !important;
+    margin-top: 10px;
+  }
+  
+  .navbar-menu-row .col-auto {
+    width: 100%;
+    text-align: center;
+    margin: 5px 0;
+  }
+
+  /* Карточки товаров */
+  .product-image-container {
+    height: 150px !important;
+  }
+  
+  .product-title {
+    font-size: 0.9rem !important;
+    height: 2.2rem !important;
+  }
+  
+  .product-price {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Контейнеры и отступы */
+  .mx-5 {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+  }
+  
+  /* Фильтры */
+  .filter-content {
+    display: none;
+  }
+  
+  .filter-content.visible {
+    display: block;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Страница товара */
+  .product-gallery .main-image-container {
+    height: 300px !important;
+  }
+  
+  .product-details .product-title {
+    font-size: 1.3rem !important;
+  }
+  
+  .product-details .product-price {
+    font-size: 1.3rem !important;
+  }
+}
+
+/* Планшеты (от 768px до 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Карточки товаров */
+  .product-image-container {
+    height: 180px !important;
+  }
+  
+  /* Страница товара */
+  .product-gallery .main-image-container {
+    height: 350px !important;
+  }
+}
+
+/* Утилиты для адаптивного отображения */
+@media (max-width: 767.98px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .show-on-mobile {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .show-on-mobile {
+    display: none !important;
+  }
+} 
