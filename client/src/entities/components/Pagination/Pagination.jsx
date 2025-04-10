@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './pagination.scss';
-import ButtonM2 from '../../../shared/ui/buttons/button-m2';
-import ButtonM1 from '../../../shared/ui/buttons/button-m1';
 import ButtonM4 from '../../../shared/ui/buttons/button-m4';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    const pages = [];
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
     
-    // Генерируем массив страниц для отображения
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 576);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const generatePageNumbers = () => {
-        if (totalPages <= 7) {
-            // Если страниц меньше 7, показываем все
+        const pages = [];
+        
+        if (totalPages <= (isMobile ? 5 : 7)) {
+            // Если страниц меньше лимита, показываем все
             for (let i = 1; i <= totalPages; i++) {
                 pages.push(i);
             }
@@ -18,21 +26,27 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             // Всегда показываем первую страницу
             pages.push(1);
             
-            if (currentPage > 3) {
+            if (currentPage > (isMobile ? 2 : 3)) {
                 pages.push('...');
             }
             
             // Показываем страницы вокруг текущей
-            for (let i = Math.max(2, currentPage - 1); i <= Math.min(currentPage + 1, totalPages - 1); i++) {
+            const beforeCurrent = isMobile ? 0 : 1;
+            const afterCurrent = isMobile ? 0 : 1;
+            
+            for (let i = Math.max(2, currentPage - beforeCurrent); 
+                 i <= Math.min(currentPage + afterCurrent, totalPages - 1); i++) {
                 pages.push(i);
             }
             
-            if (currentPage < totalPages - 2) {
+            if (currentPage < totalPages - (isMobile ? 1 : 2)) {
                 pages.push('...');
             }
             
             // Всегда показываем последнюю страницу
-            pages.push(totalPages);
+            if (currentPage !== totalPages) {
+                pages.push(totalPages);
+            }
         }
         
         return pages;
@@ -41,10 +55,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     return (
         <div className="pagination mb-4 mt-2">
             <ButtonM4
-                height="3rem" 
+                height={isMobile ? "2.5rem" : "3rem"}
+                width={isMobile ? "4rem" : "auto"}
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                text="Назад"
+                text={isMobile ? "<" : "Назад"}
             />
             
             <div className="pagination__pages">
@@ -54,8 +69,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                             <span className="l-text mt-4">...</span>
                         ) : (
                             <ButtonM4
-                                width="3rem"
-                                height="3rem"   
+                                width={isMobile ? "2.5rem" : "3rem"}
+                                height={isMobile ? "2.5rem" : "3rem"}
                                 onClick={() => onPageChange(page)}
                                 variant={currentPage === page ? 'primary' : 'outline'}
                                 text={page}
@@ -66,12 +81,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             </div>
             
             <ButtonM4
-                height="3rem" 
+                height={isMobile ? "2.5rem" : "3rem"}
+                width={isMobile ? "4rem" : "auto"}
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                text="Вперед"
+                text={isMobile ? ">" : "Вперед"}
             />
-            
         </div>
     );
 };

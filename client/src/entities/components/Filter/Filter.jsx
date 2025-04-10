@@ -24,12 +24,33 @@ const Filter = ({ onFilterChange }) => {
     });
     const [priceRange, setPriceRange] = useState([0, 100000]);
     const [maxPriceRange, setMaxPriceRange] = useState([0, 100000]);
-    const [activeKeys, setActiveKeys] = useState(['0']);
+    const [activeKeys, setActiveKeys] = useState([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     const [selectedTypes, setSelectedTypes] = useState(new Set());
     const [selectedFactories, setSelectedFactories] = useState(new Set());
     const [isFiltered, setIsFiltered] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+    // Добавляем слушатель изменения размера окна
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            // Открываем первую вкладку только на десктопе при первой загрузке
+            if (!mobile && activeKeys.length === 0) {
+                setActiveKeys(['0']);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        // Инициализация при первой загрузке
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     // Загрузка начальных данных
     useEffect(() => {
