@@ -291,6 +291,8 @@ class productController {
                     }
                 ],
                 order: [
+                    ['typeId', 'ASC'],
+                    ['id', 'DESC'],
                     [{ model: Image, as: 'images' }, 'order', 'ASC']
                 ],
                 distinct: true
@@ -499,7 +501,8 @@ class productController {
                     }
                 ],
                 order: [
-                    ['createdAt', 'DESC'],
+                    ['typeId', 'ASC'],
+                    ['id', 'DESC'],
                     [{ model: Image, as: 'images' }, 'order', 'ASC']
                 ],
                 distinct: true
@@ -919,6 +922,8 @@ class productController {
                     }
                 ],
                 order: [
+                    ['typeId', 'ASC'],
+                    ['id', 'DESC'],
                     [{ model: Image, as: 'images' }, 'order', 'ASC']
                 ],
                 distinct: true,

@@ -1,0 +1,47 @@
+@import '../../../../shared/styles/colors';
+
+.product-card {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  width: 100%;
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .image-container {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+  .thumbnail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .thumbnail {
+    flex: 1; /* Растягиваем миниатюры равномерно */
+    max-width: 100%; /* Не превышаем размеры контейнера */
+    height: 100%;
+    aspect-ratio: 1 / 1; /* Сохраняем квадратную форму */
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color 0.3s ease;
+
+    &.active {
+      border-color: $main_color;
+    }
+
+    .carousel-images {
+      width: 100%; /* Миниатюра занимает всю ширину ячейки */
+      height: 100%; /* Миниатюра занимает всю высоту ячейки */
+      object-fit: cover; /* Сохраняем пропорции */
+      transition: transform 0.5s ease-in-out;
+    }
+  }
+} 
