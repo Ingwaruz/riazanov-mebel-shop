@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
-import {createType} from "../../processes/productAPI";
+import {createType} from "../../entities/product/api/productApi";
 import ButtonM1 from "../../shared/ui/buttons/button-m1";
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Form, Modal, Spinner, Alert } from "react-bootstrap";
-import { createCollection, fetchFactories } from "../../processes/productAPI";
+import { createCollection, fetchTypes } from "../../entities/product/api/productApi";
 import "../../app/styles/colors.scss";
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
 
@@ -15,7 +15,7 @@ const CreateCollection = ({ show, onHide }) => {
         const loadFactories = async () => {
             try {
                 setLoading(true);
-                const fetchedFactories = await fetchFactories();
+                const fetchedFactories = await fetchTypes();
                 setFactories(fetchedFactories);
             } catch (err) {
                 setError("Ошибка загрузки фабрик.");

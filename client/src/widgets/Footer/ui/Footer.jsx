@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MDBFooter, MDBContainer, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
 import '../../../app/styles/colors.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { CenteredModal } from '../../Modals';
+import { CenteredModal } from '../../modals';
 import './Footer.scss';
 
 export default function Footer() {

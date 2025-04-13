@@ -4,10 +4,10 @@ import { Context } from "../../../index";
 import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE } from "../../../shared/config/route-constants";
 import { observer } from "mobx-react-lite";
 import { useNavigate, NavLink } from 'react-router-dom';
-import CenteredModal from '../../Modals/ui/CenteredModal';
+import { CenteredModal } from '../../modals';
 import './Navbar.scss';
 
-const MyNavbar = observer(() => {
+const Navbar = observer(() => {
     const { user } = useContext(Context);
     const { product } = useContext(Context);
     const navigate = useNavigate();
@@ -178,4 +178,4 @@ const MyNavbar = observer(() => {
     );
 });
 
-export default MyNavbar; 
+export default Navbar; 

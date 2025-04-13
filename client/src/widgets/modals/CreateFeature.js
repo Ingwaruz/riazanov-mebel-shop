@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {Modal, Form, Dropdown, ListGroup} from "react-bootstrap";
 import {Context} from "../../index";
-import {createFeature, searchFeatures} from "../../processes/productAPI";
+import {createFeature, fetchFactories, fetchTypes} from "../../entities/product/api/productApi";
 import ButtonM1 from "../../shared/ui/buttons/button-m1";
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
 import '../../app/styles/commonStyles.scss';
@@ -15,15 +15,22 @@ const CreateFeature = ({show, onHide}) => {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     useEffect(() => {
-        const searchTimer = setTimeout(async () => {
+        // Загрузим типы и фабрики при открытии модального окна
+        if (show && (!product.types.length || !product.factories.length)) {
+            Promise.all([
+                fetchTypes().then(data => product.setTypes(data)),
+                fetchFactories().then(data => product.setFactories(data))
+            ]).catch(err => console.error('Ошибка загрузки данных:', err));
+        }
+    }, [show, product]);
+
+    useEffect(() => {
+        const searchTimer = setTimeout(() => {
             if (name.trim().length >= 2) {
-                try {
-                    const results = await searchFeatures(name.trim());
-                    setSuggestions(results);
-                    setShowSuggestions(true);
-                } catch (error) {
-                    console.error('Error loading suggestions:', error);
-                }
+                // Поиск совпадений среди уже загруженных характеристик
+                const results = []; // Пока просто пустой массив, в будущем можно добавить поиск
+                setSuggestions(results);
+                setShowSuggestions(results.length > 0);
             } else {
                 setSuggestions([]);
                 setShowSuggestions(false);

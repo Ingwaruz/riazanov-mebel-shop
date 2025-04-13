@@ -1,7 +1,7 @@
-import FilterForm from './ui/FilterForm';
 import * as filterApi from './api/filterApi';
+import { Filter } from '../../entities/components/Filter';
 
 export {
-    FilterForm,
+    Filter as FilterForm,  // Реэкспорт Filter как FilterForm для обратной совместимости
     filterApi
 }; 

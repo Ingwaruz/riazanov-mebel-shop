@@ -5,7 +5,7 @@ import { Context } from "../../../index";
 import ProductItem from "../../../entities/product/ui/ProductItem/ProductItem";
 import './ProductList.scss';
 
-const ProductList = observer(() => {
+export const ProductList = observer(() => {
     const { product } = useContext(Context);
 
     return (
@@ -15,6 +15,4 @@ const ProductList = observer(() => {
             )}
         </Row>
     );
-});
-
-export default ProductList; 
+}); 

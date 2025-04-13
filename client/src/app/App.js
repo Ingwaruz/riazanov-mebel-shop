@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {BrowserRouter} from "react-router-dom";
-import AppRouter from "../entities/components/AppRouter";
-import MyNavbar from "../widgets/Navbar";
+import {AppRouter} from "./providers";
+import {Navbar} from "../widgets/Navbar";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {check} from "../processes/userAPI";
+import {check} from "../features/auth/api/authApi";
 import {Spinner} from "react-bootstrap";
 import './styles/index.scss';
-import Footer from "../widgets/Footer";
+import {Footer} from "../widgets/Footer";
 
 const App = observer(() => {
     const {user} = useContext(Context)
@@ -45,7 +45,7 @@ const App = observer(() => {
 
     return (
         <BrowserRouter>
-            <MyNavbar />
+            <Navbar />
             <AppRouter/>
             <Footer />
         </BrowserRouter>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ButtonM4 = ({ width, height, text, onClick, variant = 'outline', disabled }) => {
+export const ButtonM4 = ({ width, height, text, onClick, variant = 'outline', disabled }) => {
     const getButtonClasses = () => {
         const baseClasses = 'd-flex align-items-center justify-content-center l-text p-2 mt-3 text-center';
         
@@ -31,5 +31,3 @@ const ButtonM4 = ({ width, height, text, onClick, variant = 'outline', disabled 
         </button>
     );
 };
-
-export default ButtonM4;

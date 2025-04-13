@@ -1,8 +1,8 @@
 import React, {createContext} from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './app/App';
-import UserStore from "./entities/store/UserStore";
-import ProductStore from "./entities/store/ProductStore";
+import UserStore from "./entities/user/model/UserStore";
+import ProductStore from "./entities/product/model/ProductStore";
 
 export const Context = createContext(null)
 console.log(process.env.REACT_APP_API_URL)

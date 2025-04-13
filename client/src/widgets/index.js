@@ -1,10 +1,10 @@
-import { MyNavbar } from './Navbar';
+import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { ProductList } from './ProductList';
-import { CenteredModal } from './Modals';
+import { ProductList } from './ProductList/ui/ProductList';
+import { CenteredModal } from './modals';
 
 export {
-    MyNavbar,
+    Navbar,
     Footer,
     ProductList,
     CenteredModal

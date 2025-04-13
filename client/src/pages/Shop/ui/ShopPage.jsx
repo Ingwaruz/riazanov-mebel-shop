@@ -5,7 +5,7 @@ import { Context } from "../../../index";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FilterForm, filterApi } from "../../../features/product-filters";
 import { ProductList } from "../../../widgets";
-import Pagination from "../../../entities/components/Pagination/Pagination";
+import { Pagination } from "../../../shared/ui/pagination";
 import { productApi } from "../../../entities/product";
 import './ShopPage.scss';
 

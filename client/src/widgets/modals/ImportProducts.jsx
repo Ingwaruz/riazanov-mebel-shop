@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form } from 'react-bootstrap';
 import ButtonM1 from "../../shared/ui/buttons/button-m1";
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
-import { importProducts } from '../../processes/productAPI';
+import { importProducts } from '../../entities/product/api/productApi';
 
 const ImportProducts = ({ show, onHide }) => {
     const [file, setFile] = useState(null);

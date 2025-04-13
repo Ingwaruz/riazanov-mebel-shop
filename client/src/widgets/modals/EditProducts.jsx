@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Button, Form, Container, Row, Col, Spinner } from 'react-bootstrap';
-import { fetchFilteredProducts, searchProducts } from '../../processes/productAPI';
+import { fetchProducts, deleteProduct } from '../../entities/product/api/productApi';
 import { Context } from "../../index";
-import Filter from '../../entities/components/Filter/Filter';
-import Pagination from "../../entities/components/Pagination/Pagination";
+import { FilterForm } from '../../features/product-filters';
 import EditProductForm from './EditProductForm';
+import ButtonM2 from '../../shared/ui/buttons/button-m2';
+import { Pagination } from '../../shared/ui/pagination';
 import AdminProductList from './AdminProductList';
 import './EditProducts.scss';
 
@@ -47,7 +48,7 @@ const EditProducts = ({ show, onHide }) => {
                 page: currentPage,
                 limit: itemsPerPage
             };
-            const data = await fetchFilteredProducts(filtersWithPagination);
+            const data = await fetchProducts(filtersWithPagination);
             product.setProducts(data.rows);
             product.setTotalCount(data.count);
         } catch (error) {
@@ -63,7 +64,15 @@ const EditProducts = ({ show, onHide }) => {
         
         setLoading(true);
         try {
-            const data = await searchProducts(searchQuery, searchType);
+            // Создаем объект с параметрами поиска
+            const searchParams = {
+                search: searchQuery,
+                searchType: searchType,
+                page: 1,
+                limit: itemsPerPage
+            };
+            
+            const data = await fetchProducts(null, null, 1, itemsPerPage, searchParams);
             product.setProducts(data.rows);
             product.setTotalCount(data.count);
             setCurrentPage(1);
@@ -158,7 +167,7 @@ const EditProducts = ({ show, onHide }) => {
                     </Row>
                     <Row>
                         <Col md={3}>
-                            <Filter onFilterChange={handleFilterChange} />
+                            <FilterForm onFilterChange={handleFilterChange} />
                         </Col>
                         <Col md={9}>
                             {loading ? (

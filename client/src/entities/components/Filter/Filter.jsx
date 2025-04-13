@@ -3,7 +3,7 @@ import { Accordion, Form, Row, Col } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { fetchTypes, fetchFactories, fetchFilteredProducts, fetchSizeRanges, fetchPriceRange } from '../../../processes/productAPI';
+import { fetchTypes, fetchFactories, fetchFilteredProducts, fetchSizeRanges, fetchPriceRange } from '../../../features/product-filters/api/filterApi';
 import './filter.scss';
 import ButtonM3 from '../../../shared/ui/buttons/button-m3';
 

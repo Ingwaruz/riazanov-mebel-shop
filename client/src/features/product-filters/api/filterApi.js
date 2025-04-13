@@ -16,11 +16,11 @@ export const fetchFilteredProducts = async (filters) => {
 };
 
 export const fetchSizeRanges = async () => {
-    const {data} = await $host.get('api/product/size-ranges');
+    const {data} = await $host.get('api/product/sizes');
     return data;
 };
 
 export const fetchPriceRange = async () => {
-    const {data} = await $host.get('api/product/price-range');
+    const {data} = await $host.get('api/product/prices');
     return data;
 }; 

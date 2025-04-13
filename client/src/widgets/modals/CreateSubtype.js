@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Modal, Form, Dropdown} from "react-bootstrap";
+import {Button, Dropdown, Form, Modal} from "react-bootstrap";
 import {Context} from "../../index";
-import {createSubtype, fetchTypes} from "../../processes/productAPI";
+import {createSubtype, fetchTypes} from "../../entities/product/api/productApi";
 import {observer} from "mobx-react-lite";
 import ButtonM1 from "../../shared/ui/buttons/button-m1";
 import ButtonM2 from "../../shared/ui/buttons/button-m2";

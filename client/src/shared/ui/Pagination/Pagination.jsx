@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Pagination.scss';
-import ButtonM4 from '../../ui/buttons/button-m4';
+import { ButtonM4 } from '../buttons/button-m4';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 576);

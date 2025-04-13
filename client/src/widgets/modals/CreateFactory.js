@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
-import {createFactory} from "../../processes/productAPI";
+import {createFactory} from "../../entities/product/api/productApi";
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
 
 const CreateFactory = ({show, onHide}) => {

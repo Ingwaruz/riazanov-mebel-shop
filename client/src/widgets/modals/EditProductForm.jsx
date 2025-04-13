@@ -1,6 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Row, Col, Spinner, Image } from 'react-bootstrap';
-import { fetchOneProduct, updateProduct, fetchTypes, fetchFactories, fetchCollections, fetchFeaturesByTypeAndFactory, fetchSubtypes } from '../../processes/productAPI';
+import React, { useContext, useEffect, useState, useReducer } from 'react';
+import { Button, Col, Form, Modal, Row, Spinner, Alert, Image } from 'react-bootstrap';
+import { Context } from '../../index';
+import { observer } from 'mobx-react-lite';
+import ButtonM2 from '../../shared/ui/buttons/button-m2';
+import {
+    updateProduct,
+    fetchOneProduct,
+    fetchTypes,
+    fetchFactories,
+    fetchFeaturesByTypeAndFactory,
+    fetchCollections,
+    fetchSubtypes
+} from '../../entities/product/api/productApi';
 import './EditProductForm.scss';
 
 const EditProductForm = ({ show, onHide, product, onComplete }) => {

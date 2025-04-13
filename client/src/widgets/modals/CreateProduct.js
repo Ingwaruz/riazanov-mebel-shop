@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useReducer, useCallback, useState } from 'react';
 import { Button, Col, Dropdown, Form, Modal, Row, Spinner, Alert } from "react-bootstrap";
 import { Context } from "../../index";
-import { createProduct, fetchFactories, fetchTypes, fetchCollections, fetchFeaturesByTypeAndFactory } from "../../processes/productAPI";
+import { createProduct, fetchFactories, fetchTypes, fetchCollections, fetchFeaturesByTypeAndFactory } from "../../entities/product/api/productApi";
 import { observer } from "mobx-react-lite";
 import '../../app/styles/commonStyles.scss';
 import ButtonM2 from "../../shared/ui/buttons/button-m2";
+import ButtonM4 from "../../shared/ui/buttons/button-m4";
+import ButtonM1 from "../../shared/ui/buttons/button-m1";
 
 // Reducer для управления состоянием формы
 const productReducer = (state, action) => {
@@ -291,7 +293,7 @@ const CreateProduct = observer(({ show, onHide }) => {
                         className="color-white border-main_color bg-main_color_hover hover-item--main_color "
                         onClick={addInfo}
                     >
-                        Добавить нов��е свойство
+                        Добавить новое свойство
                     </Button>
                     {productData.info.map(i => (
                         <Row className="mt-4" key={i.number}>
