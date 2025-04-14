@@ -73,7 +73,7 @@ const ProductDetails = ({ product, onAddToCart }) => {
                 </ListGroup>
             </Card>
             
-            {product.product_infos && product.product_infos.length > 0 && (
+            {/* {product.product_infos && product.product_infos.length > 0 && (
                 <Card className="mb-4">
                     <Card.Header className="bg-white">
                         <h5 className="mb-0">Дополнительные характеристики</h5>
@@ -98,7 +98,7 @@ const ProductDetails = ({ product, onAddToCart }) => {
                         <div className="product-description">{product.description}</div>
                     </Card.Body>
                 </Card>
-            )}
+            )} */}
         </div>
     );
 };
