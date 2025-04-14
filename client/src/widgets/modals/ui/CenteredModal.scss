@@ -1,5 +1,11 @@
 @import '../../../app/styles/colors.scss';
 
+/* Предотвращаем сдвиг контента при открытии модального окна */
+.modal-open {
+  padding-right: 0 !important;
+  overflow-y: auto !important;
+}
+
 .centered-modal {
   .modal-title {
     font-weight: 600;

@@ -12,6 +12,9 @@ const CenteredModal = ({ show, onHide, title, children }) => {
             onHide={onHide}
             centered
             className="centered-modal"
+            backdrop={true}
+            scrollable={true}
+            restoreFocus={false}
         >
             <Modal.Header closeButton>
                 <Modal.Title className='xl-text modal-title'>

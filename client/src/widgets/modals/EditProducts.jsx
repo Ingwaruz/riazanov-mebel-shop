@@ -5,7 +5,7 @@ import { Context } from "../../index";
 import { FilterForm } from '../../features/product-filters';
 import EditProductForm from './EditProductForm';
 import ButtonM2 from '../../shared/ui/buttons/button-m2';
-import { Pagination } from '../../shared/ui/pagination';
+import { Pagination } from '../../shared/ui/Pagination';
 import AdminProductList from './AdminProductList';
 import './EditProducts.scss';
 

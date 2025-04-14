@@ -2,7 +2,7 @@ import Admin from "../pages/Admin"
 import {ADMIN_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE, PRODUCT_ROUTE} from "./utils/consts"
 import Shop from "../pages/Shop"
 import Auth from "../pages/Auth"
-import ProductPage from "../pages/ProductPage"
+import { ProductPage } from "../pages/ProductPage"
 
 export const authRoutes = [
     {

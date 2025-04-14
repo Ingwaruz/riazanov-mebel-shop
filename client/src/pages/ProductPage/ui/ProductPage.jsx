@@ -108,7 +108,7 @@ const ProductPage = () => {
     ];
 
     return (
-        <div className="container-fluid product-page">
+        <div className="container-fluid product-page product-page-container">
             <Row className="mx-5">
                 <Breadcrumb className="mt-3 p-0">
                     <Breadcrumb.Item className="l-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>

@@ -1,5 +1,11 @@
 @import '../../../app/styles/colors.scss';
 
+/* Основной контейнер страницы продукта */
+.product-page-container {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
 .carousel-container {
   position: relative;
   width: 100%;
