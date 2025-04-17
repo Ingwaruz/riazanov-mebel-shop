@@ -53,7 +53,7 @@ export default function Footer() {
                                 <MDBCol md='3' lg='4' xl='3' className='mx-auto mb-4'>
                                     <h6 className='text-uppercase mb-4 m-text color_white'>
                                         <MDBIcon icon='gem' className='me-3' />
-                                        МЕБЕЛЬ ОТ РЯЗАНОВА
+                                        ДОМУ МЕБЕЛЬ
                                     </h6>
                                     <p className='mb-4 m-text color_white'>
                                     
