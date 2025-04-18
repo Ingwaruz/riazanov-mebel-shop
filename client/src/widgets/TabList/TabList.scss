@@ -1,42 +1,127 @@
 @import '../../app/styles/colors';
 
-.tab-list-nav {
-  display: flex;
-  width: 100%; /* Чтобы Nav занимал всю ширину */
-}
-
-.tab-list-nav .nav-item {
-  flex: 1; /* Равномерное распределение ширины для всех Nav.Item */
-}
-
-.tab-link {
-  width: 100%; /* Чтобы каждая ссылка занимала всю ширину родителя */
-  text-align: center; /* Центровка текста */
-  color: $main_color;
-
-  &:hover {
-    color: $main_color;
-  }
-}
-
-.tab-list-nav {
-  .nav-item {
-    .tab-link {
-      &.active {
-        background-color: $main_color; /* Применяет цвет заднего фона */
-        color: $color_white; /* Задает белый цвет текста */
-        border-radius: 0; /* Убирает скругление */
+.custom-tab-list {
+  margin-bottom: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  .tab-nav {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid rgba($main_font_color, 0.1);
+    
+    .nav-item {
+      margin-right: 2rem;
+      
+      &:last-child {
+        margin-right: 0;
       }
+      
+      .tab-link {
+        color: $main_font_color;
+        font-weight: 500;
+        font-size: 1.1rem;
+        border: none;
+        background: transparent;
+        padding: 0.75rem 0;
+        position: relative;
+        transition: color 0.3s;
+        
+        &:hover {
+          color: $main_link_color;
+        }
+        
+        &.active {
+          color: $main_link_color;
+          background: transparent;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: $main_link_color;
+          }
+        }
+      }
+    }
+  }
+  
+  .tab-content {
+    padding: 2rem 1rem;
+    background-color: #fff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    
+    .tab-pane {
+      transition: all 0.3s ease;
     }
   }
 }
 
-.characteristic-line {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding-bottom: 2px;
-  margin-bottom: 5px;
-  border-bottom: 1px dotted $main_color;
-  color: $main_color; /* или любой другой цвет */
+.characteristics {
+  .characteristic-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    position: relative;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0.4rem;
+      left: 0;
+      right: 0;
+      height: 1px;
+      border-bottom: 1px dotted rgba($main_font_color, 0.2);
+      z-index: 0;
+    }
+    
+    .characteristic-key {
+      padding-right: 0.5rem;
+      background-color: #fff;
+      position: relative;
+      z-index: 1;
+      color: $main_font_color;
+      font-weight: 500;
+    }
+    
+    .characteristic-value {
+      padding-left: 0.5rem;
+      background-color: #fff;
+      position: relative;
+      z-index: 1;
+      color: $main_font_color;
+    }
+    
+    .characteristic-separator {
+      display: none;
+    }
+  }
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .custom-tab-list {
+    .tab-nav {
+      .nav-item {
+        margin-right: 1rem;
+        
+        .tab-link {
+          font-size: 1rem;
+          padding: 0.5rem 0;
+        }
+      }
+    }
+    
+    .tab-content {
+      padding: 1.5rem 0.5rem;
+    }
+  }
 }

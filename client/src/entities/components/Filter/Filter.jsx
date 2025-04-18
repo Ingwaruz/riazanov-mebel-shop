@@ -323,7 +323,7 @@ const Filter = ({ onFilterChange }) => {
                         {Object.entries(sizeRange).map(([type, values]) => (
                             <div key={type} className="mb-4">
                                 <p className="m-text mb-1">
-                                    {type === "width" ? "Ширина, см" : type === "depth" ? "Глубина, см" : "Высота, см"}
+                                    {type === "width" ? "Ширина, см" : type === "depth" ? "Длина, см" : "Высота, см"}
                                 </p>
                                 <Row className="align-items-center">
                                     <Col xs={6} className="mb-2 s-text main_font_color">

@@ -1,0 +1,295 @@
+@import '../../../app/styles/colors.scss';
+
+/* Стили для полосы прокрутки */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba($main_color, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $main_color;
+    border-radius: 10px;
+    border: 2px solid rgba($color_white, 0.7);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: $main_color_hover;
+}
+
+/* Стили для Mozilla Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: $main_color rgba($main_color, 0.1);
+}
+
+/* Увеличенные иконки */
+.icon-large {
+    font-size: 1.875rem !important; /* 1.25rem * 1.5 = 1.875rem */
+}
+
+.navBar {
+    background-color: $main_color;
+    padding: 0.75rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .navbar-toggler {
+        border: none;
+        padding: 0.5rem;
+        color: $color_white;
+        
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        padding: 0;
+        text-decoration: none;
+        margin-right: 1.5rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+
+    .logo-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+    }
+
+    .logo-text-first {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: $add_color;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .logo-text-second {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: $color_white;
+    }
+
+    .navbar-nav {
+        .nav-link {
+            color: $color_white;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            transition: color 0.3s;
+            white-space: nowrap;
+            position: relative;
+            text-decoration: none !important;
+            
+            &:hover, &:focus {
+                color: $add_color;
+                text-decoration: none !important;
+            }
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                width: 0;
+                height: 2px;
+                background-color: $add_color;
+                transition: all 0.3s ease;
+                transform: translateX(-50%);
+            }
+            
+            &:hover::after {
+                width: 70%;
+            }
+        }
+    }
+    
+    .nav-icons {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        align-items: center;
+        gap: 1.25rem;
+    }
+    
+    .auth-link, .basket-link {
+        display: flex;
+        align-items: center;
+        color: $color_white;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: color 0.3s, background-color 0.3s;
+        white-space: nowrap;
+        
+        &:hover, &:focus {
+            color: $add_color;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        i {
+            margin-right: 0.25rem;
+        }
+    }
+    
+    .basket-link {
+        position: relative;
+    }
+    
+    .basket-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: $add_color;
+        color: $main_font_color;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translate(50%, -50%);
+    }
+    
+    .profile-dropdown {
+        background: transparent;
+        border: none;
+        color: $color_white;
+        padding: 0.5rem;
+        
+        &:hover, &:focus, &:active {
+            color: $add_color;
+            background-color: transparent;
+            box-shadow: none;
+        }
+        
+        &::after {
+            display: none;
+        }
+    }
+    
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+        
+        .dropdown-item {
+            padding: 0.5rem 1.5rem;
+            color: $main_font_color;
+            
+            &:hover, &:focus {
+                background-color: rgba($main_color, 0.1);
+                color: $main_link_color;
+            }
+        }
+    }
+}
+
+.offcanvas {
+    max-width: 280px;
+    
+    .offcanvas-header {
+        background-color: $main_color;
+        color: $color_white;
+        
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+    }
+    
+    .offcanvas-body {
+        .nav-link {
+            color: $main_font_color;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba($main_font_color, 0.1);
+            transition: all 0.3s ease;
+            
+            &:hover {
+                color: $main_color;
+                padding-left: 0.5rem;
+            }
+        }
+    }
+}
+
+// Медиа-запросы для адаптивности
+@media (max-width: 992px) {
+    .navBar {
+        .container {
+            justify-content: space-between;
+        }
+        
+        .logo {
+            margin-right: 0;
+        }
+        
+        .nav-icons {
+            gap: 0.75rem;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .navBar {
+        .nav-icons {
+            gap: 0.5rem;
+        }
+        
+        .auth-link, .basket-link {
+            padding: 0.4rem;
+        }
+        
+        .navbar-toggler {
+            padding: 0.4rem;
+        }
+    }
+    
+    .icon-large {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .navBar {
+        padding: 0.5rem 0;
+        
+        .logo-text-first {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+        }
+        
+        .logo-text-second {
+            font-size: 0.9rem;
+        }
+        
+        .nav-icons {
+            gap: 0.3rem;
+        }
+        
+        .auth-link, .basket-link {
+            padding: 0.35rem;
+        }
+    }
+} 

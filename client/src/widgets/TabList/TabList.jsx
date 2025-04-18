@@ -1,31 +1,35 @@
 import React, { useState } from 'react';
-import { Col, Nav, Tab } from 'react-bootstrap';
+import { Nav, Tab } from 'react-bootstrap';
 import './TabList.scss';
-import './../../app/styles/commonStyles.scss';
 import '../../app/styles/colors.scss';
 
 const TabList = ({ tabs }) => {
     const [activeKey, setActiveKey] = useState(tabs[0].key);
 
     return (
-        <Tab.Container activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
-            <Nav style={{ height: 50, boxShadow: '0 4px 4px rgba(0, 0, 0, 0.4)' }} variant="pills" className="mb-3 tab-list-nav bg-focus_input_color ">
-                {tabs.map((tab) => (
-                    <Nav.Item key={tab.key} className="flex-fill text-center bg-main_color_hover">
-                        <Nav.Link eventKey={tab.key} className="tab-link color_white">
-                            {tab.title}
-                        </Nav.Link>
-                    </Nav.Item>
-                ))}
-            </Nav>
-            <Tab.Content>
-                {tabs.map((tab) => (
-                    <Tab.Pane key={tab.key} eventKey={tab.key}>
-                        {tab.content}
-                    </Tab.Pane>
-                ))}
-            </Tab.Content>
-        </Tab.Container>
+        <div className="custom-tab-list">
+            <Tab.Container activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
+                <Nav className="tab-nav mb-4">
+                    {tabs.map((tab) => (
+                        <Nav.Item key={tab.key}>
+                            <Nav.Link 
+                                eventKey={tab.key} 
+                                className={`tab-link ${activeKey === tab.key ? 'active' : ''}`}
+                            >
+                                {tab.title}
+                            </Nav.Link>
+                        </Nav.Item>
+                    ))}
+                </Nav>
+                <Tab.Content className="tab-content">
+                    {tabs.map((tab) => (
+                        <Tab.Pane key={tab.key} eventKey={tab.key}>
+                            {tab.content}
+                        </Tab.Pane>
+                    ))}
+                </Tab.Content>
+            </Tab.Container>
+        </div>
     );
 };
 

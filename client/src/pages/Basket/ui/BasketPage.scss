@@ -1,11 +1,40 @@
-@import '../../../shared/styles/colors.scss';
+@import '../../../app/styles/colors.scss';
 
 .basket-page {
   min-height: 60vh;
   
+  .breadcrumb-item {
+    a {
+      color: $main_link_color;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    
+    &.active {
+      color: $main_font_color;
+    }
+  }
+  
   h1 {
-    font-size: 28px;
-    font-weight: 600;
     color: $main_font_color;
+    margin-bottom: 2rem;
+  }
+  
+  .btn-primary {
+    background-color: $main_color;
+    border-color: $main_color;
+    
+    &:hover {
+      background-color: $main_color_hover;
+      border-color: $main_color_hover;
+    }
+    
+    &:active {
+      background-color: $main_color_active !important;
+      border-color: $main_color_active !important;
+    }
   }
 } 

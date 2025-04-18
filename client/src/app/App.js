@@ -8,6 +8,8 @@ import {check} from "../features/auth/api/authApi";
 import {Spinner} from "react-bootstrap";
 import './styles/index.scss';
 import {Footer} from "../widgets/Footer";
+import {CookieConsent} from "../widgets/CookieConsent";
+import {YandexMetrika} from "../widgets/YandexMetrika";
 
 const App = observer(() => {
     const {user} = useContext(Context)
@@ -45,9 +47,11 @@ const App = observer(() => {
 
     return (
         <BrowserRouter>
+            <YandexMetrika />
             <Navbar />
             <AppRouter/>
             <Footer />
+            <CookieConsent />
         </BrowserRouter>
     );
 });

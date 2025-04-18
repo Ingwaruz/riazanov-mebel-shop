@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Col, Image, Row, Breadcrumb } from "react-bootstrap";
+import React, { useEffect, useState, useContext } from 'react';
+import { Card, Col, Image, Row, Breadcrumb, Toast, ToastContainer, Button } from "react-bootstrap";
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { SHOP_ROUTE } from "../../../shared/config/route-constants";
 import { productApi } from "../../../entities/product";
@@ -7,17 +7,30 @@ import '../../../app/styles/shared.scss';
 import ButtonM1 from "../../../shared/ui/buttons/button-m1";
 import TabList from '../../../widgets/TabList/TabList';
 import "./ProductPage.scss";
+import { Context } from '../../../index';
 
 const ProductPage = () => {
     const [product, setProduct] = useState({ info: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showToast, setShowToast] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = product.images || [];
     const [startIndex, setStartIndex] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const { basket } = useContext(Context);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        function handleResize() {
+            setIsMobile(window.innerWidth < 768);
+        }
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleTypeClick = (e, typeId) => {
         e.preventDefault();
@@ -31,11 +44,6 @@ const ProductPage = () => {
 
     const handleThumbnailClick = (index) => {
         setCurrentImageIndex(index);
-        if (index < startIndex) {
-            setStartIndex(index);
-        } else if (index >= startIndex + 5) {
-            setStartIndex(index - 4);
-        }
     };
 
     const nextImage = () => {
@@ -48,6 +56,23 @@ const ProductPage = () => {
         setCurrentImageIndex((prevIndex) =>
             prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
+    };
+
+    const handleAddToBasket = () => {
+        basket.addItem(product);
+        setShowToast(true);
+    };
+
+    const nextThumbnailSet = () => {
+        if (startIndex + 4 < images.length) {
+            setStartIndex(prevIndex => prevIndex + 4);
+        }
+    };
+
+    const prevThumbnailSet = () => {
+        if (startIndex - 4 >= 0) {
+            setStartIndex(prevIndex => prevIndex - 4);
+        }
     };
 
     useEffect(() => {
@@ -82,34 +107,12 @@ const ProductPage = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isFullscreen]);
+    }, [isFullscreen, nextImage, prevImage]);
 
     if (loading) return <div className="mt-5 container-fluid xl-text justify-content-center">Загрузка...</div>;
     if (error) return <div className="mt-5 container-fluid xl-text justify-content-center">{error}</div>;
 
     const tabs = [
-        {
-            key: 'description',
-            title: 'Описание',
-            content: (
-                <>
-                    {product.description && (
-                        <Col className="mt-3" xs={12}>
-                            <pre style={{ 
-                                whiteSpace: 'pre-wrap',
-                                wordWrap: 'break-word',
-                                fontFamily: 'inherit',
-                                margin: 0,
-                                backgroundColor: 'transparent',
-                                lineHeight: '1.4'
-                            }}>
-                                {product.description?.split('\n\n').join('\n')}
-                            </pre>
-                        </Col>
-                    )}
-                </>
-            )
-        },
         {
             key: 'specifications',
             title: 'Характеристики',
@@ -124,7 +127,9 @@ const ProductPage = () => {
                     )}
                     {product.depth > 0 && (
                         <div className="characteristic-item">
-                            <span className="characteristic-key">Глубина</span>
+                            <span className="characteristic-key">
+                                {product.factory && product.factory.name === 'GENIUSPARK' ? 'Глубина' : 'Длина'}
+                            </span>
                             <span className="characteristic-separator"></span>
                             <span className="characteristic-value">{product.depth} см</span>
                         </div>
@@ -149,11 +154,33 @@ const ProductPage = () => {
                     ))}
                 </div>
             )
-        }
+        },
+        {
+            key: 'description',
+            title: 'Описание',
+            content: (
+                <>
+                    {product.description && (
+                        <Col className="mt-3" xs={12}>
+                            <pre style={{ 
+                                whiteSpace: 'pre-wrap',
+                                wordWrap: 'break-word',
+                                fontFamily: 'inherit',
+                                margin: 0,
+                                backgroundColor: 'transparent',
+                                lineHeight: '1.4'
+                            }}>
+                                {product.description?.split('\n\n').join('\n')}
+                            </pre>
+                        </Col>
+                    )}
+                </>
+            )
+        },
     ];
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid product-page">
             {isFullscreen && (
                 <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
                     <img
@@ -183,35 +210,47 @@ const ProductPage = () => {
                     )}
                 </div>
             )}
-            <Row className="d-flex mx-5">
-                <Breadcrumb className="mt-3 p-0">
-                    <Breadcrumb.Item className="m-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
-                        Главная
-                    </Breadcrumb.Item>
-                    {product.type && (
-                        <Breadcrumb.Item 
-                            className="m-text"
-                            onClick={(e) => handleTypeClick(e, product.type.id)}
-                            href="#"
-                        >
-                            {product.type.name}
+
+            <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1500 }}>
+                <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide bg="success">
+                    <Toast.Header>
+                        <strong className="me-auto">Корзина</strong>
+                    </Toast.Header>
+                    <Toast.Body className="text-white">Товар "{product.name}" добавлен в корзину!</Toast.Body>
+                </Toast>
+            </ToastContainer>
+
+            <Row className="product-content">
+                <Col xs={12}>
+                    <Breadcrumb className="mt-3 mb-3">
+                        <Breadcrumb.Item className="m-text" linkAs={Link} linkProps={{ to: SHOP_ROUTE }}>
+                            Главная
                         </Breadcrumb.Item>
-                    )}
-                    {product.subtype && (
-                        <Breadcrumb.Item 
-                            className="m-text"
-                            onClick={(e) => handleSubtypeClick(e, product.type.id, product.subtype.id)}
-                            href="#"
-                        >
-                            {product.subtype.name}
-                        </Breadcrumb.Item>
-                    )}
-                </Breadcrumb>
-                <Row className="d-flex flex-column xxl-text mb-4">
-                    {product.name || 'Название отсутствует'}
-                </Row>
-                <Col xs={12} sm={9} md={9} lg={9}>
-                <div className="main-image-container mb-3 border-color_white position-relative">
+                        {product.type && (
+                            <Breadcrumb.Item 
+                                className="m-text"
+                                onClick={(e) => handleTypeClick(e, product.type.id)}
+                                href="#"
+                            >
+                                {product.type.name}
+                            </Breadcrumb.Item>
+                        )}
+                        {product.subtype && (
+                            <Breadcrumb.Item 
+                                className="m-text"
+                                onClick={(e) => handleSubtypeClick(e, product.type.id, product.subtype.id)}
+                                href="#"
+                            >
+                                {product.subtype.name}
+                            </Breadcrumb.Item>
+                        )}
+                    </Breadcrumb>
+                    
+                    <h1 className="product-title mb-4">{product.name || 'Название отсутствует'}</h1>
+                </Col>
+                
+                <Col xs={12} lg={9} className="product-gallery mb-4">
+                    <div className="main-image-container">
                         {images.length > 0 ? (
                             <>
                                 <Image
@@ -220,119 +259,126 @@ const ProductPage = () => {
                                     fluid
                                     className="main-product-image"
                                     onClick={() => setIsFullscreen(true)}
-                                    style={{ cursor: 'pointer' }}
-                                    onError={(e) => {
-                                        console.error('Image load error:', e);
-                                        console.log('Failed image URL:', process.env.REACT_APP_API_URL + images[currentImageIndex].img);
-                                        console.log('Image object:', images[currentImageIndex]);
-                                        console.log('API URL:', process.env.REACT_APP_API_URL);
-                                    }}
                                 />
-                                <i
-                                    className="fa-solid fa-magnifying-glass magnifier-icon"
+                                <Button 
+                                    variant="light" 
+                                    className="magnifier-btn"
                                     onClick={() => setIsFullscreen(true)}
-                                ></i>
+                                >
+                                    <i className="fas fa-search-plus"></i>
+                                </Button>
                             </>
                         ) : (
-                            <div>Нет изображений</div>
+                            <div className="no-image">Нет изображений</div>
                         )}
                     </div>
-                    <div className="carousel-container w-35">
-                        <div className="carousel-container w-15">
-                            <div className="carousel-images mt-3 thumbnail-container">
-                                {images.slice(startIndex, startIndex + 5).map((image, index) => (
-                                    <div
-                                        key={startIndex + index}
-                                        onClick={() => handleThumbnailClick(startIndex + index)}
-                                        className={`thumbnail ${currentImageIndex === startIndex + index ? "active" : ""}`}
+                    
+                    {images.length > 1 && (
+                        <div className="thumbnails-container">
+                            <div className="thumbnails-nav">
+                                {startIndex > 0 && (
+                                    <Button 
+                                        variant="light" 
+                                        className="thumbnail-nav-btn prev"
+                                        onClick={prevThumbnailSet}
                                     >
-                                        <Image
-                                            className="carousel-images"
-                                            src={`${process.env.REACT_APP_API_URL}${image.img}`}
-                                        />
-                                    </div>
-                                ))}
+                                        <i className="fas fa-chevron-left"></i>
+                                    </Button>
+                                )}
+                                
+                                <div className="thumbnails-wrapper">
+                                    {images.slice(startIndex, isMobile ? startIndex + 3 : startIndex + 4).map((image, index) => (
+                                        <div
+                                            key={startIndex + index}
+                                            className={`thumbnail-item ${currentImageIndex === startIndex + index ? "active" : ""}`}
+                                            onClick={() => handleThumbnailClick(startIndex + index)}
+                                        >
+                                            <img
+                                                src={`${process.env.REACT_APP_API_URL}${image.img}`}
+                                                alt={`Миниатюра ${startIndex + index + 1}`}
+                                                className="thumbnail-image"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                {startIndex + (isMobile ? 3 : 4) < images.length && (
+                                    <Button 
+                                        variant="light" 
+                                        className="thumbnail-nav-btn next"
+                                        onClick={nextThumbnailSet}
+                                    >
+                                        <i className="fas fa-chevron-right"></i>
+                                    </Button>
+                                )}
                             </div>
                         </div>
-                        {images.length > 1 && (
-                            <i
-                                onClick={prevImage}
-                                className="fa-2x fas fa-angle-left arrow-icon left-arrow main_font_color"
-                            ></i>
-                        )}
-
-                        {images.length > 1 && (
-                            <i
-                                onClick={nextImage}
-                                className="fa-2x fas fa-angle-right arrow-icon right-arrow main_font_color"
-                            ></i>
-                        )}
-                    </div>
-                    <div className="d-flex flex-column xl-text mt-5">
+                    )}
+                </Col>
+                
+                <Col xs={12} lg={3} className="product-info mb-4">
+                    <Card className="product-card">
+                        <Card.Body>
+                            <h2 className="product-price mb-2">{`${product.price.toLocaleString('ru-RU')} ₽`}</h2>
+                            
+                            {product.min_price > 0 && (
+                                <p className="starting-price mb-3">
+                                    {`От ${product.min_price.toLocaleString('ru-RU')} ₽`}
+                                </p>
+                            )}
+                            
+                            <p className="price-note mb-3">
+                                Цена товара зависит от выбранной ткани и может отличаться от указанной
+                            </p>
+                            
+                            <div className="product-details mb-4">
+                                {product.factory && (
+                                    <div className="detail-item">
+                                        <span className="detail-label">Производитель</span>
+                                        <span className="detail-value">{product.factory.name}</span>
+                                    </div>
+                                )}
+                                
+                                {product.product_infos?.find(info => 
+                                    info.feature?.name.toLowerCase() === 'материал' && 
+                                    info.value && 
+                                    info.value !== '0'
+                                ) && (
+                                    <div className="detail-item">
+                                        <span className="detail-label">Материал</span>
+                                        <span className="detail-value">
+                                            {product.product_infos.find(info => 
+                                                info.feature?.name.toLowerCase() === 'материал'
+                                            ).value}
+                                        </span>
+                                    </div>
+                                )}
+                                
+                                {product.width > 0 && (
+                                    <div className="detail-item">
+                                        <span className="detail-label">Размеры</span>
+                                        <span className="detail-value">
+                                            {`${product.width}x${product.depth}x${product.height} см`}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="d-flex justify-content-center mt-4">
+                                <ButtonM1 
+                                    text="Добавить в корзину" 
+                                    onClick={handleAddToBasket}
+                                    className="btn-add-to-cart"
+                                />
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </Col>
+                
+                <Col xs={12}>
+                    <div className="product-tabs">
                         <TabList tabs={tabs} />
                     </div>
-                </Col>
-                <Col xs={12} sm={9} md={6} lg={3}>
-                    <Card
-                        style={{ boxShadow: '0px 0px 32px rgba(0, 0, 0, 0.08)' }}
-                        className="border-white d-flex border-radius-0 p-2 sticky-card"
-                    >
-                        <div className="xxl-text">{`~ ${product.price.toLocaleString('ru-RU')} ₽`}</div>
-                        {product.min_price > 0 && (
-                            <div className="l-text mt-2 mb-1">
-                                {`От ${product.min_price.toLocaleString('ru-RU')} ₽`}
-                            </div>
-                        )}
-                        <div className="m-text mt-1">
-                            Цена товара зависит от выбранной ткани и может отличаться от указанной
-                        </div>
-                        <div className="characteristics mt-3">
-                            {product.factory && (
-                                <div className="characteristic-item m-text">
-                                    <span className="characteristic-key">Производитель</span>
-                                    <span className="characteristic-separator"></span>
-                                    <span className="characteristic-value">{product.factory.name}</span>
-                                </div>
-                            )}
-                            {product.product_infos?.find(info => 
-                                info.feature?.name.toLowerCase() === 'материал' && 
-                                info.value && 
-                                info.value !== '0'
-                            ) && (
-                                <div className="characteristic-item m-text">
-                                    <span className="characteristic-key">Материал</span>
-                                    <span className="characteristic-separator"></span>
-                                    <span className="characteristic-value">
-                                        {product.product_infos.find(info => 
-                                            info.feature?.name.toLowerCase() === 'материал'
-                                        ).value}
-                                    </span>
-                                </div>
-                            )}
-                            {product.width > 0 && (
-                                <div className="characteristic-item m-text">
-                                    <span className="characteristic-key">Ширина</span>
-                                    <span className="characteristic-separator"></span>
-                                    <span className="characteristic-value">{product.width} см</span>
-                                </div>
-                            )}
-                            {product.depth > 0 && (
-                                <div className="characteristic-item m-text">
-                                    <span className="characteristic-key">Глубина</span>
-                                    <span className="characteristic-separator"></span>
-                                    <span className="characteristic-value">{product.depth} см</span>
-                                </div>
-                            )}
-                            {product.height > 0 && (
-                                <div className="characteristic-item m-text">
-                                    <span className="characteristic-key">Высота</span>
-                                    <span className="characteristic-separator"></span>
-                                    <span className="characteristic-value">{product.height} см</span>
-                                </div>
-                            )}
-                        </div>
-                        <ButtonM1 text="Добавить в корзину" />
-                    </Card>
                 </Col>
             </Row>
         </div>

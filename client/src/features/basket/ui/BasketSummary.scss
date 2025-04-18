@@ -1,8 +1,68 @@
 @import '../../../app/styles/colors.scss';
 
 .basket-summary {
-  border-color: #eaeaea;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 90px;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-title {
+        color: $main_font_color;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-primary {
+        background-color: $main_color;
+        border-color: $main_color;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background-color: $main_color_hover;
+            border-color: $main_color_hover;
+        }
+        
+        &:active, &:focus {
+            background-color: $main_color_active !important;
+            border-color: $main_color_active !important;
+            box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25) !important;
+        }
+    }
+}
+
+// Стили для модальных окон
+.modal-header {
+    border-bottom: 1px solid rgba($main_font_color, 0.1);
+    
+    .modal-title {
+        color: $main_font_color;
+        font-weight: 600;
+    }
+}
+
+.modal-body {
+    .form-label {
+        color: $main_font_color;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        border-color: rgba($main_font_color, 0.2);
+        
+        &:focus {
+            border-color: $main_link_color;
+            box-shadow: 0 0 0 0.25rem rgba($main_link_color, 0.25);
+        }
+    }
 }
 
 .summary-title {

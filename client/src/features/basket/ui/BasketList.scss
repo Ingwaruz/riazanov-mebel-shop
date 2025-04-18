@@ -5,4 +5,19 @@
   max-height: 600px;
   overflow-y: auto;
   margin-bottom: 20px;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .basket-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba($main_font_color, 0.1);
+    color: $main_font_color;
+    font-size: 0.9rem;
+  }
 } 

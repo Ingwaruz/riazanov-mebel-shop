@@ -451,7 +451,7 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
                                     </Col>
                                     <Col md={4}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>Глубина (см)</Form.Label>
+                                            <Form.Label>Длина (см)</Form.Label>
                                             <Form.Control
                                                 type="number"
                                                 name="depth"

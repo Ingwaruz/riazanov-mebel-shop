@@ -1,25 +1,21 @@
-    import React, { useState, useContext } from 'react';
-import { Navbar as BootstrapNavbar, Button, Col, Nav } from 'react-bootstrap';
-import { Context } from "../../../index";
-import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE } from "../../../shared/config/route-constants";
-import { observer } from "mobx-react-lite";
-import { useNavigate, NavLink } from 'react-router-dom';
+import React, {useContext, useState} from 'react';
+import {Container, Dropdown, Nav, NavLink, Navbar, Offcanvas} from "react-bootstrap";
+import {Link, useNavigate} from "react-router-dom";
+import {Context} from "../../../index";
+import {ADMIN_ROUTE, BASKET_ROUTE, LOGIN_ROUTE, SHOP_ROUTE} from "../../../shared/config/route-constants";
+import {observer} from "mobx-react-lite";
+import '../styles/Navbar.scss';
+import '../../../app/styles/global-typography.scss';
 import { CenteredModal } from '../../modals';
-import './Navbar.scss';
 
-const Navbar = observer(() => {
-    const { user } = useContext(Context);
-    const { product } = useContext(Context);
+const NavbarComponent = observer(() => {
+    const {user, basket} = useContext(Context);
     const navigate = useNavigate();
-
+    const [showMenu, setShowMenu] = useState(false);
     const [modalData, setModalData] = useState({ show: false, title: '', content: '' });
 
-    const logOut = () => {
-        user.setUser({});
-        user.setIsAuth(false);
-        localStorage.removeItem('token');
-        navigate(LOGIN_ROUTE);
-    };
+    const handleClose = () => setShowMenu(false);
+    const handleShow = () => setShowMenu(true);
 
     const handleModalShow = (title, content) => {
         setModalData({ show: true, title, content });
@@ -29,158 +25,154 @@ const Navbar = observer(() => {
         setModalData({ ...modalData, show: false });
     };
 
-    return (
+    const logOut = () => {
+        user.setUser({});
+        user.setIsAuth(false);
+        localStorage.removeItem('token');
+    };
+
+    // Модальное содержимое
+    const deliveryContent = (
         <div>
-            <BootstrapNavbar
-                data-bs-theme="dark"
-                style={{ height: 75, boxShadow: '0 4px 4px rgba(0, 0, 0, 0.4)' }}
-                className={'s-text bg-main_color mb-4'}
-            >
-                <div className={'container-fluid d-flex justify-content-between'}>
-                    {/* Левая часть навбара */}
-                    <Col className="col-auto d-flex align-items-center">
-                        <NavLink
-                            className={'s-text ps-3 color_white'}
-                            to={SHOP_ROUTE}
-                            onClick={() => product.resetFilters()} // Фильтры сбрасываются при переходе
-                        >
-                            <i className="fas fa-shop fa-2x"></i>
-                        </NavLink>
-                        <NavLink
-                            className="ms-5 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
-                            to={SHOP_ROUTE}
-                            style={{border: 'none'}}
-                        >
-                            <i className="fas fa-user fa-2x"></i>
-                        </NavLink>
-                        <NavLink
-                            className="ms-5 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
-                            to={SHOP_ROUTE}
-                            style={{border: 'none'}}
-                        >
-                            <i className="fas fa-cart-arrow-down fa-2x"></i>
-                        </NavLink>
-                    </Col>
+            <h4>Условия доставки</h4>
+            <p>Мы осуществляем доставку по всей России.</p>
+            <ul>
+                <li>Доставка по Москве - бесплатно (при заказе от 5000 руб)</li>
+                <li>Доставка по Московской области - от 500 руб</li>
+                <li>Доставка в регионы - по тарифам транспортных компаний</li>
+            </ul>
+            <p>Сроки доставки: 1-3 дня по Москве, 3-7 дней по России.</p>
+            <p>Для уточнения деталей доставки, свяжитесь с нами по телефону: <a href="tel:+78001234567">8 (800) 123-45-67</a></p>
+        </div>
+    );
 
-                    {/* Центральная часть навбара */}
-                    <div className="d-none d-md-flex justify-content-center align-items-center flex-grow-0">
-                        {/* Видны на средних и больших экранах */}
-                        <Col className={'xs-text mx-3 col-auto d-md-block'}>
-                            <Button
-                                variant="link"
-                                className="color_white text-decoration-none m-text p-1"
-                                onClick={() =>
-                                    handleModalShow(
-                                        'Где купить',
-                                        <>
-                                            <p>
-                                                <span style={{fontWeight: '600'}} className="l-text">Благовещенск</span>
-                                                <br />
-                                                    1. ТРЦ Острова, улица Мухина 144, 3 этаж <br />
-                                            </p>
-                                            <p>
-                                                <span style={{fontWeight: '600'}} className="l-text">Хабаровск</span>
-                                                <br/>
-                                                    1. Улица Волочаевская 8д, 2 этаж<br />
-                                                    2. Проспект 60-летия Октября 206, 3 этаж
-                                            </p>
-                                        </>
-                                    )
-                                }
-                            >
-                                ГДЕ КУПИТЬ
-                            </Button>
-                        </Col>
+    const contactsContent = (
+        <div>
+            <h4>Наши контакты</h4>
+            <p><strong>Адрес:</strong> г. Москва, ул. Мебельная, д. 123</p>
+            <p><strong>Телефон:</strong> <a href="tel:+78001234567">8 (800) 123-45-67</a></p>
+            <p><strong>Email:</strong> <a href="mailto:info@dommebel.ru">info@dommebel.ru</a></p>
+            <p><strong>Режим работы:</strong></p>
+            <p>Пн-Пт: 9:00 - 20:00<br />Сб-Вс: 10:00 - 18:00</p>
+        </div>
+    );
 
-                        {/* Видны только на больших экранах */}
-                        <Col className={'xs-text mx-3 col-auto d-none d-lg-block'}>
-                            <Button
-                                variant="link"
-                                className="color_white text-decoration-none m-text p-1"
-                                onClick={() =>
-                                    handleModalShow(
-                                        'Акции',
-                                        'Информация о текущих акциях появится здесь.'
-                                    )
-                                }
-                            >
-                                АКЦИИ
-                            </Button>
-                        </Col>
-                        <Col className={'xs-text mx-3 col-auto d-none d-lg-block'}>
-                            <Button
-                                variant="link"
-                                className="color_white text-decoration-none m-text p-1"
-                                onClick={() =>
-                                    handleModalShow(
-                                        'Доставка',
-                                        'Информация о доставке появится здесь.'
-                                    )
-                                }
-                            >
-                                ДОСТАВКА
-                            </Button>
-                        </Col>
-                        <Col className={'xs-text mx-3 col-auto d-md-block'}>
-                            <Button
-                                variant="link"
-                                className="color_white text-decoration-none m-text p-1"
-                                onClick={() =>
-                                    handleModalShow(
-                                        'Контакты',
-                                        'Контактные номера:\n1. +7 (123) 456-78-90\n2. +7 (987) 654-32-10'
-                                    )
-                                }
-                            >
-                                КОНТАКТЫ
-                            </Button>
-                        </Col>
-                    </div>
+    const aboutContent = (
+        <div>
+            <h4>О нас</h4>
+            <p>Компания "ДОМУ МЕБЕЛЬ" - это семейный бизнес с многолетней историей. Мы производим и продаем качественную мебель для дома и офиса с 2005 года.</p>
+            <p>Наша миссия - создавать комфортное пространство для жизни и работы наших клиентов.</p>
+            <p>Преимущества компании:</p>
+            <ul>
+                <li>Собственное производство</li>
+                <li>Экологически чистые материалы</li>
+                <li>Гарантия на всю продукцию</li>
+                <li>Индивидуальный подход к каждому клиенту</li>
+            </ul>
+        </div>
+    );
 
-                    {/* Правая часть навбара */}
-                    <div className="d-flex align-items-center">
+    return (
+        <>
+            <Navbar expand="lg" className="navBar" expanded={showMenu}>
+                <Container fluid className="px-3 px-md-4">
+                    {/* Логотип */}
+                    <Navbar.Brand as={Link} to={SHOP_ROUTE} className="logo">
+                        <div className="logo-text">
+                            <span className="logo-text-first">ДОМУ</span>
+                            <span className="logo-text-second">МЕБЕЛЬ</span>
+                        </div>
+                    </Navbar.Brand>
+                    
+                    {/* Навигационные ссылки для десктопа */}
+                    <Nav className="d-none d-lg-flex justify-content-center flex-grow-1 gap-3">
+                        <Nav.Link as={Link} to={SHOP_ROUTE}>Главная</Nav.Link>
+                        <Nav.Link href="#catalogs">Каталог</Nav.Link>
+                        <Nav.Link onClick={() => handleModalShow('О нас', aboutContent)}>О нас</Nav.Link>
+                        <Nav.Link onClick={() => handleModalShow('Контакты', contactsContent)}>Контакты</Nav.Link>
+                        <Nav.Link onClick={() => handleModalShow('Доставка', deliveryContent)}>Доставка</Nav.Link>
+                    </Nav>
+                    
+                    {/* Иконки профиля и корзины */}
+                    <div className="nav-icons d-flex align-items-center">
                         {user.isAuth ? (
-                            <Nav className="d-flex align-items-center">
-                                {user.user.role === 'ADMIN' && (
-                                    <Button
-                                        className="d-none d-lg-block color_white border-radius-0 hover-item--white border-color_white bg-main_color m-text mx-2"
-                                        onClick={() => navigate(ADMIN_ROUTE)}
-                                    >
-                                        АДМИН ПАНЕЛЬ
-                                    </Button>
-                                )}
-                                <Button
-                                    className="ms-2 s-text color_white border-radius-0 hover-item--white border-color_white bg-main_color"
-                                    onClick={logOut}
-                                    style={{border: 'none'}}
-                                >
-                                    <i className="fas fa-arrow-right-from-bracket fa-2x"></i>
-                                </Button>
-                            </Nav>
+                            <Dropdown>
+                                <Dropdown.Toggle className="profile-dropdown">
+                                    <i className="fas fa-user-circle icon-large"></i>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu align="end">
+                                    {user.user.role === 'ADMIN' && (
+                                        <Dropdown.Item onClick={() => navigate(ADMIN_ROUTE)}>
+                                            Панель администратора
+                                        </Dropdown.Item>
+                                    )}
+                                    <Dropdown.Item onClick={logOut}>
+                                        Выйти
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         ) : (
-                            <Nav>
-                                <Button
-                                    className={'border-radius-0 hover-item--white color_white border-color_white bg-main_color m-text'}
-                                    onClick={() => navigate(LOGIN_ROUTE)}
-                                >
-                                    ВОЙТИ
-                                </Button>
-                            </Nav>
+                            <NavLink
+                                as={Link}
+                                to={LOGIN_ROUTE}
+                                className="auth-link"
+                            >
+                                <i className="fas fa-user-circle icon-large"></i>
+                                <span className="d-none d-md-inline ms-1">Войти</span>
+                            </NavLink>
                         )}
+                        <NavLink
+                            as={Link}
+                            to={BASKET_ROUTE}
+                            className="basket-link"
+                        >
+                            <i className="fas fa-shopping-cart icon-large"></i>
+                            <span className="d-none d-md-inline ms-1">Корзина</span>
+                            {basket.totalItems > 0 && (
+                                <span className="basket-badge">{basket.totalItems}</span>
+                            )}
+                        </NavLink>
+                        
+                        {/* Кнопка-гамбургер - показывается только на маленьких экранах */}
+                        <Navbar.Toggle aria-controls="navbar-nav" className="d-lg-none" onClick={handleShow}>
+                            <i className="fas fa-bars icon-large"></i>
+                        </Navbar.Toggle>
                     </div>
-                </div>
-            </BootstrapNavbar>
 
-            {/* Модальное окно */}
+                    {/* Мобильное меню */}
+                    <Navbar.Offcanvas
+                        id="navbar-nav"
+                        aria-labelledby="offcanvasNavbarLabel"
+                        placement="end"
+                        show={showMenu}
+                        onHide={handleClose}
+                        className="d-lg-none"
+                    >
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title id="offcanvasNavbarLabel">Меню</Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <Offcanvas.Body>
+                            <Nav className="justify-content-end flex-grow-1 pe-3">
+                                <Nav.Link as={Link} to={SHOP_ROUTE} onClick={handleClose}>Главная</Nav.Link>
+                                <Nav.Link href="#catalogs" onClick={handleClose}>Каталог</Nav.Link>
+                                <Nav.Link onClick={() => {handleModalShow('О нас', aboutContent); handleClose();}}>О нас</Nav.Link>
+                                <Nav.Link onClick={() => {handleModalShow('Контакты', contactsContent); handleClose();}}>Контакты</Nav.Link>
+                                <Nav.Link onClick={() => {handleModalShow('Доставка', deliveryContent); handleClose();}}>Доставка</Nav.Link>
+                            </Nav>
+                        </Offcanvas.Body>
+                    </Navbar.Offcanvas>
+                </Container>
+            </Navbar>
+
             <CenteredModal
                 show={modalData.show}
                 onHide={handleModalClose}
                 title={modalData.title}
             >
-                <div style={{ whiteSpace: 'pre-line' }}>{modalData.content}</div>
+                {modalData.content}
             </CenteredModal>
-        </div>
+        </>
     );
 });
 
-export default Navbar; 
+export default NavbarComponent; 

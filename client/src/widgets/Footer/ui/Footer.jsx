@@ -16,6 +16,47 @@ export default function Footer() {
         setModalData({ ...modalData, show: false });
     };
 
+    // Модальное содержимое
+    const deliveryContent = (
+        <div>
+            <h4>Условия доставки</h4>
+            <p>Мы осуществляем доставку по всей России.</p>
+            <ul>
+                <li>Доставка по Москве - бесплатно (при заказе от 5000 руб)</li>
+                <li>Доставка по Московской области - от 500 руб</li>
+                <li>Доставка в регионы - по тарифам транспортных компаний</li>
+            </ul>
+            <p>Сроки доставки: 1-3 дня по Москве, 3-7 дней по России.</p>
+            <p>Для уточнения деталей доставки, свяжитесь с нами по телефону: <a href="tel:+78001234567">8 (800) 123-45-67</a></p>
+        </div>
+    );
+
+    const contactsContent = (
+        <div>
+            <h4>Наши контакты</h4>
+            <p><strong>Адрес:</strong> г. Москва, ул. Мебельная, д. 123</p>
+            <p><strong>Телефон:</strong> <a href="tel:+78001234567">8 (800) 123-45-67</a></p>
+            <p><strong>Email:</strong> <a href="mailto:info@dommebel.ru">info@dommebel.ru</a></p>
+            <p><strong>Режим работы:</strong></p>
+            <p>Пн-Пт: 9:00 - 20:00<br />Сб-Вс: 10:00 - 18:00</p>
+        </div>
+    );
+
+    const aboutContent = (
+        <div>
+            <h4>О нас</h4>
+            <p>Компания "ДОМУ МЕБЕЛЬ" - это семейный бизнес с многолетней историей. Мы производим и продаем качественную мебель для дома и офиса с 2005 года.</p>
+            <p>Наша миссия - создавать комфортное пространство для жизни и работы наших клиентов.</p>
+            <p>Преимущества компании:</p>
+            <ul>
+                <li>Собственное производство</li>
+                <li>Экологически чистые материалы</li>
+                <li>Гарантия на всю продукцию</li>
+                <li>Индивидуальный подход к каждому клиенту</li>
+            </ul>
+        </div>
+    );
+
     return (
         <>
             <MDBFooter className='text-center text-lg-start text-muted mt-5 bg-main_color color_white footer'>
@@ -109,23 +150,18 @@ export default function Footer() {
                                 <MDBCol md='3' lg='2' xl='2' className='mx-auto mb-4'>
                                     <h6 className='text-uppercase mb-4 m-text color_white'>Ссылки</h6>
                                     <p>
-                                        <a href='#!' className='m-text color_white'>
-                                            Где купить
+                                        <a href="#about" onClick={(e) => {e.preventDefault(); handleModalShow('О нас', aboutContent);}} className='m-text color_white cursor-pointer'>
+                                            О нас
                                         </a>
                                     </p>
                                     <p>
-                                        <a href='#!' className='m-text color_white'>
-                                            Распродажа
-                                        </a>
-                                    </p>
-                                    <p>
-                                        <a href='#!' className='m-text color_white'>
-                                            Доставка
-                                        </a>
-                                    </p>
-                                    <p>
-                                        <a href='#!' className='m-text color_white'>
+                                        <a href="#contacts" onClick={(e) => {e.preventDefault(); handleModalShow('Контакты', contactsContent);}} className='m-text color_white cursor-pointer'>
                                             Контакты
+                                        </a>
+                                    </p>
+                                    <p>
+                                        <a href="#delivery" onClick={(e) => {e.preventDefault(); handleModalShow('Доставка', deliveryContent);}} className='m-text color_white cursor-pointer'>
+                                            Доставка
                                         </a>
                                     </p>
                                 </MDBCol>

@@ -1,29 +1,36 @@
 import React from 'react';
-import { Alert } from 'react-bootstrap';
+import { Row, Col, Card, Alert } from 'react-bootstrap';
 import BasketItem from './BasketItem';
 import './BasketList.scss';
 
 const BasketList = ({ basketItems, removeFromBasket, changeQuantity }) => {
     if (!basketItems || basketItems.length === 0) {
         return (
-            <Alert variant="info" className="text-center">
-                <h4>Ваша корзина пуста</h4>
-                <p>Добавьте товары для оформления заказа</p>
+            <Alert variant="info">
+                Ваша корзина пуста. Добавьте товары для оформления заказа.
             </Alert>
         );
     }
 
     return (
-        <div className="basket-list">
-            {basketItems.map(item => (
-                <BasketItem 
-                    key={item.id}
-                    product={item}
-                    onRemove={removeFromBasket}
-                    onQuantityChange={changeQuantity}
-                />
-            ))}
-        </div>
+        <Card className="basket-list">
+            <Card.Body>
+                <div className="d-none d-md-flex basket-header mb-3">
+                    <Col md={6} className="fw-bold">Товар</Col>
+                    <Col md={2} className="fw-bold text-center">Цена</Col>
+                    <Col md={2} className="fw-bold text-center">Количество</Col>
+                    <Col md={2} className="fw-bold text-end">Сумма</Col>
+                </div>
+                {basketItems.map(item => (
+                    <BasketItem
+                        key={item.id}
+                        item={item}
+                        removeFromBasket={removeFromBasket}
+                        changeQuantity={changeQuantity}
+                    />
+                ))}
+            </Card.Body>
+        </Card>
     );
 };
 

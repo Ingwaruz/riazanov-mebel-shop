@@ -248,3 +248,297 @@
     }
   }
 }
+
+.product-page {
+    padding: 0 15px;
+    
+    @media (min-width: 992px) {
+        padding: 0 30px;
+    }
+    
+    .product-content {
+        margin-top: 1.5rem;
+    }
+    
+    .product-title {
+        font-size: 1.5rem;
+        color: $main_font_color;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        
+        @media (min-width: 768px) {
+            font-size: 2rem;
+        }
+    }
+    
+    .product-gallery {
+        margin-bottom: 2rem;
+        
+        .main-image-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            background-color: #fff;
+            border: 1px solid rgba($main_font_color, 0.1);
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            
+            @media (min-width: 768px) {
+                min-height: 400px;
+            }
+            
+            .main-product-image {
+                max-height: 280px;
+                object-fit: contain;
+                cursor: pointer;
+                
+                @media (min-width: 768px) {
+                    max-height: 380px;
+                }
+            }
+            
+            .magnifier-btn {
+                position: absolute;
+                right: 15px;
+                bottom: 15px;
+                background-color: rgba(255, 255, 255, 0.8);
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: $main_color;
+                
+                &:hover {
+                    background-color: $main_color;
+                    color: white;
+                }
+            }
+            
+            .no-image {
+                color: $main_font_color;
+                font-style: italic;
+                opacity: 0.6;
+            }
+        }
+        
+        .thumbnails-container {
+            margin-top: 1rem;
+            
+            .thumbnails-nav {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                
+                .thumbnails-wrapper {
+                    display: flex;
+                    gap: 8px;
+                    overflow: hidden;
+                    
+                    @media (max-width: 576px) {
+                        gap: 5px;
+                    }
+                }
+                
+                .thumbnail-item {
+                    width: 80px;
+                    height: 80px;
+                    border: 2px solid transparent;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    
+                    &.active {
+                        border-color: $main_link_color;
+                    }
+                    
+                    &:hover:not(.active) {
+                        border-color: $main_color_hover;
+                    }
+                    
+                    @media (max-width: 768px) {
+                        width: 70px;
+                        height: 70px;
+                    }
+                    
+                    @media (max-width: 576px) {
+                        width: 60px;
+                        height: 60px;
+                    }
+                    
+                    .thumbnail-image {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+                
+                .thumbnail-nav-btn {
+                    width: 36px;
+                    height: 36px;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1px solid rgba($main_font_color, 0.1);
+                    color: $main_font_color;
+                    background-color: #fff;
+                    
+                    &:hover {
+                        background-color: $main_color;
+                        color: #fff;
+                        border-color: $main_color;
+                    }
+                    
+                    @media (max-width: 576px) {
+                        width: 30px;
+                        height: 30px;
+                    }
+                }
+            }
+        }
+    }
+    
+    .product-info {
+        .product-card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 90px;
+            
+            @media (max-width: 991px) {
+                position: static;
+            }
+            
+            .product-price {
+                font-size: 1.8rem;
+                font-weight: 600;
+                color: $main_font_color;
+            }
+            
+            .starting-price {
+                font-size: 1rem;
+                color: $main_font_color;
+                opacity: 0.8;
+            }
+            
+            .price-note {
+                font-size: 0.9rem;
+                color: $main_font_color;
+                opacity: 0.7;
+            }
+            
+            .product-details {
+                margin-top: 1rem;
+                
+                .detail-item {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 0.5rem;
+                    font-size: 0.9rem;
+                    
+                    .detail-label {
+                        color: $main_font_color;
+                        opacity: 0.8;
+                    }
+                    
+                    .detail-value {
+                        font-weight: 500;
+                        color: $main_font_color;
+                        text-align: right;
+                    }
+                }
+            }
+            
+            .btn-add-to-cart {
+                min-width: 220px;
+                font-size: 1.1rem;
+                padding: 0.6rem 1.5rem;
+                border-radius: 6px;
+                text-transform: uppercase;
+                transition: all 0.3s ease;
+                
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                }
+            }
+        }
+    }
+    
+    .product-tabs {
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }
+}
+
+// Стили для модального окна полноэкранного изображения
+.fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .fullscreen-image {
+        max-width: 90%;
+        max-height: 90vh;
+        object-fit: contain;
+    }
+    
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+            transform: scale(1.2);
+        }
+    }
+    
+    .fullscreen-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        &.left {
+            left: 20px;
+        }
+        
+        &.right {
+            right: 20px;
+        }
+    }
+}

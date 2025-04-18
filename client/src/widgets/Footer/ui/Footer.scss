@@ -5,10 +5,27 @@
     color: $color_white;
     text-decoration: none;
     transition: color 0.3s ease;
+    position: relative;
     
-    &:hover {
-      color: rgba($color_white, 0.8);
+    &:hover, &:focus {
+      color: $add_color !important;
       text-decoration: none;
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background-color: $add_color;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    
+    &:hover::after, &:focus::after {
+      width: 70%;
     }
   }
   
@@ -20,6 +37,15 @@
       &:last-child {
         margin-right: 0;
       }
+      
+      /* Для иконок соцсетей не показываем подчеркивание */
+      &::after {
+        display: none;
+      }
     }
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
   }
 }
