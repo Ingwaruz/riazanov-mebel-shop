@@ -93,8 +93,10 @@ export default function Footer() {
                             <MDBRow className='mt-3'>
                                 <MDBCol md='3' lg='4' xl='3' className='mx-auto mb-4'>
                                     <h6 className='text-uppercase mb-4 m-text color_white'>
-                                        <MDBIcon icon='gem' className='me-3' />
-                                        ДОМУ МЕБЕЛЬ
+                                        <div className="logo-text">
+                                            <span className="logo-text-first">ДОМУ</span>
+                                            <span className="logo-text-second">МЕБЕЛЬ</span>
+                                        </div>
                                     </h6>
                                     <p className='mb-4 m-text color_white'>
                                     
@@ -168,6 +170,10 @@ export default function Footer() {
                             </MDBRow>
                         </MDBContainer>
                     </section>
+                </div>
+                <div className="disclaimer-container text-center py-3 border-top">
+                    <p className="mb-1 s-text color_white">Опубликованные на сайте цены не являются публичной офертой.</p>
+                    <p className="mb-0 s-text color_white">Данный сайт не является официальным сайтом представленных производителей мебели.</p>
                 </div>
             </MDBFooter>
 

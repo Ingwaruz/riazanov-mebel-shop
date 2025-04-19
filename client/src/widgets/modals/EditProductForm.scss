@@ -3,11 +3,97 @@
 .edit-product-form-modal {
   max-width: 90vw;
   
+  .modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-header {
+    background-color: $main_color;
+    color: $color_white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
   .modal-body {
+    padding: 20px;
     max-height: 80vh;
     overflow-y: auto;
   }
-  
+
+  .btn-primary {
+    background-color: $main_color;
+    border-color: $main_color;
+    
+    &:hover, &:focus {
+      background-color: $main_color_hover;
+      border-color: $main_color_hover;
+    }
+    
+    &:active {
+      background-color: $main_color_active !important;
+      border-color: $main_color_active !important;
+    }
+  }
+
+  .btn-outline-secondary {
+    color: $main_font_color;
+    border-color: $focus_input_color;
+    
+    &:hover {
+      background-color: rgba($main_color, 0.1);
+      color: $main_color;
+    }
+  }
+
+  .btn-outline-danger {
+    &:hover {
+      background-color: rgba(220, 53, 69, 0.1);
+    }
+  }
+
+  .form-control, .form-select {
+    &:focus {
+      border-color: $main_link_color;
+      box-shadow: 0 0 0 0.25rem rgba($main_link_color, 0.25);
+    }
+  }
+
+  h5 {
+    color: $main_color;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid $main_link_color_light;
+  }
+
+  h6 {
+    color: $main_font_color;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .list-group-item {
+    border-color: $focus_input_color;
+    
+    strong {
+      color: $main_color;
+    }
+  }
+
+  .product-images-container {
+    margin-top: 15px;
+    
+    .img-thumbnail {
+      border-color: $focus_input_color;
+      transition: all 0.2s;
+      
+      &:hover {
+        border-color: $main_link_color;
+      }
+    }
+  }
+
   .image-gallery {
     display: flex;
     flex-wrap: wrap;
@@ -40,5 +126,33 @@
     border: 1px dashed $main_link_color;
     padding: 10px;
     border-radius: 4px;
+  }
+  
+  .characteristic-item {
+    padding: 8px 0;
+    border-bottom: 1px dashed $main_link_color_light;
+    transition: all 0.2s ease;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background-color: rgba($main_link_color_light, 0.1);
+    }
+    
+    .characteristic-key {
+      font-weight: 500;
+      color: $main_text_color;
+    }
+    
+    .characteristic-value {
+      border-color: $main_link_color_light;
+      
+      &:focus {
+        border-color: $main_link_color;
+        box-shadow: 0 0 0 0.2rem rgba($main_link_color, 0.25);
+      }
+    }
   }
 } 

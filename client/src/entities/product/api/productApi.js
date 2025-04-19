@@ -40,9 +40,26 @@ export const createProduct = async (product) => {
 };
 
 // Обновление продукта (только для админа)
-export const updateProduct = async (id, formData) => {
-    const { data } = await $authHost.put(`api/product/${id}`, formData);
-    return data;
+export const updateProduct = async (productData) => {
+    try {
+        if (!productData || !productData.id) {
+            throw new Error('ID товара не указан');
+        }
+        
+        // Обеспечиваем числовой формат ID
+        const productId = Number(productData.id);
+        if (isNaN(productId)) {
+            throw new Error(`Некорректный ID товара: ${productData.id}`);
+        }
+        
+        console.log(`Отправка запроса на обновление товара с ID: ${productId}`);
+        
+        const { data } = await $authHost.put(`api/product/${productId}`, productData);
+        return data;
+    } catch (error) {
+        console.error('Ошибка в функции updateProduct:', error);
+        throw error;
+    }
 };
 
 // Удаление продукта (только для админа)
@@ -104,10 +121,26 @@ export const createCollection = async (collection) => {
 
 // Получение характеристик по типу и производителю
 export const fetchFeaturesByTypeAndFactory = async (typeId, factoryId) => {
-    const { data } = await $host.get('api/feature', {
-        params: { typeId, factoryId }
-    });
-    return data;
+    const params = {};
+    
+    if (typeId) {
+        params.typeId = typeId;
+    }
+    
+    if (factoryId) {
+        params.factoryId = factoryId;
+    }
+    
+    console.log('Запрос характеристик с параметрами:', params);
+    
+    try {
+        const { data } = await $host.get('api/feature', { params });
+        console.log('Полученные характеристики:', data);
+        return data;
+    } catch (error) {
+        console.error('Ошибка при загрузке характеристик:', error);
+        return [];
+    }
 };
 
 // Создание характеристики (только для админа)
@@ -128,4 +161,54 @@ export const fetchSubtypes = async (typeId) => {
 export const createSubtype = async (subtype) => {
     const { data } = await $authHost.post('api/subtype', subtype);
     return data;
+};
+
+// Получение всех характеристик
+export const fetchFeatures = async () => {
+    try {
+        const { data } = await $host.get('api/feature');
+        return data;
+    } catch (error) {
+        console.error('Ошибка при загрузке характеристик:', error);
+        return [];
+    }
+};
+
+// Получение подтипов по ID типа
+export const fetchSubtypesByType = async (typeId) => {
+    try {
+        const { data } = await $host.get('api/subtype', {
+            params: { typeId }
+        });
+        return data;
+    } catch (error) {
+        console.error('Ошибка при загрузке подтипов:', error);
+        return [];
+    }
+};
+
+// Загрузка изображений для админа
+export const uploadAdminImage = async (formData) => {
+    try {
+        const { data } = await $authHost.post('api/product/uploadimages', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error('Ошибка при загрузке изображений:', error);
+        throw error;
+    }
+};
+
+// Удаление изображения для админа
+export const deleteAdminImage = async (imageName) => {
+    try {
+        const { data } = await $authHost.delete(`api/product/image/${imageName}`);
+        return data;
+    } catch (error) {
+        console.error('Ошибка при удалении изображения:', error);
+        throw error;
+    }
 }; 

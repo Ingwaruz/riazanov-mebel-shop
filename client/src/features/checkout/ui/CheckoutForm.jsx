@@ -12,14 +12,18 @@ const CheckoutForm = ({ onSubmit, loading = false }) => {
         address: '',
         city: '',
         postalCode: '',
-        paymentMethod: 'card'
+        paymentMethod: 'card',
+        personalDataConsent: false
     });
     
     const [errors, setErrors] = useState({});
     
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({ 
+            ...prev, 
+            [name]: type === 'checkbox' ? checked : value 
+        }));
         
         // Очищаем ошибку при изменении поля
         if (errors[name]) {
@@ -56,6 +60,10 @@ const CheckoutForm = ({ onSubmit, loading = false }) => {
         
         if (!formData.city.trim()) {
             newErrors.city = 'Город обязателен';
+        }
+        
+        if (!formData.personalDataConsent) {
+            newErrors.personalDataConsent = 'Необходимо согласие на обработку персональных данных';
         }
         
         setErrors(newErrors);
@@ -186,11 +194,29 @@ const CheckoutForm = ({ onSubmit, loading = false }) => {
                 />
             </div>
             
+            <div className="mb-4">
+                <Form.Check
+                    type="checkbox"
+                    id="personal-data-consent"
+                    label="Я согласен на обработку персональных данных"
+                    name="personalDataConsent"
+                    checked={formData.personalDataConsent}
+                    onChange={handleChange}
+                    isInvalid={!!errors.personalDataConsent}
+                    disabled={loading}
+                />
+                {errors.personalDataConsent && (
+                    <Form.Control.Feedback type="invalid" className="d-block">
+                        {errors.personalDataConsent}
+                    </Form.Control.Feedback>
+                )}
+            </div>
+            
             <Button 
                 type="submit" 
                 variant="primary" 
                 className="submit-button" 
-                disabled={loading}
+                disabled={loading || !formData.personalDataConsent}
             >
                 {loading ? 'Оформление заказа...' : 'Оформить заказ'}
             </Button>

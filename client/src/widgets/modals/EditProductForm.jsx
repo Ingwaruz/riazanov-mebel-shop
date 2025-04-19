@@ -1,349 +1,446 @@
-import React, { useContext, useEffect, useState, useReducer } from 'react';
-import { Button, Col, Form, Modal, Row, Spinner, Alert, Image } from 'react-bootstrap';
-import { Context } from '../../index';
-import { observer } from 'mobx-react-lite';
-import ButtonM2 from '../../shared/ui/buttons/button-m2';
+import React, { useState, useEffect, useContext } from 'react';
+import { Modal, Button, Form, Container, Row, Col, Spinner, ListGroup, Alert } from 'react-bootstrap';
+import { Context } from "../../index";
 import {
-    updateProduct,
-    fetchOneProduct,
-    fetchTypes,
-    fetchFactories,
-    fetchFeaturesByTypeAndFactory,
-    fetchCollections,
-    fetchSubtypes
+  fetchOneProduct, 
+  updateProduct,
+  fetchTypes, 
+  fetchFactories, 
+  fetchSubtypesByType,
+  fetchSubtypes,
+  fetchCollections, 
+  fetchFeatures,
+  uploadAdminImage,
+  deleteAdminImage 
 } from '../../entities/product/api/productApi';
 import './EditProductForm.scss';
 
-const EditProductForm = ({ show, onHide, product, onComplete }) => {
-    const [loading, setLoading] = useState(true);
+const EditProductForm = ({ show, onHide, product: initialProduct, onComplete }) => {
+  const { product: productStore } = useContext(Context);
+  const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+  const [imagesUploading, setImagesUploading] = useState(false);
+  const [saveAttempted, setSaveAttempted] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+
+  // Состояния для списков и селектов
     const [types, setTypes] = useState([]);
     const [factories, setFactories] = useState([]);
+  const [subtypes, setSubtypes] = useState([]);
     const [collections, setCollections] = useState([]);
     const [features, setFeatures] = useState([]);
-    const [subtypes, setSubtypes] = useState([]);
-    const [formData, setFormData] = useState({
+
+  // Состояние редактируемого товара
+  const [product, setProduct] = useState({
+    id: 0,
         name: '',
         price: 0,
-        min_price: 0,
-        description: '',
-        width: 0,
-        height: 0,
-        depth: 0,
+    old_price: 0,
+    in_stock: true,
+    hit: false,
+    new: false,
         typeId: '',
+    factoryId: '',
         subtypeId: '',
-        factoryId: '',
         collectionId: '',
-        productFeatures: []
-    });
-    const [images, setImages] = useState([]);
-    const [newImages, setNewImages] = useState([]);
-    const [previewImages, setPreviewImages] = useState([]);
-    const [error, setError] = useState(null);
+    discount: 0,
+    img: [],
+    info: []
+  });
+
+  // Состояния для полей характеристик
+  const [featureId, setFeatureId] = useState('');
+  const [featureValue, setFeatureValue] = useState('');
+  const [productFeatures, setProductFeatures] = useState([]);
+  const [newFeatureName, setNewFeatureName] = useState('');
+  const [creatingFeature, setCreatingFeature] = useState(false);
 
     // Загрузка данных при открытии формы
     useEffect(() => {
-        if (show && product && product.id) {
-            console.log('Loading product data for id:', product.id, 'type:', typeof product.id);
-            // Сразу используем числовой формат ID
-            const numericId = parseInt(product.id);
-            if (!isNaN(numericId)) {
-                loadData(numericId);
-            } else {
-                setError('Некорректный формат ID товара');
-            }
-        }
-    }, [show, product]);
+    if (show) {
+      loadData();
+    }
+  }, [show, initialProduct?.id]);
 
-    // Загрузка деталей товара и справочных данных
-    const loadData = async (productId) => {
+  // Логирование состояния характеристик при каждом изменении
+  useEffect(() => {
+    if (productFeatures && productFeatures.length > 0) {
+      console.log('Текущие характеристики товара:', productFeatures);
+    }
+  }, [productFeatures]);
+
+  // Загрузка подтипов при изменении типа товара
+  useEffect(() => {
+    if (show && product.typeId) {
+      loadSubtypesByType(product.typeId);
+    }
+  }, [show, product.typeId]);
+
+  // Загрузка всех необходимых данных для формы
+  const loadData = async () => {
         setLoading(true);
-        setError(null);
+    setLoadError(null);
         
         try {
-            console.log('Fetching product details for ID:', productId);
-            const productDetails = await fetchOneProduct(productId);
-            console.log('Received product details:', productDetails);
+      console.log('Начинаем загрузку данных для формы редактирования');
             
-            const [typesData, factoriesData] = await Promise.all([
+      // Загружаем все необходимые данные параллельно
+      const [typesData, factoriesData, collectionsData, featuresData] = await Promise.all([
                 fetchTypes(),
-                fetchFactories()
-            ]);
-            
-            setTypes(typesData);
-            setFactories(factoriesData);
-            
-            // Загрузка подтипов для выбранного типа
-            let subtypesData = [];
-            if (productDetails.typeId) {
-                subtypesData = await fetchSubtypes(productDetails.typeId);
-                setSubtypes(subtypesData);
-            }
-            
-            // Загрузка коллекций для выбранной фабрики
-            let collectionsData = [];
-            if (productDetails.factoryId) {
-                collectionsData = await fetchCollections(productDetails.factoryId);
-                setCollections(collectionsData);
-            }
-            
-            // Загрузка характеристик для выбранного типа и фабрики
-            let featuresData = [];
-            if (productDetails.typeId && productDetails.factoryId) {
-                featuresData = await fetchFeaturesByTypeAndFactory(productDetails.typeId, productDetails.factoryId);
-                setFeatures(featuresData);
-            }
-            
-            // Заполнение формы данными товара
-            setFormData({
-                name: productDetails.name || '',
-                price: productDetails.price || 0,
-                min_price: productDetails.min_price || 0,
-                description: productDetails.description || '',
-                width: productDetails.width || 0,
-                height: productDetails.height || 0,
-                depth: productDetails.depth || 0,
-                typeId: productDetails.typeId || '',
-                subtypeId: productDetails.subtypeId || '',
-                factoryId: productDetails.factoryId || '',
-                collectionId: productDetails.collectionId || '',
-                productFeatures: productDetails.product_infos 
-                    ? productDetails.product_infos.map(info => ({
-                        featureId: info.featureId,
-                        value: info.value,
-                        name: info.feature?.name || ''
-                    })) 
-                    : []
-            });
-            
-            console.log('Form data set:', {
-                name: productDetails.name,
-                price: productDetails.price,
-                typeId: productDetails.typeId,
-                factoryId: productDetails.factoryId,
-                subtypeId: productDetails.subtypeId,
-                collectionId: productDetails.collectionId,
-                featuresCount: productDetails.product_infos?.length
-            });
-            
-            // Установка изображений товара
-            if (productDetails.images && productDetails.images.length > 0) {
-                console.log('Setting images:', productDetails.images.length, 'images');
-                setImages(productDetails.images.map(img => ({
-                    ...img,
-                    url: process.env.REACT_APP_API_URL + '/' + img.img
-                })));
-            } else {
-                console.log('No images found for product');
-                setImages([]);
-            }
-            
+        fetchFactories(),
+        fetchCollections(),
+        fetchFeatures()
+      ]);
+      
+      console.log('Загружены типы:', typesData?.length || 0);
+      console.log('Загружены фабрики:', factoriesData?.length || 0);
+      console.log('Загружены коллекции:', collectionsData?.length || 0);
+      console.log('Загружены характеристики:', featuresData?.length || 0);
+      
+      setTypes(typesData || []);
+      setFactories(factoriesData || []);
+      setCollections(collectionsData || []);
+      setFeatures(featuresData || []);
+      
+      // Если есть ID товара, загружаем данные товара
+      if (initialProduct && initialProduct.id) {
+        console.log('Загружаем товар по ID:', initialProduct.id);
+        await loadProduct(initialProduct.id);
+      }
         } catch (error) {
-            console.error('Ошибка при загрузке данных товара:', error);
-            setError('Ошибка при загрузке данных товара: ' + error.message);
+      console.error('Ошибка при загрузке данных:', error);
+      setLoadError('Не удалось загрузить необходимые данные. Пожалуйста, попробуйте еще раз.');
         } finally {
             setLoading(false);
         }
     };
 
-    // Добавьте эту функцию для повторной попытки с другим форматом ID
-    const tryAlternativeFormat = async () => {
-        setLoading(true);
-        setError(null);
+  // Загрузка товара по ID с повторной попыткой в альтернативном формате при необходимости
+  const loadProduct = async (productId) => {
+    console.log('Загрузка товара, ID:', productId, 'типа:', typeof productId);
+    try {
+      // Преобразуем ID в число, если он строка
+      const numericId = typeof productId === 'string' ? parseInt(productId, 10) : productId;
+      console.log('Используем числовой ID:', numericId);
+      
+      const productData = await fetchOneProduct(numericId);
+      if (productData) {
+        console.log('Товар успешно загружен:', productData);
+        console.log('Характеристики в ответе API:', productData.info);
         
-        try {
-            // Попробуем запросить с числовым ID без кавычек
-            console.log('Попытка получения товара с альтернативным форматом ID:', parseInt(product.id));
-            const productDetails = await fetchOneProduct(parseInt(product.id));
-            
-            if (productDetails) {
-                console.log('Успешно получены данные товара с альтернативным форматом ID');
-                
-                // Остальной код загрузки - скопируйте из функции loadData()
-                // ...
-                
-                // Установка данных формы
-                setFormData({
-                    name: productDetails.name || '',
-                    price: productDetails.price || 0,
-                    min_price: productDetails.min_price || 0,
-                    description: productDetails.description || '',
-                    width: productDetails.width || 0,
-                    height: productDetails.height || 0,
-                    depth: productDetails.depth || 0,
-                    typeId: productDetails.typeId || '',
-                    subtypeId: productDetails.subtypeId || '',
-                    factoryId: productDetails.factoryId || '',
-                    collectionId: productDetails.collectionId || '',
-                    productFeatures: productDetails.product_infos 
-                        ? productDetails.product_infos.map(info => ({
-                            featureId: info.featureId,
-                            value: info.value,
-                            name: info.feature?.name || ''
-                        })) 
-                        : []
-                });
-                
-                // Установка изображений
-                if (productDetails.images && productDetails.images.length > 0) {
-                    setImages(productDetails.images.map(img => ({
-                        ...img,
-                        url: process.env.REACT_APP_API_URL + '/' + img.img
-                    })));
-                }
-            }
-        } catch (error) {
-            console.error('Ошибка при повторной попытке загрузки товара:', error);
-            setError(`Не удалось загрузить данные товара. Пожалуйста, проверьте, существует ли товар с ID: ${product.id}`);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Обработчик изменения типа товара
-    const handleTypeChange = async (e) => {
-        const typeId = e.target.value;
-        setFormData(prev => ({ ...prev, typeId, subtypeId: '' }));
+        // Преобразуем характеристики товара для отображения в форме
+        let mappedFeatures = [];
         
-        if (typeId) {
-            try {
-                const subtypesData = await fetchSubtypes(typeId);
-                setSubtypes(subtypesData);
-                
-                if (formData.factoryId) {
-                    const featuresData = await fetchFeaturesByTypeAndFactory(typeId, formData.factoryId);
-                    setFeatures(featuresData);
-                }
-            } catch (error) {
-                console.error('Ошибка при загрузке подтипов:', error);
-            }
-        } else {
-            setSubtypes([]);
+        // Проверяем разные форматы характеристик, которые могут прийти с сервера
+        if (productData.info && productData.info.length > 0) {
+          mappedFeatures = productData.info.map(item => ({
+            id: item.id,
+            featureId: item.featureId || item.feature_id,
+            featureName: item.feature ? item.feature.name : (item.featureName || 'Неизвестная характеристика'),
+            value: item.value || ''
+          }));
+        } else if (productData.product_infos && productData.product_infos.length > 0) {
+          mappedFeatures = productData.product_infos.map(item => ({
+            id: item.id,
+            featureId: item.featureId || item.feature_id,
+            featureName: item.feature ? item.feature.name : (item.featureName || 'Неизвестная характеристика'),
+            value: item.value || ''
+          }));
         }
-    };
-
-    // Обработчик изменения фабрики
-    const handleFactoryChange = async (e) => {
-        const factoryId = e.target.value;
-        setFormData(prev => ({ ...prev, factoryId, collectionId: '' }));
         
-        if (factoryId) {
-            try {
-                const collectionsData = await fetchCollections(factoryId);
-                setCollections(collectionsData);
-                
-                if (formData.typeId) {
-                    const featuresData = await fetchFeaturesByTypeAndFactory(formData.typeId, factoryId);
-                    setFeatures(featuresData);
-                }
-            } catch (error) {
-                console.error('Ошибка при загрузке коллекций:', error);
-            }
-        } else {
-            setCollections([]);
-        }
-    };
-
-    // Обработчик изменения полей формы
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    // Обработчик изменения характеристик
-    const handleFeatureChange = (featureId, value) => {
-        setFormData(prev => {
-            const updatedFeatures = [...prev.productFeatures];
-            const index = updatedFeatures.findIndex(f => f.featureId === featureId);
-            
-            if (index !== -1) {
-                updatedFeatures[index].value = value;
-            } else {
-                const feature = features.find(f => f.id === featureId);
-                updatedFeatures.push({
-                    featureId,
-                    value,
-                    name: feature?.name || ''
-                });
-            }
-            
-            return { ...prev, productFeatures: updatedFeatures };
+        console.log('Преобразованные характеристики товара:', mappedFeatures);
+        setProductFeatures(mappedFeatures);
+        
+        // Обновляем данные товара
+        setProduct({
+          ...productData,
+          old_price: productData.old_price || 0,
+          discount: productData.discount || 0,
+          typeId: productData.typeId ? String(productData.typeId) : '',
+          factoryId: productData.factoryId ? String(productData.factoryId) : '',
+          subtypeId: productData.subtypeId ? String(productData.subtypeId) : '',
+          collectionId: productData.collectionId ? String(productData.collectionId) : '',
+          // Проверяем различные форматы хранения изображений в API
+          img: productData.img || productData.images || []
         });
-    };
-
-    // Обработчик добавления новых изображений
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        setNewImages(files);
         
-        // Создаем URL для предпросмотра
-        const fileURLs = files.map(file => URL.createObjectURL(file));
-        setPreviewImages(fileURLs);
+        // Сразу загружаем подтипы, если выбран тип
+        if (productData.typeId) {
+          loadSubtypesByType(productData.typeId);
+        }
+      } else {
+        console.error('Товар не найден');
+        throw new Error('Не удалось загрузить информацию о товаре');
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке товара:', error);
+      
+      // Пробуем альтернативный формат ID
+      if (typeof productId !== 'string') {
+        console.log('Пробуем строковый ID:', String(productId));
+        try {
+          const productData = await fetchOneProduct(String(productId));
+          if (productData) {
+            console.log('Товар успешно загружен через строковый ID:', productData);
+            console.log('Характеристики в ответе API (строковый ID):', productData.info);
+            
+            // Преобразуем характеристики товара для отображения в форме
+            let mappedFeatures = [];
+            
+            // Проверяем разные форматы характеристик, которые могут прийти с сервера
+            if (productData.info && productData.info.length > 0) {
+              mappedFeatures = productData.info.map(item => ({
+                id: item.id,
+                featureId: item.featureId || item.feature_id,
+                featureName: item.feature ? item.feature.name : (item.featureName || 'Неизвестная характеристика'),
+                value: item.value || ''
+              }));
+            } else if (productData.product_infos && productData.product_infos.length > 0) {
+              mappedFeatures = productData.product_infos.map(item => ({
+                id: item.id,
+                featureId: item.featureId || item.feature_id,
+                featureName: item.feature ? item.feature.name : (item.featureName || 'Неизвестная характеристика'),
+                value: item.value || ''
+              }));
+            }
+            
+            console.log('Преобразованные характеристики товара (строковый ID):', mappedFeatures);
+            setProductFeatures(mappedFeatures);
+            
+            setProduct({
+              ...productData,
+              old_price: productData.old_price || 0,
+              discount: productData.discount || 0,
+              typeId: productData.typeId ? String(productData.typeId) : '',
+              factoryId: productData.factoryId ? String(productData.factoryId) : '',
+              subtypeId: productData.subtypeId ? String(productData.subtypeId) : '',
+              collectionId: productData.collectionId ? String(productData.collectionId) : '',
+              // Проверяем различные форматы хранения изображений в API
+              img: productData.img || productData.images || []
+            });
+            
+            if (productData.typeId) {
+              loadSubtypesByType(productData.typeId);
+            }
+          } else {
+            throw new Error('Не удалось загрузить информацию о товаре');
+          }
+        } catch (secondError) {
+          console.error('Ошибка при использовании строкового ID:', secondError);
+          setLoadError(`Не удалось загрузить товар с ID ${productId}.`);
+        }
+      } else {
+        setLoadError(`Не удалось загрузить товар с ID ${productId}.`);
+      }
+    }
+  };
+
+  // Загрузка подтипов в зависимости от выбранного типа
+  const loadSubtypesByType = async (typeId) => {
+    try {
+      if (!typeId) return;
+      
+      console.log('Загрузка подтипов для типа:', typeId);
+      const data = await fetchSubtypesByType(typeId);
+      console.log('Загружены подтипы:', data?.length || 0, data);
+      
+      if (Array.isArray(data) && data.length > 0) {
+        setSubtypes(data);
+      } else {
+        // Если вернулся пустой массив, попробуем загрузить через запрос к обычным подтипам
+        const backupData = await fetchSubtypes(typeId);
+        console.log('Загружены подтипы через запасной метод:', backupData?.length || 0);
+        setSubtypes(backupData || []);
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке подтипов:', error);
+      setSubtypes([]);
+    }
+  };
+
+  // Обработка изменения полей формы
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    
+    if (type === 'checkbox') {
+      setProduct({ ...product, [name]: checked });
+    } else if (['price', 'old_price', 'discount'].includes(name)) {
+      // Преобразование строки в число для числовых полей
+      setProduct({ ...product, [name]: value === '' ? '' : Number(value) });
+        } else {
+      setProduct({ ...product, [name]: value });
+    }
+  };
+
+  // Добавление характеристики в товар
+  const addFeature = () => {
+    if (!featureId || !featureValue.trim()) {
+      alert('Пожалуйста, выберите характеристику и укажите её значение');
+      return;
+    }
+
+    // Находим выбранную характеристику в списке
+    const selectedFeature = features.find(f => f.id === Number(featureId));
+    if (!selectedFeature) {
+      alert('Выбранная характеристика не найдена');
+      return;
+    }
+
+    // Проверяем, не добавлена ли уже такая характеристика
+    const exists = productFeatures.some(f => f.featureId === Number(featureId));
+    if (exists) {
+      alert('Эта характеристика уже добавлена к товару');
+      return;
+    }
+
+    // Добавляем новую характеристику
+    const newFeature = {
+      featureId: Number(featureId),
+      featureName: selectedFeature.name,
+      value: featureValue
     };
 
-    // Обработчик отправки формы
+    setProductFeatures([...productFeatures, newFeature]);
+    setFeatureId('');
+    setFeatureValue('');
+  };
+
+  // Создание новой характеристики (имитация)
+  const createNewFeature = () => {
+    if (!newFeatureName.trim()) {
+      alert('Введите название характеристики');
+      return;
+    }
+
+    // Добавляем в локальный список (в реальном приложении это был бы API запрос)
+    const newFeature = {
+      id: Date.now(), // временный ID
+      name: newFeatureName
+    };
+
+    setFeatures([...features, newFeature]);
+    setNewFeatureName('');
+    setCreatingFeature(false);
+    // После создания сразу выбираем эту характеристику
+    setFeatureId(String(newFeature.id));
+  };
+
+  // Удаление характеристики
+  const removeFeature = (indexToRemove) => {
+    setProductFeatures(productFeatures.filter((_, index) => index !== indexToRemove));
+  };
+
+  // Добавление изображений
+  const handleImageUpload = async (e) => {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    setImagesUploading(true);
+    
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+      }
+      
+      const response = await uploadAdminImage(formData);
+      if (response && response.length) {
+        setProduct({
+          ...product,
+          img: [...product.img, ...response]
+        });
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке изображений:', error);
+      alert('Не удалось загрузить изображения');
+    } finally {
+      setImagesUploading(false);
+    }
+  };
+
+  // Удаление изображения
+  const handleImageDelete = async (imageName) => {
+    if (!window.confirm('Вы действительно хотите удалить это изображение?')) return;
+    
+    try {
+      await deleteAdminImage(imageName);
+      setProduct({
+        ...product,
+        img: product.img.filter(image => !image.includes(imageName))
+      });
+    } catch (error) {
+      console.error('Ошибка при удалении изображения:', error);
+      alert('Не удалось удалить изображение');
+    }
+  };
+
+  // Сохранение изменений
     const handleSubmit = async (e) => {
         e.preventDefault();
+    setSaveAttempted(true);
+    setSaveError(null);
+
+    // Валидация формы
+    if (!product.name || !product.price || !product.typeId || !product.factoryId) {
+      alert('Пожалуйста, заполните все обязательные поля');
+      return;
+    }
+
         setSaving(true);
         
         try {
-            // Создаем объект FormData для отправки файлов
-            const formDataToSend = new FormData();
-            
-            // Добавляем основные поля
-            formDataToSend.append('name', formData.name);
-            formDataToSend.append('price', formData.price);
-            formDataToSend.append('min_price', formData.min_price);
-            formDataToSend.append('description', formData.description);
-            formDataToSend.append('width', formData.width);
-            formDataToSend.append('height', formData.height);
-            formDataToSend.append('depth', formData.depth);
-            formDataToSend.append('typeId', formData.typeId);
-            formDataToSend.append('factoryId', formData.factoryId);
-            
-            if (formData.subtypeId) {
-                formDataToSend.append('subtypeId', formData.subtypeId);
-            }
-            
-            if (formData.collectionId) {
-                formDataToSend.append('collectionId', formData.collectionId);
-            }
-            
-            // Добавляем характеристики
-            if (formData.productFeatures.length > 0) {
-                formDataToSend.append('features', JSON.stringify(formData.productFeatures));
-            }
-            
-            // Добавляем новые изображения, если они есть
-            if (newImages.length > 0) {
-                newImages.forEach(file => {
-                    formDataToSend.append('images', file);
-                });
-            }
-            
-            // Отправляем запрос на обновление
-            const result = await updateProduct(product.id, formDataToSend);
-            console.log('Update result:', result);
-            
-            // Уведомляем родительский компонент об успешном обновлении
+      // Подготавливаем характеристики в правильном формате
+      const featuresForAPI = productFeatures.map(feature => ({
+        featureId: feature.featureId,
+        value: feature.value
+      }));
+      
+      // Подготавливаем данные для сохранения
+      const productData = {
+        ...product,
+        price: Number(product.price),
+        old_price: Number(product.old_price) || 0,
+        discount: Number(product.discount) || 0,
+        typeId: Number(product.typeId),
+        factoryId: Number(product.factoryId),
+        subtypeId: product.subtypeId ? Number(product.subtypeId) : null,
+        collectionId: product.collectionId ? Number(product.collectionId) : null,
+        // Преобразуем массив характеристик в JSON-строку, как ожидает сервер
+        features: JSON.stringify(featuresForAPI)
+      };
+
+      console.log('Сохранение товара (данные):', productData);
+      console.log('ID товара:', productData.id, typeof productData.id);
+      console.log('Характеристики (JSON):', productData.features);
+      console.log('URL запроса:', `api/product/${productData.id}`);
+      
+      const updatedProduct = await updateProduct(productData);
+      console.log('Ответ сервера:', updatedProduct);
+      
+      alert('Товар успешно обновлен');
+      
             if (onComplete) {
                 onComplete();
+      } else {
+        onHide();
             }
-            
         } catch (error) {
-            console.error('Ошибка при обновлении товара:', error);
-            alert('Произошла ошибка при обновлении товара: ' + error.message);
+      console.error('Ошибка при сохранении товара:', error);
+      console.error('Детали запроса:', error.request ? {
+        method: error.request.method,
+        url: error.request.responseURL,
+        status: error.request.status
+      } : 'Нет данных запроса');
+      console.error('Ответ сервера:', error.response ? error.response.data : 'Нет ответа');
+      
+      setSaveError('Не удалось сохранить изменения: ' + 
+                    (error.response ? `Ошибка ${error.response.status} - ${error.response.statusText}` : 
+                    error.message || 'Неизвестная ошибка'));
         } finally {
             setSaving(false);
         }
     };
-
-    // Очистка URL объектов при размонтировании компонента
-    useEffect(() => {
-        return () => {
-            previewImages.forEach(url => URL.revokeObjectURL(url));
-        };
-    }, [previewImages]);
 
     return (
         <Modal
@@ -355,309 +452,421 @@ const EditProductForm = ({ show, onHide, product, onComplete }) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {product ? `Редактирование товара: ${product.name} (ID: ${product.id})` : 'Редактирование товара'}
+          {initialProduct && initialProduct.id 
+            ? `Редактирование товара: ${product.name || `ID: ${initialProduct.id}`}` 
+            : 'Новый товар'}
                 </Modal.Title>
             </Modal.Header>
+      
             <Modal.Body>
+        {loadError && (
+          <Alert variant="danger">
+            {loadError}
+          </Alert>
+        )}
+        
+        {saveError && (
+          <Alert variant="danger">
+            {saveError}
+          </Alert>
+        )}
+        
                 {loading ? (
                     <div className="text-center my-5">
                         <Spinner animation="border" />
-                        <p className="mt-3">Загрузка данных товара...</p>
-                    </div>
-                ) : error ? (
-                    <div className="alert alert-danger">
-                        {error}
-                        <div className="mt-3 d-flex gap-2">
-                            <Button 
-                                variant="primary" 
-                                onClick={loadData}
-                            >
-                                Попробовать снова
-                            </Button>
-                            <Button 
-                                variant="outline-secondary" 
-                                onClick={tryAlternativeFormat}
-                            >
-                                Альтернативный формат ID
-                            </Button>
-                        </div>
+            <p className="mt-2">Загрузка данных...</p>
                     </div>
                 ) : (
                     <Form onSubmit={handleSubmit}>
+            <Container fluid>
                         <Row>
                             <Col md={6}>
+                  <h5>Основная информация</h5>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Название товара</Form.Label>
+                    <Form.Label>Название товара *</Form.Label>
                                     <Form.Control
                                         type="text"
                                         name="name"
-                                        value={formData.name}
+                      value={product.name}
                                         onChange={handleInputChange}
-                                        required
+                      isInvalid={saveAttempted && !product.name}
                                     />
+                    <Form.Control.Feedback type="invalid">
+                      Укажите название товара
+                    </Form.Control.Feedback>
                                 </Form.Group>
                                 
                                 <Row>
-                                    <Col md={6}>
+                    <Col md={4}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>Цена</Form.Label>
+                        <Form.Label>Цена (руб.) *</Form.Label>
                                             <Form.Control
                                                 type="number"
                                                 name="price"
-                                                value={formData.price}
+                          value={product.price}
                                                 onChange={handleInputChange}
-                                                min="0"
+                          isInvalid={saveAttempted && !product.price}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          Укажите цену
+                        </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={4}>
+                                        <Form.Group className="mb-3">
+                        <Form.Label>Старая цена (руб.)</Form.Label>
+                                            <Form.Control
+                                                type="number"
+                          name="old_price"
+                          value={product.old_price}
+                                                onChange={handleInputChange}
                                             />
                                         </Form.Group>
                                     </Col>
-                                    <Col md={6}>
+                                    <Col md={4}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>Минимальная цена</Form.Label>
+                        <Form.Label>Скидка (%)</Form.Label>
                                             <Form.Control
                                                 type="number"
-                                                name="min_price"
-                                                value={formData.min_price}
+                          name="discount"
+                          value={product.discount}
                                                 onChange={handleInputChange}
-                                                min="0"
                                             />
                                         </Form.Group>
                                     </Col>
                                 </Row>
                                 
-                                <Row>
-                                    <Col md={4}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label>Ширина (см)</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                name="width"
-                                                value={formData.width}
-                                                onChange={handleInputChange}
-                                                min="0"
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col md={4}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label>Высота (см)</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                name="height"
-                                                value={formData.height}
-                                                onChange={handleInputChange}
-                                                min="0"
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col md={4}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label>Длина (см)</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                name="depth"
-                                                value={formData.depth}
-                                                onChange={handleInputChange}
-                                                min="0"
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
-                                
+                  <Row>
+                    <Col md={6}>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Тип</Form.Label>
+                        <Form.Label>Тип мебели *</Form.Label>
                                     <Form.Select
                                         name="typeId"
-                                        value={formData.typeId}
-                                        onChange={handleTypeChange}
-                                        required
+                          value={product.typeId}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            loadSubtypesByType(e.target.value);
+                          }}
+                          isInvalid={saveAttempted && !product.typeId}
                                     >
                                         <option value="">Выберите тип</option>
                                         {types.map(type => (
-                                            <option key={type.id} value={type.id}>
-                                                {type.name}
-                                            </option>
+                            <option key={type.id} value={type.id}>{type.name}</option>
                                         ))}
                                     </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          Выберите тип мебели
+                        </Form.Control.Feedback>
                                 </Form.Group>
-                                
-                                {subtypes.length > 0 && (
+                    </Col>
+                    <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label>Подтип</Form.Label>
                                         <Form.Select
                                             name="subtypeId"
-                                            value={formData.subtypeId}
+                          value={product.subtypeId || ''}
                                             onChange={handleInputChange}
+                          disabled={!product.typeId || subtypes.length === 0}
                                         >
                                             <option value="">Выберите подтип</option>
                                             {subtypes.map(subtype => (
-                                                <option key={subtype.id} value={subtype.id}>
-                                                    {subtype.name}
-                                                </option>
+                            <option key={subtype.id} value={subtype.id}>{subtype.name}</option>
                                             ))}
                                         </Form.Select>
                                     </Form.Group>
-                                )}
+                    </Col>
+                  </Row>
                                 
+                  <Row>
+                    <Col md={6}>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Производитель</Form.Label>
+                        <Form.Label>Фабрика *</Form.Label>
                                     <Form.Select
                                         name="factoryId"
-                                        value={formData.factoryId}
-                                        onChange={handleFactoryChange}
-                                        required
-                                    >
-                                        <option value="">Выберите производителя</option>
+                          value={product.factoryId || ''}
+                          onChange={handleInputChange}
+                          isInvalid={saveAttempted && !product.factoryId}
+                        >
+                          <option value="">Выберите фабрику</option>
                                         {factories.map(factory => (
-                                            <option key={factory.id} value={factory.id}>
-                                                {factory.name}
-                                            </option>
+                            <option key={factory.id} value={factory.id}>{factory.name}</option>
                                         ))}
                                     </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          Выберите фабрику
+                        </Form.Control.Feedback>
                                 </Form.Group>
-                                
-                                {collections.length > 0 && (
+                    </Col>
+                    <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label>Коллекция</Form.Label>
                                         <Form.Select
                                             name="collectionId"
-                                            value={formData.collectionId}
+                          value={product.collectionId || ''}
                                             onChange={handleInputChange}
                                         >
                                             <option value="">Выберите коллекцию</option>
                                             {collections.map(collection => (
-                                                <option key={collection.id} value={collection.id}>
-                                                    {collection.name}
-                                                </option>
+                            <option key={collection.id} value={collection.id}>{collection.name}</option>
                                             ))}
                                         </Form.Select>
                                     </Form.Group>
-                                )}
-                                
+                    </Col>
+                  </Row>
+                  
+                  <Row>
+                    <Col>
+                      <Form.Group className="mb-3">
+                        <Form.Check
+                          type="checkbox"
+                          label="В наличии"
+                          name="in_stock"
+                          checked={product.in_stock}
+                          onChange={handleInputChange}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group className="mb-3">
+                        <Form.Check
+                          type="checkbox"
+                          label="Хит"
+                          name="hit"
+                          checked={product.hit}
+                          onChange={handleInputChange}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Описание</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="description"
-                                        value={formData.description}
+                        <Form.Check
+                          type="checkbox"
+                          label="Новинка"
+                          name="new"
+                          checked={product.new}
                                         onChange={handleInputChange}
-                                        rows={3}
                                     />
                                 </Form.Group>
+                    </Col>
+                  </Row>
                             </Col>
                             
                             <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Текущие изображения</Form.Label>
-                                    <div className="current-images">
-                                        {images.length > 0 ? (
-                                            <div className="image-gallery">
-                                                {images.map(img => (
-                                                    <div key={img.id} className="image-item">
-                                                        <Image 
-                                                            src={img.url} 
-                                                            thumbnail 
-                                                            style={{ maxHeight: '100px' }}
-                                                        />
+                  <h5>Характеристики</h5>
+                  
+                  {/* Текущие характеристики товара */}
+                  <div className="mb-4">
+                    <h6>Текущие характеристики товара:</h6>
+                    {productFeatures.length === 0 ? (
+                      <p className="text-muted">Характеристики не добавлены</p>
+                    ) : (
+                      <ListGroup>
+                        {productFeatures.map((feature, index) => (
+                          <ListGroup.Item 
+                            key={index}
+                            className="d-flex justify-content-between align-items-center"
+                          >
+                            <div>
+                              <strong>{feature.featureName}:</strong> {feature.value}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-muted">Нет изображений</p>
+                            <Button 
+                              variant="outline-danger" 
+                              size="sm"
+                              onClick={() => removeFeature(index)}
+                            >
+                              Удалить
+                            </Button>
+                          </ListGroup.Item>
+                        ))}
+                      </ListGroup>
                                         )}
                                     </div>
+                  
+                  {/* Форма добавления характеристики */}
+                  <div className="mb-4">
+                    <h6>Добавить характеристику:</h6>
+                    <Row className="mb-2">
+                      <Col>
+                        <Form.Group>
+                          <Form.Label>Характеристика</Form.Label>
+                          <Form.Select
+                            value={featureId}
+                            onChange={(e) => setFeatureId(e.target.value)}
+                          >
+                            <option value="">Выберите характеристику</option>
+                            {features.map(feature => (
+                              <option key={feature.id} value={feature.id}>
+                                {feature.name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    
+                    <Row className="mb-3">
+                      <Col>
+                        {!creatingFeature && (
+                          <Button 
+                            variant="outline-secondary" 
+                            size="sm"
+                            className="mb-2"
+                            onClick={() => setCreatingFeature(true)}
+                          >
+                            + Создать новую характеристику
+                          </Button>
+                        )}
+                        
+                        {creatingFeature && (
+                          <div className="p-2 border rounded mb-3">
+                            <h6>Новая характеристика</h6>
+                            <Form.Group className="mb-2">
+                              <Form.Control
+                                type="text"
+                                placeholder="Название характеристики"
+                                value={newFeatureName}
+                                onChange={(e) => setNewFeatureName(e.target.value)}
+                              />
+                            </Form.Group>
+                            <div className="d-flex gap-2">
+                              <Button 
+                                variant="primary" 
+                                size="sm"
+                                onClick={createNewFeature}
+                                className="bg-main_color"
+                              >
+                                Создать
+                              </Button>
+                              <Button 
+                                variant="outline-secondary" 
+                                size="sm"
+                                onClick={() => setCreatingFeature(false)}
+                              >
+                                Отмена
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </Col>
+                    </Row>
+                    
+                    <Row className="mb-3">
+                      <Col>
+                        <Form.Group>
+                          <Form.Label>Значение</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={featureValue}
+                            onChange={(e) => setFeatureValue(e.target.value)}
+                            placeholder="Введите значение характеристики"
+                          />
                                 </Form.Group>
-                                
+                      </Col>
+                    </Row>
+                    
+                    <Button 
+                      variant="primary" 
+                      onClick={addFeature}
+                      disabled={!featureId || !featureValue.trim()}
+                      className="bg-main_color"
+                    >
+                      Добавить характеристику
+                    </Button>
+                  </div>
+                  
+                  <h5 className="mt-4">Изображения</h5>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Заменить изображения (необязательно)</Form.Label>
+                    <Form.Label>Загрузить изображения</Form.Label>
                                     <Form.Control 
                                         type="file" 
                                         multiple 
-                                        accept="image/*"
-                                        onChange={handleImageChange}
+                      onChange={handleImageUpload}
+                      disabled={imagesUploading}
                                     />
                                     <Form.Text className="text-muted">
-                                        Внимание! При загрузке новых изображений, все существующие изображения будут удалены.
+                      Вы можете загрузить несколько изображений
                                     </Form.Text>
                                 </Form.Group>
                                 
-                                {previewImages.length > 0 && (
-                                    <div className="preview-images mb-3">
-                                        <p>Предпросмотр новых изображений:</p>
-                                        <div className="image-gallery">
-                                            {previewImages.map((url, idx) => (
-                                                <div key={idx} className="image-item">
-                                                    <Image 
-                                                        src={url} 
-                                                        thumbnail 
-                                                        style={{ maxHeight: '100px' }}
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
+                  {imagesUploading && (
+                    <div className="text-center my-3">
+                      <Spinner animation="border" size="sm" />
+                      <span className="ms-2">Загрузка изображений...</span>
                                     </div>
                                 )}
                                 
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Характеристики</Form.Label>
-                                    {features.length > 0 ? (
-                                        features.map(feature => {
-                                            const productFeature = formData.productFeatures.find(
-                                                f => f.featureId === feature.id
-                                            );
-                                            
-                                            return (
-                                                <div key={feature.id} className="mb-2">
-                                                    <Row className="align-items-center">
-                                                        <Col xs={5}>
-                                                            <Form.Label className="mb-0">
-                                                                {feature.name}:
-                                                            </Form.Label>
-                                                        </Col>
-                                                        <Col xs={7}>
-                                                            <Form.Control
-                                                                type="text"
-                                                                value={productFeature?.value || ''}
-                                                                onChange={(e) => handleFeatureChange(feature.id, e.target.value)}
-                                                                placeholder={`Значение для ${feature.name}`}
-                                                            />
-                                                        </Col>
-                                                    </Row>
-                                                </div>
-                                            );
-                                        })
+                  <div className="product-images-container">
+                    {product.img && product.img.length > 0 ? (
+                      <Row>
+                        {product.img.map((image, index) => (
+                          <Col xs={6} md={4} key={index} className="mb-3">
+                            <div className="position-relative">
+                              <img
+                                src={typeof image === 'string' 
+                                  ? (image.includes('http') ? image : process.env.REACT_APP_API_URL + image)
+                                  : (image.img ? process.env.REACT_APP_API_URL + image.img : '')}
+                                alt={`Изображение ${index + 1}`}
+                                className="img-thumbnail"
+                                style={{ height: '150px', objectFit: 'cover' }}
+                              />
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                className="position-absolute top-0 end-0"
+                                onClick={() => handleImageDelete(
+                                  typeof image === 'string' 
+                                    ? image.split('/').pop() 
+                                    : (image.img ? image.img.split('/').pop() : '')
+                                )}
+                              >
+                                &times;
+                              </Button>
+                            </div>
+                          </Col>
+                        ))}
+                      </Row>
                                     ) : (
-                                        <p className="text-muted">
-                                            Нет доступных характеристик для выбранного типа и производителя
-                                        </p>
+                      <p className="text-muted">Нет загруженных изображений</p>
                                     )}
-                                </Form.Group>
+                  </div>
                             </Col>
                         </Row>
                         
-                        <div className="d-flex justify-content-end mt-4">
-                            <Button variant="secondary" onClick={onHide} className="me-2">
-                                Отмена
-                            </Button>
-                            <Button 
-                                variant="primary" 
-                                type="submit"
-                                disabled={saving}
-                            >
-                                {saving ? (
-                                    <>
-                                        <Spinner 
-                                            as="span" 
-                                            animation="border" 
-                                            size="sm" 
-                                            role="status" 
-                                            aria-hidden="true" 
-                                            className="me-2"
-                                        />
-                                        Сохранение...
-                                    </>
-                                ) : 'Сохранить'}
-                            </Button>
-                        </div>
+              <Row className="mt-4">
+                <Col className="d-flex justify-content-end">
+                  <Button 
+                    variant="secondary" 
+                    onClick={onHide} 
+                    className="me-2"
+                    disabled={saving}
+                  >
+                    Отмена
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    type="submit"
+                    disabled={saving}
+                    className="bg-main_color"
+                  >
+                    {saving ? (
+                      <>
+                        <Spinner 
+                          as="span" 
+                          animation="border" 
+                          size="sm" 
+                          role="status" 
+                          aria-hidden="true" 
+                          className="me-1"
+                        />
+                        Сохранение...
+                      </>
+                    ) : (
+                      'Сохранить'
+                    )}
+                  </Button>
+                </Col>
+              </Row>
+            </Container>
                     </Form>
                 )}
             </Modal.Body>

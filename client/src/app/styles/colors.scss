@@ -3,6 +3,8 @@ $main_color_hover: #5262A6;
 $main_color_active: #424F86;
 $main_font_color: #3D4158;
 $main_link_color: #4777E2;
+$main_link_color_light: rgba(71, 119, 226, 0.4);
+$main_text_color: #333333;
 
 $color_white: #FFFFFF;
 $focus_input_color: #C5C5C5;
@@ -14,6 +16,8 @@ $colors: (
   main_color_active: $main_color_active,
   main_font_color: $main_font_color,
   main_link_color: $main_link_color,
+  main_link_color_light: $main_link_color_light,
+  main_text_color: $main_text_color,
   color_white: $color_white,
   focus_input_color: $focus_input_color,
   add_color: $add_color

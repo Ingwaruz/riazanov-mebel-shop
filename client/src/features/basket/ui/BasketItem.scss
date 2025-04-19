@@ -52,10 +52,13 @@
   
   &-quantity {
     max-width: 120px;
+    display: flex;
+    align-items: stretch;
     
     .quantity-input {
       max-width: 50px;
       text-align: center;
+      height: auto;
       
       &::-webkit-inner-spin-button,
       &::-webkit-outer-spin-button {
@@ -70,8 +73,10 @@
     }
     
     .quantity-btn {
-      min-width: 38px;
-      padding: 0.25rem 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
       
       @media (max-width: 576px) {
         min-width: 30px;
@@ -101,8 +106,8 @@
 }
 
 .quantity-btn {
-  width: 26px;
-  height: 26px;
+  width: 38px;
+  height: auto;
   padding: 0;
   display: flex;
   align-items: center;

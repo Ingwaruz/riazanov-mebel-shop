@@ -31,7 +31,7 @@ const ProductDetails = ({ product, onAddToCart }) => {
                     className="add-to-cart-btn"
                     variant="outline-primary"
                 >
-                    В корзину
+                    Добавить в корзину
                 </Button>
             </div>
             
