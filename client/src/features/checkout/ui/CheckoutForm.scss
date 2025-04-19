@@ -36,4 +36,10 @@
       box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25) !important;
     }
   }
+  
+  .order-total {
+    color: $main_font_color;
+    border-top: 1px solid rgba($main_font_color, 0.1);
+    padding-top: 1rem;
+  }
 } 

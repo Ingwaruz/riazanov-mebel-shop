@@ -3,7 +3,7 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FormField } from '../../../shared/ui/forms';
 import './CheckoutForm.scss';
 
-const CheckoutForm = ({ onSubmit, loading = false }) => {
+const CheckoutForm = ({ onSubmit, loading = false, totalPrice }) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -12,7 +12,6 @@ const CheckoutForm = ({ onSubmit, loading = false }) => {
         address: '',
         city: '',
         postalCode: '',
-        paymentMethod: 'card',
         personalDataConsent: false
     });
     
@@ -168,31 +167,12 @@ const CheckoutForm = ({ onSubmit, loading = false }) => {
                 </Col>
             </Row>
             
-            <h4 className="mb-3 mt-4">Способ оплаты</h4>
-            
-            <div className="mb-4">
-                <Form.Check
-                    type="radio"
-                    id="card-payment"
-                    label="Оплата картой"
-                    name="paymentMethod"
-                    value="card"
-                    checked={formData.paymentMethod === 'card'}
-                    onChange={handleChange}
-                    className="mb-2"
-                    disabled={loading}
-                />
-                <Form.Check
-                    type="radio"
-                    id="cash-payment"
-                    label="Оплата при получении"
-                    name="paymentMethod"
-                    value="cash"
-                    checked={formData.paymentMethod === 'cash'}
-                    onChange={handleChange}
-                    disabled={loading}
-                />
-            </div>
+            {totalPrice && (
+                <div className="order-total mt-4 mb-4">
+                    <h4 className="mb-3">Сумма заказа</h4>
+                    <div className="fw-bold fs-5">{totalPrice.toLocaleString('ru-RU')} ₽</div>
+                </div>
+            )}
             
             <div className="mb-4">
                 <Form.Check

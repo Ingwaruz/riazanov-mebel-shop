@@ -41,15 +41,11 @@ const BasketSummary = ({ totalPrice, onCheckout }) => {
                     <Modal.Title>Оформление заказа</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="mb-3">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div className="mb-1">Сумма заказа:</div>
-                                <div className="fw-bold fs-5">{totalPrice.toLocaleString('ru-RU')} ₽</div>
-                            </div>
-                        </div>
-                    </div>
-                    <CheckoutForm onSubmit={handleFormSubmit} loading={loading} />
+                    <CheckoutForm 
+                        onSubmit={handleFormSubmit} 
+                        loading={loading} 
+                        totalPrice={totalPrice}
+                    />
                 </Modal.Body>
             </Modal>
         </>
