@@ -173,7 +173,7 @@ export default function Footer() {
                 </div>
                 <div className="disclaimer-container text-center py-3 border-top">
                     <p className="mb-1 s-text color_white">Опубликованные на сайте цены не являются публичной офертой.</p>
-                    <p className="mb-0 s-text color_white">Данный сайт не является официальным сайтом представленных производителей мебели.</p>
+                    <p className="mb-0 s-text color_white">ДОМУ МЕБЕЛЬ не является официальным сайтом представленных производителей мебели.</p>
                 </div>
             </MDBFooter>
 
