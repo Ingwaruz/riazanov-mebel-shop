@@ -319,13 +319,16 @@ const ProductPage = () => {
                 <Col xs={12} lg={3} className="product-info mb-4">
                     <Card className="product-card">
                         <Card.Body>
-                            <h2 className="product-price mb-2">{`${product.price.toLocaleString('ru-RU')} ₽`}</h2>
-                            
                             {product.min_price > 0 && (
+                                <h2 className="product-price mb-2">{`От ${product.min_price.toLocaleString('ru-RU')} ₽`}</h2>
+                            )}
+                            {/* <h2 className="product-price mb-2">{`${product.price.toLocaleString('ru-RU')} ₽`}</h2> */}
+                            
+                            {/* {product.min_price > 0 && (
                                 <p className="starting-price mb-3">
                                     {`От ${product.min_price.toLocaleString('ru-RU')} ₽`}
                                 </p>
-                            )}
+                            )} */}
                             
                             <p className="price-note mb-3">
                                 Цена товара зависит от выбранной ткани и может отличаться от указанной
