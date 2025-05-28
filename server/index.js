@@ -1,5 +1,5 @@
 const path = require('path')
-require('dotenv').config()
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
 // Срочное исправление - устанавливаем переменные напрямую
 if (!process.env.DB_USER) {
@@ -9,6 +9,7 @@ if (!process.env.DB_USER) {
     process.env.DB_HOST = 'localhost'
     process.env.DB_PORT = '5432'
     process.env.PORT = '5000'
+    process.env.SECRET_KEY = 'h2K8fjkds!dfs+d-fsdxcchslcv938C_frmrfsudo'
     console.log('=== USING HARDCODED ENV VARIABLES ===')
 }
 

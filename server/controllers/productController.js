@@ -372,15 +372,39 @@ class productController {
 
     async getFiltered(req, res, next) {
         try {
-            let {typeIds, factoryIds, size, price, limit, page, selectedSubtype} = req.query;
+            let {typeIds, factoryIds, size, price, limit, page, selectedSubtypes} = req.query;
             page = page || 1;
             limit = limit || 20;
             let offset = (page - 1) * limit;
             
             const whereClause = {};
             
-            // Обработка фильтрации по типам
-            if (typeIds) {
+            // Обработка фильтрации по подтипам (множественный выбор)
+            let hasSubtypeFilter = false;
+            if (selectedSubtypes) {
+                try {
+                    let subtypeIdsArray;
+                    if (typeof selectedSubtypes === 'string') {
+                        // Если это строка с разделителями
+                        subtypeIdsArray = selectedSubtypes.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+                    } else if (Array.isArray(selectedSubtypes)) {
+                        // Если это уже массив
+                        subtypeIdsArray = selectedSubtypes.map(id => parseInt(id)).filter(id => !isNaN(id));
+                    }
+                    
+                    if (subtypeIdsArray && subtypeIdsArray.length > 0) {
+                        whereClause.subtypeId = {
+                            [Op.in]: subtypeIdsArray
+                        };
+                        hasSubtypeFilter = true;
+                    }
+                } catch (error) {
+                    console.error('Error parsing selectedSubtypes:', error);
+                }
+            }
+            
+            // Обработка фильтрации по типам (только если НЕТ фильтра по подтипам)
+            if (typeIds && !hasSubtypeFilter) {
                 try {
                     const typeIdsArray = JSON.parse(typeIds);
                     if (Array.isArray(typeIdsArray) && typeIdsArray.length > 0) {
@@ -407,10 +431,6 @@ class productController {
                 }
             }
 
-            if (selectedSubtype) {
-                whereClause.subtypeId = selectedSubtype;
-            }
-            
             if (size) {
                 const {width, depth, height} = JSON.parse(size);
                 

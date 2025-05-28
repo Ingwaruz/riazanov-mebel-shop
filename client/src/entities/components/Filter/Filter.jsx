@@ -7,7 +7,7 @@ import { fetchTypes, fetchFactories, fetchFilteredProducts, fetchSizeRanges, fet
 import './filter.scss';
 import ButtonM3 from '../../../shared/ui/buttons/button-m3';
 
-const Filter = ({ onFilterChange }) => {
+const Filter = ({ onFilterChange, onSelectedTypesChange }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [types, setTypes] = useState([]);
@@ -94,25 +94,41 @@ const Filter = ({ onFilterChange }) => {
                     const typeId = params.get('selectedType');
                     const shouldApplyFilter = params.get('applyFilter') === 'true';
 
+                    // ВАЖНО: Фильтры восстанавливаются ТОЛЬКО при наличии флага applyFilter
+                    // При обычной перезагрузке страницы фильтры НЕ применяются
                     if (shouldApplyFilter && typeId) {
                         const selectedType = typesData.find(t => t.id === parseInt(typeId));
                         if (selectedType) {
                             setSelectedTypes(new Set([selectedType.id]));
                             setIsFiltered(true);
                             
+                            // Передаем выбранный тип в родительский компонент
+                            if (onSelectedTypesChange) {
+                                onSelectedTypesChange([selectedType]);
+                            }
+                            
                             const filters = {
                                 typeIds: JSON.stringify([parseInt(typeId)])
                             };
                             
-                            const subtypeId = params.get('selectedSubtype');
-                            if (subtypeId) {
-                                filters.selectedSubtype = subtypeId;
+                            const subtypeIds = params.get('selectedSubtypes');
+                            if (subtypeIds) {
+                                filters.selectedSubtypes = subtypeIds.split(',');
                             }
 
                             const filteredProducts = await fetchFilteredProducts(filters);
                             if (onFilterChange) {
                                 onFilterChange(filteredProducts, filters);
                             }
+                        }
+                    }
+                    // Если фильтры не применяются, убеждаемся что состояние чистое
+                    else {
+                        setSelectedTypes(new Set());
+                        setSelectedFactories(new Set());
+                        setIsFiltered(false);
+                        if (onSelectedTypesChange) {
+                            onSelectedTypesChange([]);
                         }
                     }
                     setIsInitialLoad(false);
@@ -138,59 +154,47 @@ const Filter = ({ onFilterChange }) => {
     };
 
     // Обработчики для множественного выбора
-    const handleTypeChange = (type) => {
-        setSelectedTypes(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(type.id)) {
-                newSet.delete(type.id);
-            } else {
-                newSet.add(type.id);
-            }
-            return newSet;
-        });
-    };
-
-    const handleFactoryChange = (factory) => {
-        setSelectedFactories(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(factory.id)) {
-                newSet.delete(factory.id);
-            } else {
-                newSet.add(factory.id);
-            }
-            return newSet;
-        });
-    };
-
-    const resetFilters = async () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setSelectedTypes(new Set());
-        setSelectedFactories(new Set());
-        setSizeRange(maxSizeRanges);
-        setPriceRange(maxPriceRange);
-        setIsFiltered(false);
-        setActiveKeys(['0']);
-        
-        const filters = {
-            page: 1,
-            limit: 20
-        };
-        
-        try {
-            const filteredProducts = await fetchFilteredProducts(filters);
-            if (onFilterChange) {
-                onFilterChange(filteredProducts, filters);
-            }
-        } catch (error) {
-            console.error('Ошибка при сбросе фильтров:', error);
+    const handleTypeChange = async (type) => {
+        const newSelectedTypes = new Set(selectedTypes);
+        if (newSelectedTypes.has(type.id)) {
+            newSelectedTypes.delete(type.id);
+        } else {
+            newSelectedTypes.add(type.id);
         }
+        
+        setSelectedTypes(newSelectedTypes);
+        
+        // Передаем выбранные типы в родительский компонент
+        const selectedTypesArray = Array.from(newSelectedTypes).map(id => types.find(t => t.id === id)).filter(Boolean);
+        if (onSelectedTypesChange) {
+            onSelectedTypesChange(selectedTypesArray);
+        }
+        
+        // Автоматически применяем фильтры
+        await applyFiltersWithCurrentState(newSelectedTypes, selectedFactories);
     };
 
-    const applyFilters = async () => {
+    const handleFactoryChange = async (factory) => {
+        const newSelectedFactories = new Set(selectedFactories);
+        if (newSelectedFactories.has(factory.id)) {
+            newSelectedFactories.delete(factory.id);
+        } else {
+            newSelectedFactories.add(factory.id);
+        }
+        
+        setSelectedFactories(newSelectedFactories);
+        
+        // Автоматически применяем фильтры
+        await applyFiltersWithCurrentState(selectedTypes, newSelectedFactories);
+    };
+
+    // Функция для применения фильтров с текущим состоянием
+    const applyFiltersWithCurrentState = async (currentSelectedTypes, currentSelectedFactories) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        
         // Проверяем, есть ли выбранные фильтры
-        const hasSelectedTypes = selectedTypes.size > 0;
-        const hasSelectedFactories = selectedFactories.size > 0;
+        const hasSelectedTypes = currentSelectedTypes.size > 0;
+        const hasSelectedFactories = currentSelectedFactories.size > 0;
         const hasSizeFilter = !Object.values(sizeRange).every((range, index) => 
             range[0] === maxSizeRanges[Object.keys(sizeRange)[index]][0] && 
             range[1] === maxSizeRanges[Object.keys(sizeRange)[index]][1]
@@ -203,8 +207,8 @@ const Filter = ({ onFilterChange }) => {
         }
 
         const filters = {
-            typeIds: JSON.stringify(Array.from(selectedTypes)),
-            factoryIds: JSON.stringify(Array.from(selectedFactories)),
+            typeIds: JSON.stringify(Array.from(currentSelectedTypes)),
+            factoryIds: JSON.stringify(Array.from(currentSelectedFactories)),
             size: JSON.stringify({
                 width: sizeRange.width,
                 depth: sizeRange.depth,
@@ -226,12 +230,53 @@ const Filter = ({ onFilterChange }) => {
         }
     };
 
+    const resetFilters = async () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setSelectedTypes(new Set());
+        setSelectedFactories(new Set());
+        setSizeRange(maxSizeRanges);
+        setPriceRange(maxPriceRange);
+        setIsFiltered(false);
+        setActiveKeys(['0']);
+        
+        // Очищаем выбранные типы в родительском компоненте
+        if (onSelectedTypesChange) {
+            onSelectedTypesChange([]);
+        }
+        
+        const filters = {
+            page: 1,
+            limit: 20
+        };
+        
+        try {
+            const filteredProducts = await fetchFilteredProducts(filters);
+            if (onFilterChange) {
+                onFilterChange(filteredProducts, filters);
+            }
+        } catch (error) {
+            console.error('Ошибка при сбросе фильтров:', error);
+        }
+    };
+
     const handleRangeChange = (type, values) => {
         setSizeRange((prev) => ({ ...prev, [type]: values }));
+        
+        // Автоматически применяем фильтры с задержкой
+        clearTimeout(window.sizeFilterTimeout);
+        window.sizeFilterTimeout = setTimeout(() => {
+            applyFiltersWithCurrentState(selectedTypes, selectedFactories);
+        }, 800);
     };
 
     const handlePriceRangeChange = (values) => {
         setPriceRange(values);
+        
+        // Автоматически применяем фильтры с задержкой
+        clearTimeout(window.priceFilterTimeout);
+        window.priceFilterTimeout = setTimeout(() => {
+            applyFiltersWithCurrentState(selectedTypes, selectedFactories);
+        }, 800);
     };
 
     return (
@@ -392,9 +437,11 @@ const Filter = ({ onFilterChange }) => {
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
+            {/* Закомментирована кнопка "Применить фильтры" - теперь фильтры применяются автоматически
             <div className="mt-3 d-flex justify-content-center">
                 <ButtonM3 width="100%" onClick={applyFilters} text="Применить фильтры" />
             </div>
+            */}
         </div>
     );
 };

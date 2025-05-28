@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Context } from "../../../index";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FilterForm, filterApi } from "../../../features/product-filters";
+import { SubtypeFilter } from "../../../features/subtype-filter";
 import { ProductList } from "../../../widgets";
 import { Pagination } from "../../../shared/ui/Pagination";
 import { productApi } from "../../../entities/product";
@@ -16,6 +17,7 @@ const ShopPage = observer(() => {
     const location = useLocation();
     const navigate = useNavigate();
     const [currentFilters, setCurrentFilters] = useState({});
+    const [selectedTypes, setSelectedTypes] = useState([]);
 
     // Функция для применения фильтров
     const applyFilters = async (filters, page = 1) => {
@@ -38,7 +40,9 @@ const ShopPage = observer(() => {
                     params.set('selectedType', typeIdsArray[0]);
                 }
             }
-            if (filters.selectedSubtype) params.set('selectedSubtype', filters.selectedSubtype);
+            if (filters.selectedSubtypes && filters.selectedSubtypes.length > 0) {
+                params.set('selectedSubtypes', filters.selectedSubtypes.join(','));
+            }
             if (Object.keys(filters).length > 0) params.set('applyFilter', 'true');
             navigate(`${location.pathname}?${params.toString()}`);
         } catch (error) {
@@ -67,19 +71,27 @@ const ShopPage = observer(() => {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const selectedTypeId = params.get('selectedType');
-        const selectedSubtypeId = params.get('selectedSubtype');
+        const selectedSubtypesParam = params.get('selectedSubtypes');
         const shouldApplyFilter = params.get('applyFilter') === 'true';
 
-        if (shouldApplyFilter && (selectedTypeId || selectedSubtypeId)) {
+        // ВАЖНО: При перезагрузке страницы фильтры НЕ восстанавливаются
+        // Фильтры применяются только при активном использовании фильтров в сессии
+        // Если в URL нет явного флага applyFilter, загружаем все товары без фильтров
+        if (shouldApplyFilter && (selectedTypeId || selectedSubtypesParam)) {
             const filters = {};
             if (selectedTypeId) {
                 filters.typeIds = JSON.stringify([parseInt(selectedTypeId)]);
             }
-            if (selectedSubtypeId) {
-                filters.selectedSubtype = selectedSubtypeId;
+            if (selectedSubtypesParam) {
+                filters.selectedSubtypes = selectedSubtypesParam.split(',');
             }
             applyFilters(filters, 1);
         } else {
+            // При любой перезагрузке или прямом переходе сбрасываем фильтры
+            // Очищаем URL от параметров фильтров
+            if (params.toString()) {
+                navigate(location.pathname, { replace: true });
+            }
             loadInitialData();
         }
     }, [location.search, loadInitialData]);
@@ -89,6 +101,24 @@ const ShopPage = observer(() => {
         product.setTotalCount(filteredProducts.count);
         setCurrentFilters(filters);
         setCurrentPage(1);
+    };
+
+    const handleSelectedTypesChange = (types) => {
+        setSelectedTypes(types);
+    };
+
+    const handleSubtypeSelect = async (subtypeIds) => {
+        const newFilters = { ...currentFilters };
+        
+        if (!subtypeIds || subtypeIds.length === 0) {
+            // Удаляем фильтр по подтипам
+            delete newFilters.selectedSubtypes;
+        } else {
+            // Устанавливаем фильтр по подтипам
+            newFilters.selectedSubtypes = subtypeIds;
+        }
+        
+        await applyFilters(newFilters, 1);
     };
 
     const handlePageChange = async (page) => {
@@ -117,9 +147,17 @@ const ShopPage = observer(() => {
         <div className="container-fluid shop-page">
             <Row className="mt-2">
                 <Col lg={2} md={4} sm={4} xs={12} className="filter-column">
-                    <FilterForm onFilterChange={handleFilterChange} />
+                    <FilterForm 
+                        onFilterChange={handleFilterChange} 
+                        onSelectedTypesChange={handleSelectedTypesChange}
+                    />
                 </Col>
                 <Col lg={10} md={8} sm={8} xs={12} className="product-column">
+                    <SubtypeFilter 
+                        selectedTypes={selectedTypes}
+                        currentFilters={currentFilters}
+                        onSubtypeSelect={handleSubtypeSelect}
+                    />
                     <ProductList />
                     {totalPages > 1 && (
                         <Pagination
