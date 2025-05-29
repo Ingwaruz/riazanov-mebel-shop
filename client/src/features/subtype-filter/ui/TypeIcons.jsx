@@ -6,6 +6,7 @@ import { ReactComponent as BedSvg } from '../../../shared/assets/icons-for-types
 import { ReactComponent as LampSvg } from '../../../shared/assets/icons-for-types/lamp.svg';
 import { ReactComponent as SofaSvg } from '../../../shared/assets/icons-for-types/sofa.svg';
 import { ReactComponent as StoolSvg } from '../../../shared/assets/icons-for-types/stool.svg';
+import { ReactComponent as TableSvg } from '../../../shared/assets/icons-for-types/table.svg';
 
 // Компоненты-обертки для иконок с нужными пропсами
 const ArmchairIcon = ({ size = 20, color = '#333333' }) => (
@@ -63,6 +64,17 @@ const StoolIcon = ({ size = 20, color = '#333333' }) => (
   />
 );
 
+const TableIcon = ({ size = 20, color = '#333333' }) => (
+  <TableSvg 
+    style={{ 
+      width: size, 
+      height: size, 
+      fill: color,
+      stroke: 'none'
+    }} 
+  />
+);
+
 // Функция для получения иконки по типу
 export const getTypeIcon = (typeName, size = 20, color = '#333333') => {
   const lowerTypeName = typeName.toLowerCase();
@@ -90,7 +102,7 @@ export const getTypeIcon = (typeName, size = 20, color = '#333333') => {
     case 'столы':
     case 'стол':
     case 'table':
-      return <StoolIcon size={size} color={color} />;
+      return <TableIcon size={size} color={color} />;
     
     case 'кровати':
     case 'кровать':

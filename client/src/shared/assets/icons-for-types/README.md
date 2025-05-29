@@ -11,7 +11,8 @@ icons-for-types/
 ├── bed.svg           # Кровати  
 ├── lamp.svg          # Аксессуары (лампы)
 ├── sofa.svg          # Диваны
-├── stool.svg         # Столы
+├── stool.svg         # Стулья и табуреты
+├── table.svg         # Столы
 └── README.md         # Этот файл
 ```
 
@@ -21,7 +22,8 @@ icons-for-types/
 - **bed.svg** - для кроватей
 - **lamp.svg** - для аксессуаров
 - **sofa.svg** - для диванов
-- **stool.svg** - для столов
+- **stool.svg** - для стульев и табуретов
+- **table.svg** - для столов
 
 ## Использование
 
@@ -34,7 +36,8 @@ import {
     BedIcon, 
     LampIcon, 
     SofaIcon, 
-    StoolIcon 
+    StoolIcon,
+    TableIcon
 } from '../shared/assets/icons-for-types';
 
 // Использование в компоненте фильтра по типам
@@ -58,7 +61,11 @@ function ProductTypeFilter() {
                 Диваны
             </button>
             <button>
-                <img src={StoolIcon} alt="Столы" />
+                <img src={StoolIcon} alt="Стулья" />
+                Стулья
+            </button>
+            <button>
+                <img src={TableIcon} alt="Столы" />
                 Столы
             </button>
         </div>
@@ -74,6 +81,7 @@ import { ReactComponent as Bed } from '../shared/assets/icons-for-types/bed.svg'
 import { ReactComponent as Lamp } from '../shared/assets/icons-for-types/lamp.svg';
 import { ReactComponent as Sofa } from '../shared/assets/icons-for-types/sofa.svg';
 import { ReactComponent as Stool } from '../shared/assets/icons-for-types/stool.svg';
+import { ReactComponent as Table } from '../shared/assets/icons-for-types/table.svg';
 
 function ProductTypeFilter() {
     return (
@@ -96,6 +104,10 @@ function ProductTypeFilter() {
             </button>
             <button className="type-button">
                 <Stool className="type-icon" />
+                <span>Стулья</span>
+            </button>
+            <button className="type-button">
+                <Table className="type-icon" />
                 <span>Столы</span>
             </button>
         </div>

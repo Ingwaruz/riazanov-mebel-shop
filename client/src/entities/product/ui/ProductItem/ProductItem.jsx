@@ -5,11 +5,12 @@ import { PRODUCT_ROUTE } from '../../../../shared/config/route-constants';
 import "./ProductItem.scss";
 import { observer } from 'mobx-react-lite';
 
-const ProductItem = observer(({ product }) => {
+const ProductItem = observer(({ product, animationDelay = 0 }) => {
     const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [startIndex, setStartIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     const defaultImage = '/placeholder.svg'; // Обновленный путь к SVG-заглушке
 
@@ -17,7 +18,14 @@ const ProductItem = observer(({ product }) => {
         setCurrentImageIndex(0);
         setStartIndex(0);
         setImageError(false);
-    }, [product.id]);
+        
+        // Запускаем анимацию появления с задержкой
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, animationDelay);
+
+        return () => clearTimeout(timer);
+    }, [product.id, animationDelay]);
 
     const images = Array.isArray(product.images) ? product.images : [];
     const hasValidImages = images.length > 0 && images.some(img => img?.img);
@@ -46,7 +54,7 @@ const ProductItem = observer(({ product }) => {
                     width: '100%',
                     margin: '0 8px'
                 }}
-                className="d-flex position-relative product-card img-centered border-radius-0 bg-color_white border-0 h-100 flex-column cursor-pointer flex-grow-1"
+                className={`d-flex position-relative product-card img-centered border-radius-0 bg-color_white border-0 h-100 flex-column cursor-pointer flex-grow-1 ${isVisible ? 'product-item-visible' : 'product-item-hidden'}`}
                 onClick={() => navigate(PRODUCT_ROUTE + '/' + product.id)}
             >
                 <div

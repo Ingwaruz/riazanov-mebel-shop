@@ -38,11 +38,12 @@ import { SubtypeFilter } from '../../../features/subtype-filter';
 - `onSubtypeSelect` - функция-обработчик выбора подтипа
 
 ## Иконки типов товаров
-- 🛋️ Диваны, Прямые диваны - `SofaIcon`
-- 🏗️ Модульные Диваны - `ModularSofaIcon`
-- 📐 Угловые Диваны - `CornerSofaIcon`
-- 🪑 Кресла-Кровати, Стулья - `ChairIcon`
-- ✨ Аксессуары - `AccessoryIcon`
+- 🛋️ Диваны - `SofaIcon`
+- 🪑 Кресла - `ArmchairIcon`
+- 🛏️ Кровати - `BedIcon`
+- 🪑 Стулья и табуреты - `StoolIcon`
+- 🪑 Столы - `TableIcon`
+- 💡 Аксессуары и лампы - `LampIcon`
 
 ## Адаптивность
 - **Десктоп**: Полноразмерные плашки с анимациями
