@@ -803,8 +803,8 @@ const EditProductForm = ({ show, onHide, product: initialProduct, onComplete }) 
                             <div className="position-relative">
                               <img
                                 src={typeof image === 'string' 
-                                  ? (image.includes('http') ? image : process.env.REACT_APP_API_URL + image)
-                                  : (image.img ? process.env.REACT_APP_API_URL + image.img : '')}
+                                  ? (image.includes('http') ? image : process.env.REACT_APP_API_URL + '/' + image)
+                                  : (image.img ? process.env.REACT_APP_API_URL + '/' + image.img : '')}
                                 alt={`Изображение ${index + 1}`}
                                 className="img-thumbnail"
                                 style={{ height: '150px', objectFit: 'cover' }}

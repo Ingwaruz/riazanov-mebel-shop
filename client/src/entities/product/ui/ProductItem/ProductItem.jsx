@@ -66,7 +66,7 @@ const ProductItem = observer(({ product, animationDelay = 0 }) => {
                     <Image
                         className="px-3 object-fit-contain w-100 h-100"
                         src={hasValidImages && !imageError 
-                            ? process.env.REACT_APP_API_URL + images[currentImageIndex]?.img 
+                            ? process.env.REACT_APP_API_URL + '/' + images[currentImageIndex]?.img 
                             : defaultImage}
                         onError={handleImageError}
                     />
@@ -85,7 +85,7 @@ const ProductItem = observer(({ product, animationDelay = 0 }) => {
                                 >
                                     <Image
                                         className="carousel-images"
-                                        src={process.env.REACT_APP_API_URL + image.img}
+                                        src={process.env.REACT_APP_API_URL + '/' + image.img}
                                         onError={handleImageError}
                                     />
                                 </div>

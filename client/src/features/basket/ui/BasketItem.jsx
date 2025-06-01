@@ -30,7 +30,7 @@ const BasketItem = ({ item, removeFromBasket, changeQuantity }) => {
                 <Col xs={12} md={6} className="d-flex align-items-center">
                     <div className="basket-item-image-container">
                         <Image 
-                            src={item.img ? `${process.env.REACT_APP_API_URL}${item.img}` : '/assets/placeholder.jpg'} 
+                            src={item.img ? `${process.env.REACT_APP_API_URL}/${item.img}` : '/assets/placeholder.jpg'} 
                             alt={item.name}
                             className="basket-item-image"
                             onError={(e) => {

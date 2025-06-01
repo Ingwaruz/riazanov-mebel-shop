@@ -25,7 +25,7 @@ const ProductGallery = ({ images = [] }) => {
         <div className="product-gallery">
             <div className="main-image-container mb-3">
                 <Image 
-                    src={process.env.REACT_APP_API_URL + mainImage} 
+                    src={process.env.REACT_APP_API_URL + '/' + mainImage} 
                     alt="Основное изображение" 
                     className="main-product-image" 
                 />
@@ -39,7 +39,7 @@ const ProductGallery = ({ images = [] }) => {
                                 onClick={() => handleThumbnailClick(image)}
                             >
                                 <Image 
-                                    src={process.env.REACT_APP_API_URL + image.img} 
+                                    src={process.env.REACT_APP_API_URL + '/' + image.img} 
                                     alt={`Миниатюра ${index + 1}`}
                                     className="product-thumbnail"
                                 />

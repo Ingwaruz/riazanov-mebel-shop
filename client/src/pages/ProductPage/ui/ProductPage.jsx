@@ -185,7 +185,7 @@ const ProductPage = () => {
                 <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
                     <img
                         className="fullscreen-image"
-                        src={`${process.env.REACT_APP_API_URL}${images[currentImageIndex].img}`}
+                        src={`${process.env.REACT_APP_API_URL}/${images[currentImageIndex].img}`}
                         alt="Полноэкранное изображение"
                         onClick={e => e.stopPropagation()}
                     />
@@ -254,7 +254,7 @@ const ProductPage = () => {
                         {images.length > 0 ? (
                             <>
                                 <Image
-                                    src={process.env.REACT_APP_API_URL + images[currentImageIndex].img}
+                                    src={`${process.env.REACT_APP_API_URL}/${images[currentImageIndex].img}`}
                                     alt={product.name}
                                     fluid
                                     className="main-product-image"
@@ -294,7 +294,7 @@ const ProductPage = () => {
                                             onClick={() => handleThumbnailClick(startIndex + index)}
                                         >
                                             <img
-                                                src={`${process.env.REACT_APP_API_URL}${image.img}`}
+                                                src={`${process.env.REACT_APP_API_URL}/${image.img}`}
                                                 alt={`Миниатюра ${startIndex + index + 1}`}
                                                 className="thumbnail-image"
                                             />

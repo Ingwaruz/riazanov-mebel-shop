@@ -1,26 +1,51 @@
 const path = require('path')
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
+const fs = require('fs')
 
-// Срочное исправление - устанавливаем переменные напрямую
-if (!process.env.DB_USER) {
-    process.env.DB_NAME = 'online_store_riazanov'
-    process.env.DB_USER = 'postgres'
-    process.env.DB_PASSWORD = '95249524'
-    process.env.DB_HOST = 'localhost'
-    process.env.DB_PORT = '5432'
-    process.env.PORT = '5000'
-    process.env.SECRET_KEY = 'h2K8fjkds!dfs+d-fsdxcchslcv938C_frmrfsudo'
-    console.log('=== USING HARDCODED ENV VARIABLES ===')
+// Загружаем правильный .env файл в зависимости от NODE_ENV
+const envFile = process.env.NODE_ENV === 'development' ? '.env.development' : 
+                process.env.NODE_ENV === 'production' ? '.env.production' : '.env'
+
+const envPath = path.join(__dirname, envFile)
+
+console.log(`=== TRYING TO LOAD ${envFile} ===`)
+console.log('File path:', envPath)
+console.log('File exists:', fs.existsSync(envPath))
+
+if (fs.existsSync(envPath)) {
+    try {
+        let content = fs.readFileSync(envPath, 'utf8')
+        console.log('File content length:', content.length)
+        console.log('First 100 chars:', content.substring(0, 100))
+        
+        // Удаляем BOM если он есть (более надежный способ)
+        content = content.replace(/^\uFEFF/, '').replace(/^\ufeff/, '')
+        console.log('After BOM removal, first 50 chars:', content.substring(0, 50))
+        
+        // Парсим переменные вручную
+        const lines = content.split(/\r?\n/)
+        lines.forEach(line => {
+            const trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#')) {
+                const equalIndex = trimmed.indexOf('=')
+                if (equalIndex > 0) {
+                    const key = trimmed.substring(0, equalIndex).trim()
+                    const value = trimmed.substring(equalIndex + 1).trim()
+                    process.env[key] = value
+                    console.log(`Set ${key}=${value}`)
+                }
+            }
+        })
+        
+    } catch (e) {
+        console.log('Error reading file:', e.message)
+}
 }
 
-// Отладочная информация
-console.log('=== DEBUG ENV VARIABLES ===')
+console.log('=== VARIABLES SET BEFORE REQUIRING MODULES ===')
+console.log('DB_NAME:', process.env.DB_NAME)
 console.log('DB_USER:', process.env.DB_USER)
 console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? '***' : 'NOT SET')
-console.log('DB_NAME:', process.env.DB_NAME)
-console.log('DB_HOST:', process.env.DB_HOST)
-console.log('DB_PORT:', process.env.DB_PORT)
-console.log('============================')
+console.log('==============================================')
 
 const express = require('express')
 const sequelize = require('./db')
@@ -30,7 +55,7 @@ const fileUpload = require('express-fileupload')
 const router = require('./routes/index')
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'development' ? 5001 : 5000)
 const app = express()
 
 app.use(cors({
