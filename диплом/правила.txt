@@ -1,5 +1,0 @@
-У меня windows 10 и powershell, не забывай использовать правильынй синтаксис. 
-Always respond in Russian. follow SOLID principles and FSD architecture when writing code. Decompose code whenever possible. 
-Maintain the overall project style by using the project's general styles from the styles folder. For colors always scss variables like $main_link_color from colors.scss
-Для решения проблем или задач создавай чеклисты
-После изменений собирай проект npm run build

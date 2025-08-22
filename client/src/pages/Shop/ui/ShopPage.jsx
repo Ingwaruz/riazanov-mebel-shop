@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react';
-import { Col, Row } from "react-bootstrap";
+import React, { useContext, useEffect, useState, useCallback, useMemo, Suspense } from 'react';
+import { Col, Row, Spinner } from "react-bootstrap";
 import { observer } from "mobx-react-lite";
 import { Context } from "../../../index";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -10,23 +10,58 @@ import { Pagination } from "../../../shared/ui/Pagination";
 import { productApi } from "../../../entities/product";
 import './ShopPage.scss';
 
+// Skeleton Loader компонент
+const ProductListSkeleton = () => (
+    <div className="product-list-skeleton">
+        {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="product-skeleton-item">
+                <div className="skeleton-image"></div>
+                <div className="skeleton-text-long"></div>
+                <div className="skeleton-text-short"></div>
+                <div className="skeleton-text-medium"></div>
+            </div>
+        ))}
+    </div>
+);
+
+const FilterSkeleton = () => (
+    <div className="filter-skeleton">
+        <div className="skeleton-text-medium mb-3"></div>
+        <div className="skeleton-text-long mb-2"></div>
+        <div className="skeleton-text-short mb-2"></div>
+        <div className="skeleton-text-medium mb-3"></div>
+        <div className="skeleton-text-long mb-2"></div>
+        <div className="skeleton-text-short mb-2"></div>
+    </div>
+);
+
 const ShopPage = observer(() => {
     const { product } = useContext(Context);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(20);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const [isPageLoading, setIsPageLoading] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const [currentFilters, setCurrentFilters] = useState({});
     const [selectedTypes, setSelectedTypes] = useState([]);
 
-    // Функция для применения фильтров
-    const applyFilters = async (filters, page = 1) => {
+    // Мемоизированное значение общего количества страниц
+    const totalPages = useMemo(() => 
+        Math.ceil(product.totalCount / itemsPerPage), 
+        [product.totalCount, itemsPerPage]
+    );
+
+    // Функция для применения фильтров с debounce эффектом
+    const applyFilters = useCallback(async (filters, page = 1) => {
         try {
+            setIsPageLoading(true);
             const filteredProducts = await filterApi.fetchFilteredProducts({
                 ...filters,
                 page,
                 limit: itemsPerPage
             });
+            
             product.setProducts(filteredProducts.rows);
             product.setTotalCount(filteredProducts.count);
             setCurrentFilters(filters);
@@ -47,23 +82,32 @@ const ShopPage = observer(() => {
             navigate(`${location.pathname}?${params.toString()}`);
         } catch (error) {
             console.error('Error applying filters:', error);
+        } finally {
+            setIsPageLoading(false);
         }
-    };
+    }, [itemsPerPage, product, navigate, location.pathname]);
 
-    // Функция для загрузки данных при первой загрузке компонента
+    // Оптимизированная загрузка начальных данных с параллельными запросами
     const loadInitialData = useCallback(async () => {
         try {
-            const types = await filterApi.fetchTypes();
+            setIsInitialLoading(true);
+            
+            // Параллельная загрузка всех данных
+            const [types, factories, products] = await Promise.all([
+                filterApi.fetchTypes(),
+                filterApi.fetchFactories(),
+                productApi.fetchProducts(null, null, 1, itemsPerPage)
+            ]);
+
+            // Batch обновление состояния
             product.setTypes(types);
-
-            const factories = await filterApi.fetchFactories();
             product.setFactories(factories);
-
-            const products = await productApi.fetchProducts(null, null, 1, itemsPerPage);
             product.setProducts(products.rows);
             product.setTotalCount(products.count);
         } catch (error) {
             console.error('Error fetching initial data:', error);
+        } finally {
+            setIsInitialLoading(false);
         }
     }, [itemsPerPage, product]);
 
@@ -74,9 +118,6 @@ const ShopPage = observer(() => {
         const selectedSubtypesParam = params.get('selectedSubtypes');
         const shouldApplyFilter = params.get('applyFilter') === 'true';
 
-        // ВАЖНО: При перезагрузке страницы фильтры НЕ восстанавливаются
-        // Фильтры применяются только при активном использовании фильтров в сессии
-        // Если в URL нет явного флага applyFilter, загружаем все товары без фильтров
         if (shouldApplyFilter && (selectedTypeId || selectedSubtypesParam)) {
             const filters = {};
             if (selectedTypeId) {
@@ -87,47 +128,45 @@ const ShopPage = observer(() => {
             }
             applyFilters(filters, 1);
         } else {
-            // При любой перезагрузке или прямом переходе сбрасываем фильтры
-            // Очищаем URL от параметров фильтров
             if (params.toString()) {
                 navigate(location.pathname, { replace: true });
             }
             loadInitialData();
         }
-    }, [location.search, loadInitialData]);
+    }, [location.search, loadInitialData, applyFilters, navigate, location.pathname]);
 
-    const handleFilterChange = async (filteredProducts, filters) => {
+    const handleFilterChange = useCallback(async (filteredProducts, filters) => {
         product.setProducts(filteredProducts.rows);
         product.setTotalCount(filteredProducts.count);
         setCurrentFilters(filters);
         setCurrentPage(1);
-    };
+    }, [product]);
 
-    const handleSelectedTypesChange = (types) => {
+    const handleSelectedTypesChange = useCallback((types) => {
         setSelectedTypes(types);
-    };
+    }, []);
 
-    const handleSubtypeSelect = async (subtypeIds) => {
+    const handleSubtypeSelect = useCallback(async (subtypeIds) => {
         const newFilters = { ...currentFilters };
         
         if (!subtypeIds || subtypeIds.length === 0) {
-            // Удаляем фильтр по подтипам
             delete newFilters.selectedSubtypes;
         } else {
-            // Устанавливаем фильтр по подтипам
             newFilters.selectedSubtypes = subtypeIds;
         }
         
         await applyFilters(newFilters, 1);
-    };
+    }, [currentFilters, applyFilters]);
 
-    const handlePageChange = async (page) => {
+    const handlePageChange = useCallback(async (page) => {
+        // Smooth scroll to top
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
         
         try {
+            setIsPageLoading(true);
             if (Object.keys(currentFilters).length > 0) {
                 await applyFilters(currentFilters, page);
             } else {
@@ -138,28 +177,48 @@ const ShopPage = observer(() => {
             }
         } catch (error) {
             console.error('Error fetching products:', error);
+        } finally {
+            setIsPageLoading(false);
         }
-    };
-
-    const totalPages = Math.ceil(product.totalCount / itemsPerPage);
+    }, [currentFilters, applyFilters, itemsPerPage, product]);
 
     return (
         <div className="container-fluid shop-page">
             <Row className="mt-2">
                 <Col lg={2} md={4} sm={4} xs={12} className="filter-column">
-                    <FilterForm 
-                        onFilterChange={handleFilterChange} 
-                        onSelectedTypesChange={handleSelectedTypesChange}
-                    />
+                    <Suspense fallback={<FilterSkeleton />}>
+                        {isInitialLoading ? (
+                            <FilterSkeleton />
+                        ) : (
+                            <FilterForm 
+                                onFilterChange={handleFilterChange} 
+                                onSelectedTypesChange={handleSelectedTypesChange}
+                            />
+                        )}
+                    </Suspense>
                 </Col>
                 <Col lg={10} md={8} sm={8} xs={12} className="product-column">
-                    <SubtypeFilter 
-                        selectedTypes={selectedTypes}
-                        currentFilters={currentFilters}
-                        onSubtypeSelect={handleSubtypeSelect}
-                    />
-                    <ProductList />
-                    {totalPages > 1 && (
+                    <Suspense fallback={<div className="text-center py-3"><Spinner animation="border" /></div>}>
+                        {!isInitialLoading && (
+                            <SubtypeFilter 
+                                selectedTypes={selectedTypes}
+                                currentFilters={currentFilters}
+                                onSubtypeSelect={handleSubtypeSelect}
+                            />
+                        )}
+                    </Suspense>
+                    
+                    <div className="product-list-container">
+                        {isInitialLoading || isPageLoading ? (
+                            <ProductListSkeleton />
+                        ) : (
+                            <Suspense fallback={<ProductListSkeleton />}>
+                                <ProductList />
+                            </Suspense>
+                        )}
+                    </div>
+                    
+                    {!isInitialLoading && totalPages > 1 && (
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}

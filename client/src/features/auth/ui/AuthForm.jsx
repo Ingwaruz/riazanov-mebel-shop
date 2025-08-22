@@ -113,6 +113,9 @@ const AuthForm = ({ isLogin, onSubmit, serverError, loading }) => {
                         </Form.Control.Feedback>
                     )}
                 </InputGroup>
+                <div className="form-text text-muted mt-1">
+                    Пароль должен содержать минимум 8 символов
+                </div>
             </Form.Group>
             <Row className="d-flex justify-content-between align-items-center mt-3 pl-3 pr-3 m-text">
                 {isLogin ?

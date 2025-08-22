@@ -12,7 +12,165 @@ const User = sequelize.define('user', {
     name: {type: DataTypes.STRING, allowNull: true},
     second_name: {type: DataTypes.STRING, allowNull: true},
     phone_number: {type: DataTypes.STRING, allowNull: true},
+    email_verified: {type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false}
 })
+
+// Email верификация
+const EmailVerification = sequelize.define('email_verification', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    email: {type: DataTypes.STRING, allowNull: false},
+    pin_code: {type: DataTypes.STRING(6), allowNull: false},
+    expires_at: {type: DataTypes.DATE, allowNull: false}
+}, {
+    tableName: 'email_verifications',
+    timestamps: false,
+    underscored: true,
+    indexes: [
+        {
+            fields: ['email']
+        },
+        {
+            fields: ['expires_at']
+        }
+    ]
+})
+
+// Контакты
+const Contact = sequelize.define('contact', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    type: {type: DataTypes.STRING, allowNull: false}, // phone, email, address, social, messenger
+    value: {type: DataTypes.STRING, allowNull: false},
+    label: {type: DataTypes.STRING, allowNull: false},
+    is_active: {type: DataTypes.BOOLEAN, defaultValue: true, allowNull: false},
+    sort_order: {type: DataTypes.INTEGER, defaultValue: 0, allowNull: false}
+}, {
+    tableName: 'contacts',
+    underscored: true,
+    indexes: [
+        {
+            fields: ['type']
+        },
+        {
+            fields: ['is_active']
+        },
+        {
+            fields: ['sort_order']
+        }
+    ]
+})
+
+// Контентные страницы
+const ContentPage = sequelize.define('content_page', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    page_key: {type: DataTypes.STRING, unique: true, allowNull: false}, // about_us, delivery, payment, etc.
+    title: {type: DataTypes.STRING, allowNull: false},
+    content: {type: DataTypes.TEXT, allowNull: false},
+    meta_title: {type: DataTypes.STRING, allowNull: true},
+    meta_description: {type: DataTypes.TEXT, allowNull: true},
+    is_active: {type: DataTypes.BOOLEAN, defaultValue: true, allowNull: false}
+}, {
+    tableName: 'content_pages',
+    underscored: true,
+    indexes: [
+        {
+            fields: ['page_key']
+        },
+        {
+            fields: ['is_active']
+        }
+    ]
+})
+
+// Заказы
+const Order = sequelize.define('order', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    order_number: {type: DataTypes.STRING(20), allowNull: false, unique: true},
+    user_id: {type: DataTypes.INTEGER, allowNull: true},
+    status: {
+        type: DataTypes.ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled'),
+        defaultValue: 'pending',
+        allowNull: false
+    },
+    total_amount: {type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0},
+    shipping_amount: {type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0},
+    customer_name: {type: DataTypes.STRING(255), allowNull: false},
+    customer_email: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: { isEmail: true }
+    },
+    customer_phone: {type: DataTypes.STRING(20), allowNull: false},
+    shipping_address: {type: DataTypes.TEXT, allowNull: false},
+    shipping_city: {type: DataTypes.STRING(100), allowNull: false},
+    shipping_postal_code: {type: DataTypes.STRING(20), allowNull: true},
+    payment_method: {
+        type: DataTypes.ENUM('cash', 'card', 'bank_transfer'),
+        allowNull: false
+    },
+    payment_status: {
+        type: DataTypes.ENUM('pending', 'paid', 'failed', 'refunded'),
+        defaultValue: 'pending',
+        allowNull: false
+    },
+    notes: {type: DataTypes.TEXT, allowNull: true}
+}, {
+    tableName: 'orders',
+    underscored: true
+})
+
+// Элементы заказа
+const OrderItem = sequelize.define('order_item', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    order_id: {type: DataTypes.INTEGER, allowNull: false},
+    product_id: {type: DataTypes.INTEGER, allowNull: false},
+    quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+        validate: { min: 1 }
+    },
+    price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: { min: 0 }
+    },
+    discount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0,
+        validate: { min: 0 }
+    }
+}, {
+    tableName: 'order_items',
+    underscored: true
+})
+
+// Статические методы для Order
+Order.generateOrderNumber = function() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    return `${year}${month}${day}-${random}`;
+};
+
+// Методы экземпляра для Order
+Order.prototype.calculateTotal = async function() {
+    const items = await this.getOrderItems();
+    const itemsTotal = items.reduce((sum, item) => {
+        return sum + (parseFloat(item.price) - parseFloat(item.discount)) * item.quantity;
+    }, 0);
+    
+    this.total_amount = itemsTotal + parseFloat(this.shipping_amount);
+    await this.save();
+    return this.total_amount;
+};
+
+// Методы экземпляра для OrderItem
+OrderItem.prototype.getSubtotal = function() {
+    return (parseFloat(this.price) - parseFloat(this.discount)) * this.quantity;
+};
 
 // Корзина покупателя
 const Basket = sequelize.define('basket', {
@@ -140,10 +298,26 @@ const CollectionToType = sequelize.define('collection_to_type', {
 // User
 User.hasOne(Basket, {foreignKey: { allowNull: false }});
 Basket.belongsTo(User, {foreignKey: { allowNull: false }});
+User.hasMany(Order, {foreignKey: 'user_id'});
+Order.belongsTo(User, {foreignKey: 'user_id'});
 
 // Basket
 Basket.hasMany(BasketProduct, {foreignKey: { allowNull: false }});
 BasketProduct.belongsTo(Basket, {foreignKey: { allowNull: false }});
+
+// Order
+Order.hasMany(OrderItem, {
+    as: 'orderItems',
+    foreignKey: 'order_id'
+});
+OrderItem.belongsTo(Order, {foreignKey: 'order_id'});
+
+// OrderItem и Product
+Product.hasMany(OrderItem, {foreignKey: 'product_id'});
+OrderItem.belongsTo(Product, {
+    as: 'product',
+    foreignKey: 'product_id'
+});
 
 // Type
 Type.hasMany(Product, {foreignKey: { allowNull: false }});
@@ -228,10 +402,15 @@ module.exports = {
     MaterialCategory,
     Feature,
     FeatureToTypeFactory,
+    EmailVerification,
+    Contact,
+    ContentPage,
     // Промежуточные таблицы
     TypeToFactory,
     ColorToMaterial,
     MaterialCategoryToMaterial,
     MaterialCategoryToFactory,
-    CollectionToType
+    CollectionToType,
+    Order,
+    OrderItem
 }

@@ -7,12 +7,26 @@ import {observer} from "mobx-react-lite";
 import '../styles/Navbar.scss';
 import '../../../app/styles/global-typography.scss';
 import { CenteredModal } from '../../modals';
+import { useContacts } from '../../../entities/contacts/hooks';
+import useContent from '../../../entities/contacts/hooks/useContent';
 
 const NavbarComponent = observer(() => {
     const {user, basket} = useContext(Context);
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const [modalData, setModalData] = useState({ show: false, title: '', content: '' });
+    
+    // Получаем динамические контакты
+    const { phones, emails, addresses, loading: contactsLoading } = useContacts();
+    
+    // Получаем динамический контент для страниц
+    const aboutContent = useContent('about_us');
+    const deliveryContent = useContent('delivery');
+    
+    // Получаем первые контакты для отображения
+    const mainPhone = phones[0];
+    const mainEmail = emails[0];
+    const mainAddress = addresses[0];
 
     const handleClose = () => setShowMenu(false);
     const handleShow = () => setShowMenu(true);
@@ -32,48 +46,99 @@ const NavbarComponent = observer(() => {
     };
 
     // Модальное содержимое
-    const deliveryContent = (
-        <div>
-            <h4>Условия доставки</h4>
-            <p>Мы осуществляем доставку по всей России.</p>
-            {/* <ul>
-                <li>Доставка по <Благовещенску> - бесплатно (при заказе от х руб)</li>
-                <li>Доставка по Амурской области - от х руб</li>
-                <li>Доставка в регионы - по тарифам транспортных компаний</li>
-            </ul>
-            <p>Сроки доставки: x дня по Москве, x дней по России.</p> */}
-            <p>Для уточнения деталей доставки, свяжитесь с нами по телефону: <a href="tel:+79143983470">8 (914) 398-34-70</a></p>
-        </div>
-    );
+    const getDeliveryContent = () => {
+        if (deliveryContent.loading) {
+            return <div>Загрузка...</div>;
+        }
+        
+        if (deliveryContent.body) {
+            return (
+                <div dangerouslySetInnerHTML={{ __html: deliveryContent.body }} />
+            );
+        }
+        
+        // Fallback контент, если нет в БД
+        return (
+            <div>
+                <h4>Условия доставки</h4>
+                <p>Мы осуществляем доставку по всей России.</p>
+                {mainPhone && (
+                    <p>Для уточнения деталей доставки, свяжитесь с нами по телефону: 
+                        <a href={`tel:${mainPhone.value.replace(/\D/g, '')}`}> {mainPhone.value}</a>
+                    </p>
+                )}
+            </div>
+        );
+    };
 
-    const contactsContent = (
-        <div>
-            <h4>Наши контакты</h4>
-            <p><strong>Адрес:</strong> г. Благовещенск, ул. Мухина 114, ТЦ Острова, 3 этаж</p>
-            <p><strong>Телефон:</strong> <a href="tel:+79143983470">8 (914) 398-34-70</a></p>
-            {/* <p><strong>Email:</strong> <a href="mailto:info@dommebel.ru">info@dommebel.ru</a></p> */}
-            <p><strong>Режим работы:</strong></p>
-            <p>Ежедневно с 10:00 до 21:00</p>
-        </div>
-    );
+    const getContactsContent = () => {
+        if (contactsLoading) {
+            return <div>Загрузка...</div>;
+        }
+        
+        return (
+            <div>
+                <h4>Наши контакты</h4>
+                {mainAddress && <p><strong>Адрес:</strong> {mainAddress.value}</p>}
+                {mainPhone && (
+                    <p><strong>Телефон:</strong> 
+                        <a href={`tel:${mainPhone.value.replace(/\D/g, '')}`}> {mainPhone.value}</a>
+                    </p>
+                )}
+                {mainEmail && (
+                    <p><strong>Email:</strong> 
+                        <a href={`mailto:${mainEmail.value}`}> {mainEmail.value}</a>
+                    </p>
+                )}
+                <p><strong>Режим работы:</strong></p>
+                <p>Ежедневно с 10:00 до 21:00</p>
+                
+                {/* Дополнительные телефоны */}
+                {phones.length > 1 && (
+                    <>
+                        <p className="mt-3"><strong>Дополнительные телефоны:</strong></p>
+                        {phones.slice(1).map((phone, index) => (
+                            <p key={index}>
+                                {phone.label}: 
+                                <a href={`tel:${phone.value.replace(/\D/g, '')}`}> {phone.value}</a>
+                            </p>
+                        ))}
+                    </>
+                )}
+            </div>
+        );
+    };
 
-    const aboutContent = (
-        <div>
-            <p>
-            «ДОМУ МЕБЕЛЬ» — ведущий дистрибьютор премиальной мебели, предлагающий эксклюзивные коллекции от лучших Российских производителей. Мы тщательно отбираем предметы интерьера, сочетающие в себе безупречное качество, элегантный дизайн и функциональность, чтобы создать пространства, отражающие ваш стиль и статус.
-            </p>
-            <p>
-                Наша миссия — обеспечивать клиентов мебелью премиум-класса, которая превращает дом в место настоящего комфорта и роскоши. Мы работаем с дизайнерами, архитекторами и частными заказчиками, предлагая индивидуальный подход и профессиональные решения для любых интерьерных задач.
-            </p>
-            <h4>Почему выбирают нас?</h4>
-            <ul>
-                <li>Высокое качество материалов </li>
-                <li>Широкий ассортимент: от классики до современных трендов</li>
-                <li>Персональный сервис и помощь в подборе мебели</li>
-                <li>Гарантия на всю продукцию</li>
-            </ul>
-        </div>
-    );
+    const getAboutContent = () => {
+        if (aboutContent.loading) {
+            return <div>Загрузка...</div>;
+        }
+        
+        if (aboutContent.body) {
+            return (
+                <div dangerouslySetInnerHTML={{ __html: aboutContent.body }} />
+            );
+        }
+        
+        // Fallback контент, если нет в БД
+        return (
+            <div>
+                <p>
+                «ДОМУ МЕБЕЛЬ» — ведущий дистрибьютор премиальной мебели, предлагающий эксклюзивные коллекции от лучших Российских производителей. Мы тщательно отбираем предметы интерьера, сочетающие в себе безупречное качество, элегантный дизайн и функциональность, чтобы создать пространства, отражающие ваш стиль и статус.
+                </p>
+                <p>
+                    Наша миссия — обеспечивать клиентов мебелью премиум-класса, которая превращает дом в место настоящего комфорта и роскоши. Мы работаем с дизайнерами, архитекторами и частными заказчиками, предлагая индивидуальный подход и профессиональные решения для любых интерьерных задач.
+                </p>
+                <h4>Почему выбирают нас?</h4>
+                <ul>
+                    <li>Высокое качество материалов</li>
+                    <li>Широкий ассортимент: от классики до современных трендов</li>
+                    <li>Персональный сервис и помощь в подборе мебели</li>
+                    <li>Гарантия на всю продукцию</li>
+                </ul>
+            </div>
+        );
+    };
 
     return (
         <>
@@ -91,9 +156,9 @@ const NavbarComponent = observer(() => {
                     <Nav className="d-none d-lg-flex justify-content-center flex-grow-1 gap-3">
                         <Nav.Link as={Link} to={SHOP_ROUTE}>Главная</Nav.Link>
                         <Nav.Link href="#catalogs">Каталог</Nav.Link>
-                        <Nav.Link onClick={() => handleModalShow('О нас', aboutContent)}>О нас</Nav.Link>
-                        <Nav.Link onClick={() => handleModalShow('Контакты', contactsContent)}>Контакты</Nav.Link>
-                        <Nav.Link onClick={() => handleModalShow('Доставка', deliveryContent)}>Доставка</Nav.Link>
+                        <Nav.Link onClick={() => handleModalShow('О нас', getAboutContent())}>О нас</Nav.Link>
+                        <Nav.Link onClick={() => handleModalShow('Контакты', getContactsContent())}>Контакты</Nav.Link>
+                        <Nav.Link onClick={() => handleModalShow('Доставка', getDeliveryContent())}>Доставка</Nav.Link>
                     </Nav>
                     
                     {/* Иконки профиля и корзины */}
@@ -158,9 +223,9 @@ const NavbarComponent = observer(() => {
                             <Nav className="justify-content-end flex-grow-1 pe-3">
                                 <Nav.Link as={Link} to={SHOP_ROUTE} onClick={handleClose}>Главная</Nav.Link>
                                 <Nav.Link href="#catalogs" onClick={handleClose}>Каталог</Nav.Link>
-                                <Nav.Link onClick={() => {handleModalShow('О нас', aboutContent); handleClose();}}>О нас</Nav.Link>
-                                <Nav.Link onClick={() => {handleModalShow('Контакты', contactsContent); handleClose();}}>Контакты</Nav.Link>
-                                <Nav.Link onClick={() => {handleModalShow('Доставка', deliveryContent); handleClose();}}>Доставка</Nav.Link>
+                                <Nav.Link onClick={() => {handleModalShow('О нас', getAboutContent()); handleClose();}}>О нас</Nav.Link>
+                                <Nav.Link onClick={() => {handleModalShow('Контакты', getContactsContent()); handleClose();}}>Контакты</Nav.Link>
+                                <Nav.Link onClick={() => {handleModalShow('Доставка', getDeliveryContent()); handleClose();}}>Доставка</Nav.Link>
                             </Nav>
                         </Offcanvas.Body>
                     </Navbar.Offcanvas>

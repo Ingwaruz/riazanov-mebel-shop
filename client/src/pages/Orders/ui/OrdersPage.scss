@@ -1,0 +1,99 @@
+@import '../../../app/styles/colors.scss';
+
+.orders-page {
+    background-color: #f9f9f9;
+    min-height: calc(100vh - 120px);
+    
+    h1 {
+        color: $main_color;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    .breadcrumb {
+        background-color: transparent;
+        
+        .breadcrumb-item a {
+            color: $main_color;
+            text-decoration: none;
+            
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    
+    .status-filter {
+        min-width: 200px;
+        border-color: #dee2e6;
+        
+        &:focus {
+            border-color: $main_color;
+            box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25);
+        }
+    }
+    
+    .orders-card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border: none;
+        overflow: hidden;
+        
+        .orders-table {
+            margin-bottom: 0;
+            
+            th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+                border-top: none;
+                padding: 15px;
+            }
+            
+            td {
+                padding: 15px;
+                vertical-align: middle;
+            }
+            
+            .order-row {
+                cursor: pointer;
+                transition: background-color 0.2s;
+                
+                &:hover {
+                    background-color: rgba($main_color, 0.05);
+                }
+            }
+        }
+    }
+    
+    .pagination {
+        .page-item {
+            .page-link {
+                color: $main_color;
+                
+                &:focus {
+                    box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25);
+                }
+            }
+            
+            &.active .page-link {
+                background-color: $main_color;
+                border-color: $main_color;
+                color: white;
+            }
+        }
+    }
+    
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 1.5rem;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+            
+            .status-filter {
+                width: 100%;
+            }
+        }
+    }
+} 

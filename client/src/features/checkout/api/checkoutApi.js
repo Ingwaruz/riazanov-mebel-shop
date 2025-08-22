@@ -17,14 +17,30 @@ export const createOrder = async (orderData) => {
 
 /**
  * Получение заказов пользователя
- * @returns {Promise<Array>} - Массив заказов пользователя
+ * @param {Object} params - Параметры запроса (page, limit, status)
+ * @returns {Promise<Object>} - Объект с массивом заказов и метаданными
  */
-export const getUserOrders = async () => {
+export const getUserOrders = async (params = {}) => {
     try {
-        const { data } = await $authHost.get('api/order/user');
+        const { data } = await $authHost.get('api/order', { params });
         return data;
     } catch (error) {
         console.error('Ошибка при получении заказов пользователя:', error);
+        throw error;
+    }
+};
+
+/**
+ * Получение всех заказов (для админа)
+ * @param {Object} params - Параметры запроса (page, limit, status)
+ * @returns {Promise<Object>} - Объект с массивом заказов и метаданными
+ */
+export const getAllOrders = async (params = {}) => {
+    try {
+        const { data } = await $authHost.get('api/order', { params });
+        return data;
+    } catch (error) {
+        console.error('Ошибка при получении всех заказов:', error);
         throw error;
     }
 };
@@ -40,6 +56,38 @@ export const getOrderDetails = async (orderId) => {
         return data;
     } catch (error) {
         console.error(`Ошибка при получении заказа #${orderId}:`, error);
+        throw error;
+    }
+};
+
+/**
+ * Обновление статуса заказа (только для админа)
+ * @param {number} orderId - ID заказа
+ * @param {string} status - Новый статус
+ * @returns {Promise<Object>} - Обновленные данные заказа
+ */
+export const updateOrderStatus = async (orderId, status) => {
+    try {
+        const { data } = await $authHost.put(`api/order/${orderId}/status`, { status });
+        return data;
+    } catch (error) {
+        console.error(`Ошибка при обновлении статуса заказа #${orderId}:`, error);
+        throw error;
+    }
+};
+
+/**
+ * Отмена заказа
+ * @param {number} orderId - ID заказа
+ * @param {string} reason - Причина отмены
+ * @returns {Promise<Object>} - Ответ сервера
+ */
+export const cancelOrder = async (orderId, reason = '') => {
+    try {
+        const { data } = await $authHost.put(`api/order/${orderId}/cancel`, { reason });
+        return data;
+    } catch (error) {
+        console.error(`Ошибка при отмене заказа #${orderId}:`, error);
         throw error;
     }
 }; 

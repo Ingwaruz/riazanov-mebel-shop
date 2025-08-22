@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, startTransition} from "react";
 import {BrowserRouter} from "react-router-dom";
 import {AppRouter} from "./providers";
 import {Navbar} from "../widgets/Navbar";
@@ -20,21 +20,29 @@ const App = observer(() => {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    setLoading(false);
+                    startTransition(() => {
+                        setLoading(false);
+                    });
                     return;
                 }
 
                 const data = await check();
                 if (data) {
-                    user.setUser(data);
-                    user.setIsAuth(true);
+                    startTransition(() => {
+                        user.setUser(data);
+                        user.setIsAuth(true);
+                    });
                 }
             } catch (error) {
                 localStorage.removeItem('token');
-                user.setUser({});
-                user.setIsAuth(false);
+                startTransition(() => {
+                    user.setUser({});
+                    user.setIsAuth(false);
+                });
             } finally {
-                setLoading(false);
+                startTransition(() => {
+                    setLoading(false);
+                });
             }
         };
 

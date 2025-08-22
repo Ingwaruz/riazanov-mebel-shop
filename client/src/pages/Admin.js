@@ -9,6 +9,7 @@ import ButtonM2 from "../shared/ui/buttons/button-m1";
 import ImportProducts from "../widgets/modals/ImportProducts";
 import CreateFeature from "../widgets/modals/CreateFeature";
 import EditProducts from "../widgets/modals/EditProducts";
+import { OrdersManagement as OrdersManagementFeature } from "../features/admin";
 
 const Admin = () => {
     const [factoryVisible, setFactoryVisible] = useState(false)
@@ -19,9 +20,14 @@ const Admin = () => {
     const [importVisible, setImportVisible] = useState(false)
     const [featureVisible, setFeatureVisible] = useState(false)
     const [editProductsVisible, setEditProductsVisible] = useState(false)
+    const [showOrdersManagement, setShowOrdersManagement] = useState(false)
 
     return (
         <Container className={'d-flex flex-column mt-4'}>
+            <ButtonM2
+                text="Управление заказами"
+                onClick={() => setShowOrdersManagement(true)}
+            />
 
             <ButtonM2
                 text="Добавить производителя"
@@ -56,6 +62,8 @@ const Admin = () => {
                 text="Добавить характеристику"
                 onClick={() => setFeatureVisible(true)}
             />
+
+            {showOrdersManagement && <OrdersManagementFeature />}
 
             <CreateType show={typeVisible} onHide={() => setTypeVisible(false)}/>
             <CreateSubtype show={subtypeVisible} onHide={() => setSubtypeVisible(false)}/>

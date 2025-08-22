@@ -7,6 +7,9 @@ const collectionRouter = require('./collectionRouter')
 const productRouter = require('./productRouter')
 const featureRouter = require('./featureRouter')
 const subtypeRouter = require('./subtypeRouter')
+const contactsRouter = require('./contactsRouter')
+const contentRouter = require('./contentRouter')
+const orderRouter = require('./orderRouter')
 
 router.use('/user', userRouter)
 router.use('/type', typeRouter)
@@ -15,5 +18,8 @@ router.use('/collection', collectionRouter)
 router.use('/product', productRouter)
 router.use('/feature', featureRouter)
 router.use('/subtype', subtypeRouter)
+router.use('/contacts', contactsRouter)
+router.use('/content', contentRouter)
+router.use('/order', orderRouter)
 
 module.exports = router

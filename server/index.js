@@ -54,6 +54,7 @@ const cors = require('cors')
 const fileUpload = require('express-fileupload')
 const router = require('./routes/index')
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
+const { startCleanupJob } = require('./utils/cleanupExpiredPins')
 
 const PORT = process.env.PORT || (process.env.NODE_ENV === 'development' ? 5001 : 5000)
 const app = express()
@@ -85,6 +86,10 @@ const start = async () => {
         await sequelize.authenticate()
         // Отключаем автоматическую синхронизацию моделей
         // await sequelize.sync({ force: true })
+        
+        // Запускаем очистку просроченных пин-кодов
+        startCleanupJob()
+        
         app.listen(PORT, '0.0.0.0', () => console.log(`Server started on port ${PORT} and is accessible from outside`))
     } catch (e) {
         console.log(e)

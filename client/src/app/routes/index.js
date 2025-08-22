@@ -1,40 +1,58 @@
-import React, { lazy, Suspense } from 'react';
-import { Spinner } from 'react-bootstrap';
-import { ADMIN_ROUTE, BASKET_ROUTE, LOGIN_ROUTE, PRODUCT_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../../shared/config/route-constants";
+import React, { lazy } from 'react';
+import { 
+    ADMIN_ROUTE, 
+    BASKET_ROUTE, 
+    CHECKOUT_ROUTE, 
+    LOGIN_ROUTE, 
+    ORDER_CONFIRMATION_ROUTE, 
+    ORDER_ROUTE, 
+    ORDERS_ROUTE, 
+    PRODUCT_ROUTE, 
+    REGISTRATION_ROUTE, 
+    SHOP_ROUTE 
+} from "../../shared/config/route-constants";
 
-// Импорт компонентов из новой структуры
-import { ProductPage } from "../../pages/ProductPage";
-import Admin from "../../pages/Admin";
-import { BasketPage as Basket } from "../../pages/Basket";
-import { ShopPage as Shop } from "../../pages/Shop";
-import { AuthPage as Auth } from "../../pages/Auth";
+// Ленивая загрузка компонентов для оптимизации
+const ProductPage = lazy(() => import("../../pages/ProductPage").then(module => ({ default: module.ProductPage })));
+const Admin = lazy(() => import("../../pages/Admin"));
+const BasketPage = lazy(() => import("../../pages/Basket").then(module => ({ default: module.BasketPage })));
+const ShopPage = lazy(() => import("../../pages/Shop").then(module => ({ default: module.ShopPage })));
+const AuthPage = lazy(() => import("../../pages/Auth").then(module => ({ default: module.AuthPage })));
+const CheckoutPage = lazy(() => import("../../pages/Checkout").then(module => ({ default: module.CheckoutPage })));
+const OrdersPage = lazy(() => import("../../pages/Orders").then(module => ({ default: module.OrdersPage })));
+const OrderDetailPage = lazy(() => import("../../pages/OrderDetail").then(module => ({ default: module.OrderDetailPage })));
+const OrderConfirmationPage = lazy(() => import("../../pages/OrderConfirmation").then(module => ({ default: module.OrderConfirmationPage })));
 
-// Компонент-обертка для ленивой загрузки (не используется в текущей версии)
-const LazyLoadWrapper = ({ children }) => (
-    <Suspense fallback={<div className="d-flex justify-content-center mt-5"><Spinner animation="border" /></div>}>
-        {children}
-    </Suspense>
-);
+// Компонент-обертка для ленивой загрузки (теперь Suspense в AppRouter)
+const LazyLoadWrapper = ({ children }) => children;
 
 export const authRoutes = [
     {
         path: ADMIN_ROUTE,
         Component: Admin
+    },
+    {
+        path: ORDERS_ROUTE,
+        Component: OrdersPage
+    },
+    {
+        path: ORDER_ROUTE + '/:orderId',
+        Component: OrderDetailPage
     }
 ];
 
 export const publicRoutes = [
     {
         path: SHOP_ROUTE,
-        Component: Shop
+        Component: ShopPage
     },
     {
         path: LOGIN_ROUTE,
-        Component: Auth
+        Component: AuthPage
     },
     {
         path: REGISTRATION_ROUTE,
-        Component: Auth
+        Component: AuthPage
     },
     {
         path: PRODUCT_ROUTE + '/:id',
@@ -42,6 +60,14 @@ export const publicRoutes = [
     },
     {
         path: BASKET_ROUTE,
-        Component: Basket
+        Component: BasketPage
+    },
+    {
+        path: CHECKOUT_ROUTE,
+        Component: CheckoutPage
+    },
+    {
+        path: ORDER_CONFIRMATION_ROUTE + '/:orderId',
+        Component: OrderConfirmationPage
     }
 ]; 

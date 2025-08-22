@@ -18,11 +18,6 @@ const BasketPage = observer(() => {
         basket.changeQuantity(productId, newQuantity);
     };
     
-    const handleCheckout = () => {
-        console.log('Оформление заказа:', basket.items);
-        // Логика оформления заказа
-    };
-    
     return (
         <Container fluid className="basket-page py-4">
             <Row className="justify-content-center">
@@ -47,9 +42,7 @@ const BasketPage = observer(() => {
                             </Col>
                             <Col lg={4}>
                                 <BasketSummary 
-                                    basketItems={basket.items}
                                     totalPrice={basket.totalPrice}
-                                    onCheckout={handleCheckout}
                                 />
                             </Col>
                         </Row>

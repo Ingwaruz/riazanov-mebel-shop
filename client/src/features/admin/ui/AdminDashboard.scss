@@ -1,0 +1,209 @@
+@import '../../../app/styles/colors.scss';
+
+.admin-dashboard {
+    &__header {
+        margin-bottom: 2rem;
+        
+        h1 {
+            color: $main_font_color;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+    }
+}
+
+// Карточки статистики
+.stat-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+    
+    &__header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    &__icon {
+        font-size: 2rem;
+        margin-right: 0.75rem;
+    }
+    
+    &__title {
+        color: #6c757d;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    &__value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $main_font_color;
+        line-height: 1.2;
+    }
+    
+    &__subtitle {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+    
+    // Цветовые варианты
+    &--primary {
+        border-left: 4px solid $main_link_color;
+    }
+    
+    &--success {
+        border-left: 4px solid #28a745;
+    }
+    
+    &--info {
+        border-left: 4px solid #17a2b8;
+    }
+    
+    &--warning {
+        border-left: 4px solid $add_color;
+    }
+}
+
+// Карточки с графиками
+.chart-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    
+    .card-header {
+        background-color: $color_white;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1rem 1.5rem;
+        
+        h5 {
+            color: $main_font_color;
+            font-weight: 600;
+        }
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+}
+
+// Последние заказы
+.recent-orders {
+    .recent-order-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid #e9ecef;
+        
+        &:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        &:first-child {
+            padding-top: 0;
+        }
+        
+        &__info {
+            flex: 1;
+        }
+        
+        &__id {
+            font-weight: 600;
+            color: $main_font_color;
+            margin-bottom: 0.25rem;
+        }
+        
+        &__customer {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        &__amount {
+            font-weight: 600;
+            color: $main_font_color;
+            margin-right: 1rem;
+        }
+        
+        &__status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            
+            &.status--new {
+                background-color: rgba($add_color, 0.2);
+                color: darken($add_color, 20%);
+            }
+            
+            &.status--processing {
+                background-color: rgba($main_link_color, 0.2);
+                color: $main_link_color;
+            }
+            
+            &.status--completed {
+                background-color: rgba(#28a745, 0.2);
+                color: #28a745;
+            }
+        }
+    }
+}
+
+// Быстрые действия
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: $main_font_color;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: $color_white;
+        border-color: $main_link_color;
+        color: $main_link_color;
+        transform: translateY(-2px);
+    }
+    
+    &__icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+    .stat-card {
+        &__value {
+            font-size: 1.5rem;
+        }
+    }
+    
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+} 

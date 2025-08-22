@@ -1,0 +1,96 @@
+@import '../../../app/styles/colors.scss';
+
+.registration-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+
+    &__step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+
+        &--completed {
+            .registration-progress__circle {
+                background-color: $main_color;
+                color: $color_white;
+                border-color: $main_color;
+            }
+        }
+
+        &--active {
+            .registration-progress__circle {
+                background-color: $main_link_color;
+                color: $color_white;
+                border-color: $main_link_color;
+                box-shadow: 0 0 0 4px rgba($main_link_color, 0.2);
+            }
+
+            .registration-progress__label {
+                color: $main_font_color;
+                font-weight: 600;
+            }
+        }
+
+        &--pending {
+            .registration-progress__circle {
+                background-color: $color_white;
+                color: #999;
+                border-color: #ddd;
+            }
+
+            .registration-progress__label {
+                color: #999;
+            }
+        }
+    }
+
+    &__circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        border: 2px solid;
+        transition: all 0.3s ease;
+    }
+
+    &__label {
+        font-size: 0.75rem;
+        color: $main_text_color;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    &__line {
+        width: 80px;
+        height: 2px;
+        background-color: #ddd;
+        margin: 0 0.5rem;
+        margin-bottom: 1.5rem;
+        transition: background-color 0.3s ease;
+
+        &--completed {
+            background-color: $main_color;
+        }
+    }
+}
+
+// Мобильная адаптация
+@media (max-width: 480px) {
+    .registration-progress {
+        transform: scale(0.85);
+        margin-bottom: 1rem;
+
+        &__line {
+            width: 50px;
+        }
+    }
+} 

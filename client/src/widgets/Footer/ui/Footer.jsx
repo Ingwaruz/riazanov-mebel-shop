@@ -3,10 +3,14 @@ import { MDBFooter, MDBContainer, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-k
 import '../../../app/styles/colors.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { CenteredModal } from '../../modals';
+import { useContacts } from '../../../entities/contacts/hooks';
+import useContent from '../../../entities/contacts/hooks/useContent';
 import './Footer.scss';
 
 export default function Footer() {
     const [modalData, setModalData] = useState({ show: false, title: '', content: '' });
+    const { phones, emails, addresses, socials, messengers, loading } = useContacts();
+    const aboutPageContent = useContent('about_us');
 
     const handleModalShow = (title, content) => {
         setModalData({ show: true, title, content });
@@ -16,37 +20,82 @@ export default function Footer() {
         setModalData({ ...modalData, show: false });
     };
 
+    // Получаем первые контакты каждого типа для отображения
+    const mainPhone = phones[0];
+    const mainEmail = emails[0];
+    const mainAddress = addresses[0];
+    
+    // Находим социальные сети и мессенджеры
+    const telegram = socials.find(s => s.value.includes('t.me') || s.value.includes('telegram'));
+    const instagram = socials.find(s => s.value.includes('instagram'));
+    const whatsapp = messengers.find(m => m.value.includes('whatsapp') || m.value.includes('wa.me'));
+
     // Модальное содержимое
     const deliveryContent = (
         <div>
-            <h4>Условия доставки</h4>
-            <p>Мы осуществляем доставку по всей России.</p>
-            <ul>
-                <li>Доставка по Москве - бесплатно (при заказе от 5000 руб)</li>
-                <li>Доставка по Московской области - от 500 руб</li>
-                <li>Доставка в регионы - по тарифам транспортных компаний</li>
-            </ul>
-            <p>Сроки доставки: 1-3 дня по Москве, 3-7 дней по России.</p>
-            <p>Для уточнения деталей доставки, свяжитесь с нами по телефону: <a href="tel:+78001234567">8 (800) 123-45-67</a></p>
-        </div>
+                <h4>Условия доставки</h4>
+                <p>Мы осуществляем доставку по всей России.</p>
+                {mainPhone && (
+                    <p>Для уточнения деталей доставки, свяжитесь с нами по телефону: 
+                        <a href={`tel:${mainPhone.value.replace(/\D/g, '')}`}> {mainPhone.value}</a>
+                    </p>
+                )}
+            </div>
     );
 
     const contactsContent = (
         <div>
-            <h4>Наши контакты</h4>
-            <p><strong>Адрес:</strong> г. Москва, ул. Мебельная, д. 123</p>
-            <p><strong>Телефон:</strong> <a href="tel:+78001234567">8 (800) 123-45-67</a></p>
-            <p><strong>Email:</strong> <a href="mailto:info@dommebel.ru">info@dommebel.ru</a></p>
-            <p><strong>Режим работы:</strong></p>
-            <p>Пн-Пт: 9:00 - 20:00<br />Сб-Вс: 10:00 - 18:00</p>
-        </div>
+                <h4>Наши контакты</h4>
+                {mainAddress && <p><strong>Адрес:</strong> {mainAddress.value}</p>}
+                {mainPhone && (
+                    <p><strong>Телефон:</strong> 
+                        <a href={`tel:${mainPhone.value.replace(/\D/g, '')}`}> {mainPhone.value}</a>
+                    </p>
+                )}
+                {mainEmail && (
+                    <p><strong>Email:</strong> 
+                        <a href={`mailto:${mainEmail.value}`}> {mainEmail.value}</a>
+                    </p>
+                )}
+                <p><strong>Режим работы:</strong></p>
+                <p>Ежедневно с 10:00 до 21:00</p>
+                
+                {/* Дополнительные телефоны */}
+                {phones.length > 1 && (
+                    <>
+                        <p className="mt-3"><strong>Дополнительные телефоны:</strong></p>
+                        {phones.slice(1).map((phone, index) => (
+                            <p key={index}>
+                                {phone.label}: 
+                                <a href={`tel:${phone.value.replace(/\D/g, '')}`}> {phone.value}</a>
+                            </p>
+                        ))}
+                    </>
+                )}
+            </div>
     );
 
     const aboutContent = (
         <div>
-            
-        </div>
+                <p>
+                «ДОМУ МЕБЕЛЬ» — ведущий дистрибьютор премиальной мебели, предлагающий эксклюзивные коллекции от лучших Российских производителей. Мы тщательно отбираем предметы интерьера, сочетающие в себе безупречное качество, элегантный дизайн и функциональность, чтобы создать пространства, отражающие ваш стиль и статус.
+                </p>
+                <p>
+                    Наша миссия — обеспечивать клиентов мебелью премиум-класса, которая превращает дом в место настоящего комфорта и роскоши. Мы работаем с дизайнерами, архитекторами и частными заказчиками, предлагая индивидуальный подход и профессиональные решения для любых интерьерных задач.
+                </p>
+                <h4>Почему выбирают нас?</h4>
+                <ul>
+                    <li>Высокое качество материалов</li>
+                    <li>Широкий ассортимент: от классики до современных трендов</li>
+                    <li>Персональный сервис и помощь в подборе мебели</li>
+                    <li>Гарантия на всю продукцию</li>
+                </ul>
+            </div>
     );
+
+    if (loading) {
+        return null; // Или можно показать скелетон footer
+    }
 
     return (
         <>
@@ -58,24 +107,39 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <a
-                                href='https://t.me/mebel_blg_ostrova'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-reset fa-2x'
-                            >
-                                <MDBIcon fab icon='telegram' />
-                            </a>
-                            <a
-                                href='https://www.instagram.com/divan_premium_blg/profilecard/?igsh=MWEybW9hdDdtM2Nseg%3D%3D&fbclid=PAZXh0bgNhZW0CMTEAAabsLjVjPEDUFBfcxJrU0_C32iJvKrBSn6mJLWikPEBk9HdTaBwCAGOFVzY_aem_5pe7FhH0-vGs_42FQrSDhA'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-reset fa-2x'
-                            >
-                                <MDBIcon fab icon='instagram' />
-                            </a>
-                            <a
-                                href='https://api.whatsapp.com/send/?phone=79143983470&text&type=phone_number&app_absent=0
-                                ' target="_blank" rel="noopener noreferrer" className='me-4 text-reset fa-2x'
-                            >
-                                <MDBIcon fab icon='whatsapp' />
-                            </a>
+                            {telegram && (
+                                <a
+                                    href={telegram.value}
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className='me-4 text-reset fa-2x'
+                                    title={telegram.label}
+                                >
+                                    <MDBIcon fab icon='telegram' />
+                                </a>
+                            )}
+                            {instagram && (
+                                <a
+                                    href={instagram.value}
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className='me-4 text-reset fa-2x'
+                                    title={instagram.label}
+                                >
+                                    <MDBIcon fab icon='instagram' />
+                                </a>
+                            )}
+                            {whatsapp && (
+                                <a
+                                    href={whatsapp.value}
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className='me-4 text-reset fa-2x'
+                                    title={whatsapp.label}
+                                >
+                                    <MDBIcon fab icon='whatsapp' />
+                                </a>
+                            )}
                         </div>
                     </section>
 
@@ -141,7 +205,7 @@ export default function Footer() {
                                 </MDBCol>
 
                                 <MDBCol md='3' lg='2' xl='2' className='mx-auto mb-4'>
-                                    <h6 className='text-uppercase mb-4 m-text color_white'>Ссылки</h6>
+                                    <h6 className='text-uppercase mb-4 m-text color_white'>Информация</h6>
                                     <p>
                                         <a href="#about" onClick={(e) => {e.preventDefault(); handleModalShow('О нас', aboutContent);}} className='m-text color_white cursor-pointer'>
                                             О нас

@@ -1,23 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        
+        <!-- DNS Prefetch для внешних ресурсов -->
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+        <link rel="dns-prefetch" href="https://mc.yandex.ru" />
+        
+        <!-- Preload критически важного CSS -->
+        <link 
+            rel="preload" 
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+            as="style" 
+            onload="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+            <link
+                rel="stylesheet"
+                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+                integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+                crossorigin="anonymous"
+            />
+        </noscript>
+        
+        <!-- Fallback для браузеров без поддержки preload -->
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous"
+            media="print"
+            onload="this.media='all'"
         />
-        <!-- Предотвращение кеширования стилей -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
-        <title>Дому мебель</title>
+        
+        <!-- Preload шрифтов если есть -->
+        <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+        
+        <!-- Оптимизированные meta-теги для кеширования -->
+        <meta http-equiv="Cache-Control" content="public, max-age=31536000" />
+        <meta name="theme-color" content="#ffffff" />
+        
+        <title>Дому мебель - Интернет-магазин мебели</title>
+        <meta name="description" content="Широкий выбор качественной мебели для дома. Быстрая доставка по всей России." />
     </head>
     <body>
-<!--        <noscript>You need to enable Javascript to run this app.</noscript>-->
+        <noscript>
+            <div style="text-align: center; padding: 50px;">
+                <h2>Для работы сайта необходимо включить JavaScript</h2>
+                <p>Пожалуйста, включите JavaScript в настройках браузера и перезагрузите страницу.</p>
+            </div>
+        </noscript>
         <div id="root"></div>
     </body>
 </html>

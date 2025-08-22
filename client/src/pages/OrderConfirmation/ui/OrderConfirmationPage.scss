@@ -1,0 +1,64 @@
+@import '../../../app/styles/colors.scss';
+
+.order-confirmation-page {
+    background-color: #f9f9f9;
+    min-height: calc(100vh - 120px);
+    
+    h1 {
+        color: $main_color;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    .breadcrumb {
+        background-color: transparent;
+        
+        .breadcrumb-item a {
+            color: $main_color;
+            text-decoration: none;
+            
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    
+    .confirmation-card {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        border: none;
+        
+        .alert-success {
+            background-color: lighten($main_color, 50%);
+            border-color: $main_color;
+            color: darken($main_color, 10%);
+            
+            .alert-heading {
+                color: $main_color;
+            }
+        }
+        
+        h5 {
+            color: $main_color;
+            font-weight: 600;
+        }
+        
+        .table {
+            th, td {
+                vertical-align: middle;
+            }
+            
+            thead {
+                background-color: #f8f9fa;
+            }
+            
+            tfoot {
+                border-top: 2px solid #dee2e6;
+                font-weight: bold;
+                
+                th {
+                    padding-top: 15px;
+                }
+            }
+        }
+    }
+} 

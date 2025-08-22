@@ -1,0 +1,289 @@
+@import '../../../app/styles/colors.scss';
+
+.pin-verification-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 1rem auto; // дополнительный вертикальный отступ для безопасности
+    padding: 2rem;
+    background-color: $color_white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 2rem;
+        row-gap: 0.5rem;
+    }
+
+    &__back-row {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 40px;
+    }
+
+    &__back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: none;
+        border: none;
+        color: $main_font_color;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover:not(:disabled) {
+            color: $main_link_color;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $main_font_color;
+        text-align: center;
+    }
+
+    &__spacer {
+        visibility: hidden; // занимает место, но не виден
+        padding: 0.5rem 1rem; // повторяем горизонтальные отступы кнопки
+        font-size: 0.875rem;
+    }
+
+    &__description {
+        text-align: center;
+        color: $main_text_color;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+
+        strong {
+            color: $main_font_color;
+            font-weight: 600;
+        }
+    }
+
+    &__dev-mode {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: rgba(0, 123, 255, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    &__dev-pin-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    &__dev-pin {
+        font-size: 1rem;
+    }
+
+    &__dev-label {
+        color: #666;
+    }
+
+    &__dev-value {
+        font-weight: 700;
+        color: #007bff;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+    }
+
+    &__dev-hint {
+        font-size: 0.75rem;
+        color: #666;
+        margin: 0;
+        font-style: italic;
+    }
+
+    &__copy-btn {
+        background-color: transparent;
+        border: 1px solid #007bff;
+        color: #007bff;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+            background-color: #007bff;
+            color: white;
+        }
+    }
+
+    &__form {
+        margin-bottom: 1.5rem;
+    }
+
+    &__inputs {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    &__input {
+        width: 50px;
+        height: 60px;
+        font-size: 1.5rem;
+        text-align: center;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: $color_white;
+        transition: all 0.2s;
+        font-weight: 600;
+
+        &:focus {
+            outline: none;
+            border-color: $main_link_color;
+            box-shadow: 0 0 0 3px rgba($main_link_color, 0.1);
+        }
+
+        &:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        &--error {
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+    }
+
+    &__error {
+        text-align: center;
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background-color: rgba(220, 53, 69, 0.1);
+        border-radius: 4px;
+    }
+
+    &__submit-btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: $color_white;
+        background-color: $main_color;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+            background-color: $main_color_hover;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba($main_color, 0.3);
+        }
+
+        &:active:not(:disabled) {
+            background-color: $main_color_active;
+            transform: translateY(0);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    }
+
+    &__resend {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    &__resend-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        color: $main_link_color;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        transition: color 0.2s;
+
+        &:hover:not(:disabled) {
+            color: $main_color_hover;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    &__timer {
+        color: $main_text_color;
+        font-size: 0.875rem;
+    }
+
+    &__hint {
+        text-align: center;
+        color: #666;
+        font-size: 0.8rem;
+        margin: 0;
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+// Мобильная адаптация
+@media (max-width: 480px) {
+    .pin-verification-form {
+        padding: 1.5rem;
+
+        &__inputs {
+            gap: 0.25rem;
+        }
+
+        &__input {
+            width: 45px;
+            height: 55px;
+            font-size: 1.25rem;
+        }
+
+        &__title {
+            font-size: 1.25rem;
+        }
+
+        // Адаптив: уменьшим резерв под кнопку на узких экранах
+        &__header {
+            padding-left: 64px;
+            padding-right: 64px;
+            min-height: 52px;
+        }
+    }
+} 

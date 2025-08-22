@@ -1,5 +1,10 @@
 {
+  "name": "riazanov-mebel-shop",
+  "version": "1.0.0",
   "dependencies": {
     "@tanstack/react-query": "^5.76.2"
+  },
+  "scripts": {
+    "dev:local": "cd server && npm run dev:local"
   }
 }

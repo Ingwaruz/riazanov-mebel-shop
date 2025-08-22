@@ -24,6 +24,9 @@
   .submit-button {
     background-color: $main_color;
     border-color: $main_color;
+    min-width: 200px;
+    padding: 10px 20px;
+    font-weight: 500;
     
     &:hover {
       background-color: $main_color_hover;
@@ -41,5 +44,55 @@
     color: $main_font_color;
     border-top: 1px solid rgba($main_font_color, 0.1);
     padding-top: 1rem;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    
+    .fs-5 {
+      color: $main_color;
+    }
+  }
+  
+  .payment-methods {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .basket-items-table {
+    th, td {
+      vertical-align: middle;
+    }
+    
+    thead {
+      background-color: #f8f9fa;
+    }
+    
+    tfoot {
+      border-top: 2px solid #dee2e6;
+      font-weight: bold;
+      
+      th {
+        padding-top: 15px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout-form {
+    .submit-button {
+      width: 100%;
+    }
+    
+    .d-flex.justify-content-between {
+      flex-direction: column;
+      
+      button {
+        margin-bottom: 10px;
+        width: 100%;
+      }
+    }
   }
 } 

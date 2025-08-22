@@ -1,0 +1,55 @@
+@import '../../../app/styles/colors.scss';
+
+.orders-management {
+    h2 {
+        color: $main_color;
+        font-weight: 600;
+    }
+    
+    .admin-orders-table {
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        td {
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background-color: rgba($main_color, 0.05);
+        }
+    }
+    
+    .dropdown-menu {
+        min-width: 180px;
+    }
+    
+    .btn-outline-info:hover, .btn-outline-primary:hover {
+        background-color: rgba($main_color, 0.1);
+        color: $main_color;
+        border-color: $main_color;
+    }
+    
+    .form-label {
+        font-weight: 500;
+    }
+    
+    .pagination {
+        .page-item {
+            .page-link {
+                color: $main_color;
+                
+                &:focus {
+                    box-shadow: 0 0 0 0.25rem rgba($main_color, 0.25);
+                }
+            }
+            
+            &.active .page-link {
+                background-color: $main_color;
+                border-color: $main_color;
+                color: white;
+            }
+        }
+    }
+} 

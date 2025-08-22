@@ -3,6 +3,8 @@
 .auth-container {
   min-height: 100vh;
   background-color: #f8f9fa;
+  padding-top: 80px; // отступ от фиксированного навбара
+  padding-bottom: 40px; // отступ перед футером
 }
 
 .auth-card {

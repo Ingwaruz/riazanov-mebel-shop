@@ -11,11 +11,34 @@ export const login = async (email, password) => {
     }
 };
 
-export const registration = async (email, password) => {
+export const registration = async (email, password, verified = false) => {
     try {
-        const { data } = await $host.post('api/user/registration', { email, password });
+        const { data } = await $host.post('api/user/registration', { 
+            email, 
+            password,
+            verified,
+            role: 'USER'
+        });
         localStorage.setItem('token', data.token);
         return jwtDecode(data.token);
+    } catch (e) {
+        throw e;
+    }
+};
+
+export const sendVerificationPin = async (email) => {
+    try {
+        const { data } = await $host.post('api/user/send-verification-pin', { email });
+        return data;
+    } catch (e) {
+        throw e;
+    }
+};
+
+export const verifyPin = async (email, pin_code) => {
+    try {
+        const { data } = await $host.post('api/user/verify-pin', { email, pin_code });
+        return data;
     } catch (e) {
         throw e;
     }
