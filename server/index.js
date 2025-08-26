@@ -53,7 +53,7 @@ const models = require('./models/models')
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
 const router = require('./routes/index')
-const errorHandler = require('./middleware/ErrorHandlingMiddleware')
+const errorHandler = require('./middleware/errorHandlingMiddleware')
 const { startCleanupJob } = require('./utils/cleanupExpiredPins')
 
 const PORT = process.env.PORT || (process.env.NODE_ENV === 'development' ? 5001 : 5000)

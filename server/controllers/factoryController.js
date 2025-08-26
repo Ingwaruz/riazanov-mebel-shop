@@ -1,5 +1,5 @@
 const { Factory } = require("../models/models")
-const ApiError = require('../error/apiError')
+const ApiError = require('../error/ApiError')
 
 class factoryController {
     async create(req, res) {

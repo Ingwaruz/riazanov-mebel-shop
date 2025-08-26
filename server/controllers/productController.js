@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const path = require('path');
 const {Product, ProductInfo, Image, Collection, Type, Factory, Feature, FeatureToTypeFactory, Subtype} = require('../models/models');
-const ApiError = require('../error/apiError');
+const ApiError = require('../error/ApiError');
 const {Op} = require('sequelize');
 const csv = require('csv-parser');
 const fsPromises = require('fs').promises;
